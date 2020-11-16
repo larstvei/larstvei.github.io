@@ -1,0 +1,26 @@
+<!DOC TYPE html>
+<html>
+  <head>
+    <title>linear-probing</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <div id="linear-probing"></div>
+
+    <div id="controls" class="container">
+      <div>
+        <input id="k" type="number" placeholder="random" autofocus/>
+      </div>
+      <hr>
+      <div>
+        <button id="insert" style="width = 33%;" type="button"> <u>i</u>nsert </button>
+        <button id="delete" style="width = 33%;" type="button"> <u>d</u>elete </button>
+        <button id="resize" style="width = 33%;" type="button"> <u>r</u>e(size|hash) </button>
+      </div>
+    </div>
+    <script src="js/main.js"></script>
+    <script>linear_probing.core.run_sketch()</script>
+  </body>
+</html>
