@@ -15,6 +15,10 @@ html, body {
     overflow: hidden;
 }
 
+.container {
+    text-align: center;
+}
+
 .container hr {
     width: 100%;
     border: none;

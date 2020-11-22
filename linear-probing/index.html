@@ -8,17 +8,22 @@
   </head>
   <body>
     <div id="linear-probing"></div>
-
     <div id="controls" class="container">
-      <div>
-        <input id="k" type="number" placeholder="random" autofocus/>
-      </div>
+
+      <input id="k" type="number" placeholder="random" autofocus/>
+
       <hr>
-      <div>
-        <button id="insert" style="width = 33%;" type="button"> <u>i</u>nsert </button>
-        <button id="delete" style="width = 33%;" type="button"> <u>d</u>elete </button>
-        <button id="resize" style="width = 33%;" type="button"> <u>r</u>e(size|hash) </button>
-      </div>
+
+      <button id="insert" type="button"> <u>i</u>nsert </button>
+      <button id="bulk-insert" type="button"> <u>b</u>ulk-insert </button>
+      <button id="delete" type="button"> <u>d</u>elete </button>
+
+      <hr>
+
+      <button id="resize" type="button"> <u>r</u>e(size|hash) </button>
+      <button id="view" type="button"> <u>v</u>iew (text|dots) </button>
+      <button id="clear" type="button"> <u>c</u>lear </button>
+
     </div>
     <script src="js/main.js"></script>
     <script>linear_probing.core.run_sketch()</script>
