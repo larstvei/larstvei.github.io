@@ -10,19 +10,30 @@
     <div id="linear-probing"></div>
     <div id="controls" class="container">
 
-      <input id="k" type="number" placeholder="random" autofocus/>
+      <div>
+        <input id="k" type="number" pattern="[0-9]*" placeholder="random" autofocus/>
+      </div>
 
       <hr>
-
-      <button id="insert" type="button"> <u>i</u>nsert </button>
-      <button id="bulk-insert" type="button"> <u>b</u>ulk-insert </button>
-      <button id="delete" type="button"> <u>d</u>elete </button>
+      <div>
+        <button id="insert" type="button"> <u>i</u>nsert </button>
+        <button id="bulk-insert" type="button"> <u>b</u>ulk-insert </button>
+        <button id="delete" type="button"> <u>d</u>elete </button>
+      </div>
 
       <hr>
+      <div>
+        <button id="resize" type="button"> <u>r</u>e(size|hash) </button>
+        <button id="view" type="button"> <u>v</u>iew (text|dots) </button>
+        <button id="clear" type="button"> <u>c</u>lear </button>
+      </div>
+      <hr>
 
-      <button id="resize" type="button"> <u>r</u>e(size|hash) </button>
-      <button id="view" type="button"> <u>v</u>iew (text|dots) </button>
-      <button id="clear" type="button"> <u>c</u>lear </button>
+      <div>
+        <input type="range" id="speed" name="speed" min="0" max="200" value="50">
+        <br>
+        <label> speed </label>
+      </div>
 
     </div>
     <script src="js/main.js"></script>
