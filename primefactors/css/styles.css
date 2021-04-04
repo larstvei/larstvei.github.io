@@ -1,12 +1,12 @@
 * {
     font-family: 'Roboto Mono', monospace;
-    color: gray;
 }
 
 body, html {
-    font-size: 18px;
+    font-size: 16px;
     background: black;
     overflow-x: hidden;
+    color: gray;
 }
 
 .container {
@@ -42,32 +42,37 @@ canvas {
     max-height: 100%;
 }
 
-#n {
-    text-align: center;
-    outline: 0;
-    border: none;
-    background: none;
-    border-color: gray;
-    color: white;
-    font-size: 100%;
-}
-
 button {
-    border: none;
-    background: black;
+    text-align: center;
     font-size: 100%;
     cursor: pointer;
 }
 
-/* Chrome, Safari, Edge, Opera */
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
+.btn {
+    color: gray;
+    border: none;
+    outline: none;
+    background: none;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 1px;
+    border-bottom: 1px solid transparent;
+    -webkit-transition: all 0.3s;
+    -moz-transition: all 0.3s;
+    transition: all 0.3s;
 }
 
-/* Firefox */
-input[type=number] {
-    -moz-appearance: textfield;
-    font-size: inherit;
+@media(hover: hover) and (pointer: fine) {
+    .btn:hover {
+        border-bottom: 1px solid gray;
+    }
+}
+
+
+.toggled {
+    color: white;
+}
+
+.untoggled {
+    color: gray;
 }
