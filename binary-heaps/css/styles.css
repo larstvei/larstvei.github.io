@@ -1,0 +1,82 @@
+* {
+    font-family: 'Roboto Mono', monospace;
+}
+
+body, html {
+    font-size: 16px;
+    background: black;
+    overflow: hidden;
+    color: gray;
+    height: 100%;
+    margin: 0;
+}
+
+#app, #content {
+    height: 100%;
+}
+
+.container {
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.container .controls {
+    display: flex;
+    flex: 0 1 auto;
+    margin: auto;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    max-width: 65ch;
+    padding: 1ch;
+}
+
+.break {
+    flex-basis: 100%;
+    height: 1ch;
+}
+
+.container .main-sketch {
+    display: flex;
+    flex: 1 1 auto;
+    justify-content: center;
+    align-items: center;
+    min-height: 0;
+    width: 95%;
+}
+
+button {
+    text-align: center;
+    font-size: 100%;
+    cursor: pointer;
+}
+
+.btn {
+    color: gray;
+    border: none;
+    outline: none;
+    background: none;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 1px;
+    border-bottom: 1px solid transparent;
+    -webkit-transition: all 0.3s;
+    -moz-transition: all 0.3s;
+    transition: all 0.3s;
+}
+
+@media(hover: hover) and (pointer: fine) {
+    .btn:hover {
+        border-bottom: 1px solid gray;
+    }
+}
+
+.toggled {
+    color: white;
+}
+
+.untoggled {
+    color: gray;
+}
