@@ -1,0 +1,1050 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="nb" xml:lang="nb">
+<head>
+<!-- 2021-09-28 Tue 00:05 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Utvalgte grafalgoritmer</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="Lars Tveito" />
+<script type="text/javascript" src="js/script.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.css" integrity="sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y" crossorigin="anonymous"/>
+<script defer="defer" src="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.js" integrity="sha384-K3vbOmF2BtaVai+Qk37uypf7VrgBubhQreNQe9aGsz9lB63dIFiQVlJbr92dw2Lx" crossorigin="anonymous"></script>
+<script defer="defer" src="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/contrib/auto-render.min.js" integrity="sha384-kmZOZB5ObwgQnS/DuDg6TScgOiWWBiVt0plIRkZCmE6rDZGrEOQeHM5PcHi+nyqe" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
+</head>
+<body>
+<div id="preamble" class="status">
+<h1 class="title">Utvalgte grafalgoritmer</h1>
+                                                  <p class="author">Lars Tveito</p>
+                                                  <p class="date">28. September, 2021</p>
+</div>
+<div id="content">
+<link rel="stylesheet" type="text/css" href="Rethink/rethink.css" />
+
+<p>
+I dette dokumentet skal vi gå gjennom noen sentrale grafalgoritmer for IN2010.
+Det kan brukes som et løsningsforslag for det som alltid er en god ukesoppgave:
+<i>implementer algoritmene som gjennomgås</i>. For både Dijkstra og Prim's
+algoritmer vil presentasjonen være litt annerledes enn den som er gitt i
+forelesningsvideoene.
+</p>
+
+<p>
+Vi tar utgangspunkt i grafen som ble vist i forelesningen som ser slik ut:
+</p>
+
+
+<div id="org96c9d0d" class="figure">
+<p><object type="image/svg+xml" data="./forelesningsgraf.svg" class="org-svg" width="400">
+Sorry, your browser does not support SVG.</object>
+</p>
+</div>
+
+<p>
+Den kan skrives ned ved å liste alle kantene sammen med vektene:
+</p>
+
+<pre class="example" id="orgd47f4b3">
+A B 13
+A C 6
+B C 7
+B D 1
+C D 14
+C E 8
+C H 20
+D E 9
+D F 3
+E F 2
+E J 18
+G H 15
+G I 5
+G J 19
+G K 10
+H J 17
+I K 11
+J K 16
+J L 4
+K L 12
+</pre>
+
+<div id="outline-container-orgf34594a" class="outline-2">
+<h2 id="orgf34594a">Bygg grafen</h2>
+<div class="outline-text-2" id="text-orgf34594a">
+<p>
+Vi kan skrive en prosedyre som leser linjene og returnerer en graf \(G = (V,
+  E)\), der \(w\) er en vektfunksjon fra \(V \times V \to \mathbb{N}\). Merk at
+kodeblokkene er skjult, men dukker opp når du trykker på dem; det er ment som
+en oppfordring til å prøve å løse problemet selv først!
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #e45649;">from</span> collections <span style="color: #e45649;">import</span> defaultdict
+
+<span style="color: #e45649;">def</span> <span style="color: #a626a4;">buildgraph</span>(lines):
+    <span style="color: #6a1868;">V</span> = <span style="color: #a626a4;">set</span>()
+    <span style="color: #6a1868;">E</span> = defaultdict(<span style="color: #a626a4;">set</span>)
+    <span style="color: #6a1868;">w</span> = <span style="color: #a626a4;">dict</span>()
+
+    <span style="color: #e45649;">for</span> line <span style="color: #e45649;">in</span> lines.splitlines():
+        <span style="color: #6a1868;">v</span>, <span style="color: #6a1868;">u</span>, <span style="color: #6a1868;">weight</span> = line.strip().split()
+
+        V.add(v)
+        V.add(u)
+
+        E[v].add(u)
+        E[u].add(v)
+
+        <span style="color: #6a1868;">w</span>[(v, u)] = <span style="color: #a626a4;">int</span>(weight)
+        <span style="color: #6a1868;">w</span>[(u, v)] = <span style="color: #a626a4;">int</span>(weight)
+
+    <span style="color: #e45649;">return</span> V, E, w
+</pre>
+</div>
+
+<p>
+Vi antar at linjene er gitt som en enkel streng. Siden grafen er <i>urettet</i>
+representerer vi hver kant i begge retninger. For kantene \(E\) bruker vi en
+<code>defaultdict</code> slik at alle noder vi implisitt er assosiert med en tom mengde;
+med en vanlig <code>dict</code> kunne vi for eksempel initialisert en tom mengde for
+alle nodene først. Nå kan vi lese inn grafen, og antar at grafen er gitt i en
+variabel <code>lines</code>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #6a1868;">G</span> = buildgraph(lines)
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org7b484c6" class="outline-3">
+<h3 id="org7b484c6">Tegn grafen</h3>
+<div class="outline-text-3" id="text-org7b484c6">
+<p>
+Nå som vi har en måte å bygge grafen, kan det være kjekt å ha en måte å vise
+grafen. Den enkleste måten jeg vet om er å bruke <a href="https://pypi.org/project/graphviz/">Python sitt bibliotek</a> for
+<a href="https://www.graphviz.org/">Graphviz</a>. Dette er ikke viktig stoff for IN2010 (som betyr det ikke er
+relevant i en eksamens-sammenheng), men verktøy som dette gjør det enklere å
+oppdage feil i egen kode.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #e45649;">import</span> graphviz
+
+<span style="color: #e45649;">def</span> <span style="color: #a626a4;">drawgraph</span>(G):
+    <span style="color: #6a1868;">V</span>, <span style="color: #6a1868;">E</span>, <span style="color: #6a1868;">w</span> = G
+    <span style="color: #6a1868;">dot</span> = graphviz.Graph()
+    <span style="color: #6a1868;">seen_edges</span> = <span style="color: #a626a4;">set</span>()
+
+    <span style="color: #e45649;">for</span> v <span style="color: #e45649;">in</span> V:
+        dot.node(v)
+
+        <span style="color: #e45649;">for</span> u <span style="color: #e45649;">in</span> E[v]:
+            <span style="color: #e45649;">if</span> (u, v) <span style="color: #e45649;">in</span> seen_edges:
+                <span style="color: #e45649;">continue</span>
+            seen_edges.add((v, u))
+            dot.edge(v, u, label=<span style="color: #a626a4;">str</span>(w[(v, u)]))
+
+    dot.render(<span style="color: #50a14f;">'graph'</span>, <span style="color: #a626a4;">format</span>=<span style="color: #50a14f;">'svg'</span>)
+
+drawgraph(G)
+</pre>
+</div>
+
+
+<div id="org4d63c1e" class="figure">
+<p><object type="image/svg+xml" data="./graph.svg" class="org-svg">
+Sorry, your browser does not support SVG.</object>
+</p>
+</div>
+
+<p>
+Merk at den grafen vi ser her er den samme grafen som den på toppen av siden
+(men den er ikke tegnet like pent).
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org4649ba2" class="outline-2">
+<h2 id="org4649ba2">Traverser grafen</h2>
+<div class="outline-text-2" id="text-org4649ba2">
+<p>
+Nå som vi har representert grafen, så kan vi traversere den. Det vil si at vi
+systematisk går gjennom alle nodene i grafen.
+</p>
+
+<p>
+Grafen vi jobber med er <i>sammenhengende</i>. Det betyr at det finnes en sti
+mellom alle par av noder i \(V\). Når en graf er sammenhengende, så er det
+tilstrekkelig å starte med en vilkårlig node \(v \in V\), og besøke \(v\) sine
+naboer, og deres naboer sine naboer, og så videre, og da vil vi til slutt ha
+besøkt alle noder i \(V\).
+</p>
+
+<p>
+Det finnes to svært naturlige måter å utføre en slik traversering. Begge går
+ut på å starte i en node, notere ned den sine naboer, besøke alle dem, og
+notere ned deres naboer også, og fortsette slik. I tillegg må vi holde styr
+på hvilke noder som er besøkt, slik at vi ikke besøker noder flere ganger, og
+dermed risikere at traverseringen aldri terminerer. Distinksjonen mellom de
+to naturlige måtene å traversere grafen på er i <i>valg av datastruktur</i> når vi
+skal notere ned hvilke noder som er i «besøkslista». De enkleste (og dermed
+mest naturlige) er enten å:
+</p>
+<ul class="org-ul">
+<li>gå så dypt som mulig inn i grafen som mulig, det vil si at du følger
+(ikke-besøkte) naboer så langt du kan;</li>
+<li>besøke alle direkte naboer før du besøker naboer sine naboer.</li>
+</ul>
+<p>
+Den første strategien kalles <i>dybde-først søk</i> (DFS) (eng: <i>depth-first
+search</i>), og den andre kalles <i>bredde først søk</i> (BFS) (eng: <i>breath-first
+search</i>). Konkret er det eneste som skiller de to strategiene at et
+dybde-først søk anvender en stack og et bredde-først søk anvender en kø.
+</p>
+</div>
+
+<div id="outline-container-orgbb886ca" class="outline-3">
+<h3 id="orgbb886ca">Dybde-først søk</h3>
+<div class="outline-text-3" id="text-orgbb886ca">
+<p>
+DFS fra en gitt node \(s\) kan implementeres rekursivt på følgende måte:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #e45649;">def</span> <span style="color: #a626a4;">dfs_rec</span>(G, s, visited, result):
+    <span style="color: #6a1868;">_</span>, <span style="color: #6a1868;">E</span>, <span style="color: #6a1868;">_</span> = G
+    result.append(s)
+    visited.add(s)
+    <span style="color: #e45649;">for</span> v <span style="color: #e45649;">in</span> E[s]:
+        <span style="color: #e45649;">if</span> v <span style="color: #e45649;">not</span> <span style="color: #e45649;">in</span> visited:
+            dfs_rec(G, v, visited, result)
+    <span style="color: #e45649;">return</span> result
+</pre>
+</div>
+
+<p>
+Merk at vi her gir med to ekstra argumenter for å holde styr på hvilke noder
+som er besøkt, og resultatlisten. Nå kan vi for eksempel kalle på <code>dfs_rec</code>
+fra noden \(A\):
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python">dfs_rec(G, <span style="color: #50a14f;">'A'</span>, <span style="color: #a626a4;">set</span>(), [])
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left">A</td>
+<td class="org-left">B</td>
+<td class="org-left">D</td>
+<td class="org-left">E</td>
+<td class="org-left">F</td>
+<td class="org-left">C</td>
+<td class="org-left">H</td>
+<td class="org-left">G</td>
+<td class="org-left">K</td>
+<td class="org-left">L</td>
+<td class="org-left">J</td>
+<td class="org-left">I</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+Vi kan også gjøre et DFS-søk ved å bruke en stack. Merk at rekursive kall
+legges på det som kalles en «<a href="https://www.wikiwand.com/en/Call_stack">call stack</a>»; altså bytter vi egentlig bare ut
+en stack med en annen!
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #e45649;">def</span> <span style="color: #a626a4;">dfs</span>(G, s):
+    <span style="color: #6a1868;">_</span>, <span style="color: #6a1868;">E</span>, <span style="color: #6a1868;">_</span> = G
+    <span style="color: #6a1868;">visited</span> = <span style="color: #a626a4;">set</span>([s])
+    <span style="color: #6a1868;">stack</span> = [s]
+    <span style="color: #6a1868;">result</span> = []
+
+    <span style="color: #e45649;">while</span> stack:
+        <span style="color: #6a1868;">v</span> = stack.pop()
+        result.append(v)
+        <span style="color: #e45649;">for</span> u <span style="color: #e45649;">in</span> E[v]:
+            <span style="color: #e45649;">if</span> u <span style="color: #e45649;">not</span> <span style="color: #e45649;">in</span> visited:
+                visited.add(u)
+                stack.append(u)
+    <span style="color: #e45649;">return</span> result
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-python">dfs(G, <span style="color: #50a14f;">'A'</span>)
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left">A</td>
+<td class="org-left">C</td>
+<td class="org-left">E</td>
+<td class="org-left">J</td>
+<td class="org-left">K</td>
+<td class="org-left">I</td>
+<td class="org-left">G</td>
+<td class="org-left">L</td>
+<td class="org-left">F</td>
+<td class="org-left">D</td>
+<td class="org-left">H</td>
+<td class="org-left">B</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div id="outline-container-orgb3120b0" class="outline-3">
+<h3 id="orgb3120b0">Bredde-først søk</h3>
+<div class="outline-text-3" id="text-orgb3120b0">
+<p>
+Ved å bruke en kø (altså en liste med «first-in-first-out» snarere enn en
+«last-in-first-out»), i stedet for en stack, så får vi et bredde-først søk.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #e45649;">from</span> collections <span style="color: #e45649;">import</span> deque
+
+<span style="color: #e45649;">def</span> <span style="color: #a626a4;">bfs</span>(G, s):
+    <span style="color: #6a1868;">_</span>, <span style="color: #6a1868;">E</span>, <span style="color: #6a1868;">_</span> = G
+    <span style="color: #6a1868;">visited</span> = <span style="color: #a626a4;">set</span>([s])
+    <span style="color: #6a1868;">queue</span> = deque([s])
+    <span style="color: #6a1868;">result</span> = []
+
+    <span style="color: #e45649;">while</span> queue:
+        <span style="color: #6a1868;">v</span> = deque.popleft(queue)
+        result.append(v)
+        <span style="color: #e45649;">for</span> u <span style="color: #e45649;">in</span> E[v]:
+            <span style="color: #e45649;">if</span> u <span style="color: #e45649;">not</span> <span style="color: #e45649;">in</span> visited:
+                visited.add(u)
+                queue.append(u)
+    <span style="color: #e45649;">return</span> result
+</pre>
+</div>
+
+<p>
+Her bruker vi en <code>deque</code>, som gir konstant tid for innsetting og sletting på
+hver ende av køen. Vi setter inn på slutten, og tar ut elementene i
+begynnelsen. Merk at vi kunne like gjerne gjort motsatt, og satt inn på
+begynnelsen og tatt ut på slutten.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python">bfs(G, <span style="color: #50a14f;">'A'</span>)
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left">A</td>
+<td class="org-left">B</td>
+<td class="org-left">C</td>
+<td class="org-left">D</td>
+<td class="org-left">H</td>
+<td class="org-left">E</td>
+<td class="org-left">F</td>
+<td class="org-left">G</td>
+<td class="org-left">J</td>
+<td class="org-left">K</td>
+<td class="org-left">I</td>
+<td class="org-left">L</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orga078eb4" class="outline-2">
+<h2 id="orga078eb4">Korteste stier</h2>
+<div class="outline-text-2" id="text-orga078eb4">
+<p>
+Når vi snakker om <i>korteste stier</i> er det som ofte snakk om vektede grafer.
+Men la oss for et øyeblikk tenke på hva det betyr for uvektede grafer. I
+eksempelgrafen ovenfor kan vi ganske enkelt ignorere vektene, og anse grafen
+å være uvektet. Den korteste stien mellom to noder i en uvektet graf, er
+stien som går mellom de to nodene med færrest kanter. Da får vi faktisk den
+korteste stien mellom to noder ved hjelp av et bredde-først søk, slik vi
+gjorde ovenfor.
+</p>
+</div>
+
+<div id="outline-container-org20d7c60" class="outline-3">
+<h3 id="org20d7c60">Bredde-først søk (igjen)</h3>
+<div class="outline-text-3" id="text-org20d7c60">
+<p>
+Det som mangler fra det forrige bredde-først søket er en måte å hente ut de
+korteste stiene; det eneste vi «sparer på» under søket er rekkefølgen noder
+blir besøkt i. En enkel måte å lagre stiene, er for hver node vi legger på
+køen, også lagre hvilken node som la den på køen. Det kan gjøres slik:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #e45649;">def</span> <span style="color: #a626a4;">bfs_shortest_paths_from</span>(G, s):
+    <span style="color: #6a1868;">_</span>, <span style="color: #6a1868;">E</span>, <span style="color: #6a1868;">_</span> = G
+    <span style="color: #6a1868;">parents</span> = {s : <span style="color: #b751b6;">None</span>}
+    <span style="color: #6a1868;">queue</span> = deque([s])
+    <span style="color: #6a1868;">result</span> = []
+
+    <span style="color: #e45649;">while</span> queue:
+        <span style="color: #6a1868;">v</span> = deque.popleft(queue)
+        result.append(v)
+        <span style="color: #e45649;">for</span> u <span style="color: #e45649;">in</span> E[v]:
+            <span style="color: #e45649;">if</span> u <span style="color: #e45649;">not</span> <span style="color: #e45649;">in</span> parents:
+                <span style="color: #6a1868;">parents</span>[u] = v
+                queue.append(u)
+    <span style="color: #e45649;">return</span> parents
+</pre>
+</div>
+
+<p>
+Her har vi kun byttet ut <code>visited</code> med <code>parents</code>, der <code>parents</code> er en
+dictionary som mapper hver node \(u\) til node \(v\) som la den på køen. Vi kan
+avgjøre om en node er besøkt før ved å sjekke om noden har en forelder.
+</p>
+
+<p>
+Merk at denne mappingen av nodene utgjør et tre! Vi kan utforske den nærmere
+ved å tegne treet (igjen med bruk av graphviz).
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #e45649;">def</span> <span style="color: #a626a4;">draw_parents</span>(parents):
+    <span style="color: #6a1868;">dot</span> = graphviz.Graph()
+    <span style="color: #e45649;">for</span> v <span style="color: #e45649;">in</span> parents:
+        <span style="color: #6a1868;">u</span> = parents[v]
+        <span style="color: #e45649;">if</span> u: dot.edge(v, u)
+    dot.render(<span style="color: #50a14f;">'bfs_spanningtree'</span>, <span style="color: #a626a4;">format</span>=<span style="color: #50a14f;">'svg'</span>)
+
+draw_parents(bfs_shortest_paths_from(G, <span style="color: #50a14f;">'A'</span>))
+</pre>
+</div>
+
+
+<div id="orgdbf2ec8" class="figure">
+<p><object type="image/svg+xml" data="./bfs_spanningtree.svg" class="org-svg">
+Sorry, your browser does not support SVG.</object>
+</p>
+</div>
+
+<p>
+Fra dette treet kan man lese ut den korteste stien fra \(A\) til alle andre
+noder. For å finne den korteste stien mellom to noder \(s\) og \(t\) er det
+tilstrekkelig å kalle på <code>bfs_shortest_paths_from(G, s)</code>, og følge <code>parents</code>
+fra \(t\) til roten av treet som er \(s\) (akkurat som kattunge-oppgaven fra
+Oblig 1!). Et slikt tre, som inneholder de samme nodene som en graf \(G\)
+kalles et spenntre for \(G\). Merk at dersom grafen ikke er sammenhengende, så
+vil det ikke nødvendigvis finnes en sti fra \(s\) til \(t\), hvor vi her for
+enkelhets skyld returnerer en tom liste.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #e45649;">def</span> <span style="color: #a626a4;">bfs_shortest_path_between</span>(G, s, t):
+    <span style="color: #6a1868;">parents</span> = bfs_shortest_paths_from(G, s)
+    <span style="color: #6a1868;">v</span> = t
+    <span style="color: #6a1868;">path</span> = []
+
+    <span style="color: #e45649;">if</span> t <span style="color: #e45649;">not</span> <span style="color: #e45649;">in</span> parents:
+        <span style="color: #e45649;">return</span> path
+
+    <span style="color: #e45649;">while</span> v:
+        path.append(v)
+        <span style="color: #6a1868;">v</span> = parents[v]
+    <span style="color: #e45649;">return</span> path[::-1]
+</pre>
+</div>
+
+<p>
+Merk at <code>path[::-1]</code> er en måte å reversere en liste i Python. Med denne
+prosedyren definert kan vi finne korteste vei mellom for eksempel nodene \(A\)
+og \(G\).
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python">bfs_shortest_path_between(G, <span style="color: #50a14f;">'A'</span>, <span style="color: #50a14f;">'G'</span>)
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left">A</td>
+<td class="org-left">C</td>
+<td class="org-left">H</td>
+<td class="org-left">G</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+Vi kan også finne korteste veien fra en node til alle andre noder.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #e45649;">def</span> <span style="color: #a626a4;">bfs_all_shortest_paths</span>(G, s):
+    <span style="color: #6a1868;">V</span>, <span style="color: #6a1868;">_</span>, <span style="color: #6a1868;">_</span> = G
+    <span style="color: #6a1868;">parents</span> = bfs_shortest_paths_from(G, s)
+    <span style="color: #6a1868;">paths</span> = []
+
+    <span style="color: #e45649;">for</span> v <span style="color: #e45649;">in</span> V:
+        <span style="color: #6a1868;">path</span> = []
+        <span style="color: #e45649;">while</span> v:
+            path.append(v)
+            <span style="color: #6a1868;">v</span> = parents[v]
+        paths.append(path[::-1])
+    <span style="color: #e45649;">return</span> paths
+</pre>
+</div>
+
+<p>
+Med denne prosedyren definert kan vi finne korteste vei mellom alle par av
+noder. Vi kan kalle på prosedyren fra noden \(A\), og få ut de korteste stiene
+fra \(A\) til alle andre noder. Merk at vi kaller på <code>sorted</code> kun for å gjøre
+tabellen litt enklere å lese.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #a626a4;">sorted</span>(bfs_all_shortest_paths(G, <span style="color: #50a14f;">'A'</span>))
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left">A</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">A</td>
+<td class="org-left">B</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">A</td>
+<td class="org-left">B</td>
+<td class="org-left">D</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">A</td>
+<td class="org-left">B</td>
+<td class="org-left">D</td>
+<td class="org-left">F</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">A</td>
+<td class="org-left">C</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">A</td>
+<td class="org-left">C</td>
+<td class="org-left">E</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">A</td>
+<td class="org-left">C</td>
+<td class="org-left">H</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">A</td>
+<td class="org-left">C</td>
+<td class="org-left">H</td>
+<td class="org-left">G</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">A</td>
+<td class="org-left">C</td>
+<td class="org-left">H</td>
+<td class="org-left">G</td>
+<td class="org-left">I</td>
+</tr>
+
+<tr>
+<td class="org-left">A</td>
+<td class="org-left">C</td>
+<td class="org-left">H</td>
+<td class="org-left">G</td>
+<td class="org-left">K</td>
+</tr>
+
+<tr>
+<td class="org-left">A</td>
+<td class="org-left">C</td>
+<td class="org-left">H</td>
+<td class="org-left">J</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">A</td>
+<td class="org-left">C</td>
+<td class="org-left">H</td>
+<td class="org-left">J</td>
+<td class="org-left">L</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div id="outline-container-org76218a6" class="outline-3">
+<h3 id="org76218a6">Korteste stier for vektede grafer (Dijkstra)</h3>
+<div class="outline-text-3" id="text-org76218a6">
+<p>
+La oss returnere til det mer interessante spørsmålet der vi har vekter på
+kantene. For en graf \(G = (V, E)\) med vektfunksjon \(w\), er den korteste
+stien mellom \(s \in V\) og \(t \in V\) den stien \(v_1, v_2, \dots, v_n\) slik at
+\(v_1 = s\) og \(v_n = t\) som minimerer \(\sum_{i=1}^{n-1}w(v_i, v_{i+1})\). Det
+vil si at den totale vekten (eller kostnadden) av en sti er gitt av summene
+av vektene til kantene som utgjør stien.
+</p>
+
+<p>
+Vi skal nå implementere Dijkstra sin algoritme for korteste vei fra en node
+til alle andre noder. Der DFS bruker en stack og BFS bruker en FIFO-kø, så
+bruker Dijkstra heller en <i>prioritetskø</i>. En prioritetskø trenger en total
+ordning over elementene som legges på køen, altså et sorteringskriterie.
+Tradisjonelt beskriver man Dijkstra ved å si at prioriteten til et element
+er gitt av en avstandsmatrise \(D\), slik at for en gitt \(v \in V\) så angir
+\(D[v]\) den korteste avstanden fra startnoden til \(v\) som er oppdaget så
+langt. Dersom \(v\) ikke er oppdaget enda har den avstand \(\infty\).
+</p>
+
+<p>
+En utfordring med å implementere Dijkstra er et steg som kalles <i>edge
+relaxation</i>. Hvis vi er ved en node \(v \in V\) som har en kant til en node \(u
+   \in V\) med vekt \(w(v, u)\), så er spørsmålet om vi har funnet en kortere vei
+til \(u\) enn den som er funnet så langt. Den korteste veien til en node så
+langt er gitt av \(D\), som vil si at det har kostet \(D[v]\) å komme til \(v\),
+og det vil koste \(D[v] + w(v, u)\) å komme til \(u\) via \(v\). Dersom \(D[v] +
+   w(v, u)\) er mindre enn \(D[u]\), så må vi erstatte prioriteten til \(u\). Steget
+kan beskrives slik, der <code>Q</code> referer til prioritetskøen:
+</p>
+
+<pre class="example" id="org965e4e8">
+if D[v] + w((v, u)) &lt; D[u]:
+    D[u] = D[v] + w((v, u))
+    change value of u in Q to D[u]
+</pre>
+
+<p>
+Vanskeligheten med dette er at prioritetskøene vi har sett så langt (der
+binære heaps er den mest effektive) ikke har noen måte å oppdatere
+prioriteten for en gitt node. <sup><a id="fnr.1" class="footref" href="#fn.1">1</a></sup> I Python har vi ikke tilgang på en
+prioritetskø som støtter å endre prioriteten til et element på logaritmisk
+tid, så derfor vil bruke en litt annen strategi, som ligger litt tettere opp
+mot bredde-først søk.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #e45649;">from</span> heapq <span style="color: #e45649;">import</span> heappush, heappop
+
+<span style="color: #e45649;">def</span> <span style="color: #a626a4;">dijkstra</span>(G, s):
+    <span style="color: #6a1868;">V</span>, <span style="color: #6a1868;">E</span>, <span style="color: #6a1868;">w</span> = G
+    <span style="color: #6a1868;">Q</span> = [(0, s)]
+    <span style="color: #6a1868;">D</span> = defaultdict(<span style="color: #e45649;">lambda</span>: <span style="color: #a626a4;">float</span>(<span style="color: #50a14f;">'inf'</span>))
+    <span style="color: #6a1868;">D</span>[s] = 0
+
+    <span style="color: #e45649;">while</span> Q:
+        <span style="color: #6a1868;">cost</span>, <span style="color: #6a1868;">v</span> = heappop(Q)
+        <span style="color: #e45649;">for</span> u <span style="color: #e45649;">in</span> E[v]:
+            <span style="color: #6a1868;">c</span> = cost + w[(v, u)]
+            <span style="color: #e45649;">if</span> c &lt; D[u]:
+                <span style="color: #6a1868;">D</span>[u] = c
+                heappush(Q, (c, u))
+
+    <span style="color: #e45649;">return</span> D
+</pre>
+</div>
+
+<p>
+Vi definerer en kø som starter med å inneholde et par \((0, s)\), der \(0\) er
+avstanden fra \(s\) til \(s\). I tillegg lager vi en avstandsmatrise, som her er
+implementert som en <code>defaultdict</code>, slik at alle noder implisitt har en
+avstand på <code>float('inf')</code>, som er det nærmeste vi kommer \(\infty\)
+representert i Python, og setter avstanden til \(s\) lik \(0\).
+</p>
+
+<p>
+Vi traverserer så grafen ved å ta ut noder fra prioritetskøen. For hver node
+\(v\) vi tar av prioritetskøen har vi en assosiert kostnad. Når en node \(v\) er
+tatt av køen, går vi gjennom hver kant fra \(v\) til en node \(u\). Dersom
+kostnaden ved å gå til \(u\) via \(v\) er den laveste vi har observert så langt,
+så oppdaterer vi avstanden til \(u\) i \(D\), og legger \(u\) på køen, med den nye
+kostnaden som prioritet.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #6a1868;">D</span> = dijkstra(G, <span style="color: #50a14f;">'A'</span>)
+<span style="color: #a626a4;">list</span>(<span style="color: #a626a4;">zip</span>(*<span style="color: #a626a4;">sorted</span>(D.items())))
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-right">A</td>
+<td class="org-right">B</td>
+<td class="org-right">C</td>
+<td class="org-right">D</td>
+<td class="org-right">E</td>
+<td class="org-right">F</td>
+<td class="org-right">G</td>
+<td class="org-right">H</td>
+<td class="org-right">I</td>
+<td class="org-right">J</td>
+<td class="org-right">K</td>
+<td class="org-right">L</td>
+</tr>
+
+<tr>
+<td class="org-right">0</td>
+<td class="org-right">13</td>
+<td class="org-right">6</td>
+<td class="org-right">14</td>
+<td class="org-right">14</td>
+<td class="org-right">16</td>
+<td class="org-right">41</td>
+<td class="org-right">26</td>
+<td class="org-right">46</td>
+<td class="org-right">32</td>
+<td class="org-right">48</td>
+<td class="org-right">36</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+Et spørsmål man bør stille seg, er om denne implementasjonen av Dijkstra har
+samme kjøretidskompleksitet som den varianten som er presentert på
+forelesning, altså \(O(|E| \cdot \log(|V|))\). Intuitivt betyr det at vi har
+tid til å gå gjennom alle kantene i grafen og for hver av disse gjøre en
+\(O(\log(|V|))\) operasjon, slik som innsetting og sletting fra en binær heap.
+Det som skiller denne implementasjonen fra den som er gått gjennom i
+forelesningsvideoen er at vi her risikerer å legge samme node på heapen
+flere ganger! Da blir spørsmålet, hvor mange elementer kan legges på heapen
+totalt? I verste tilfelle, så kan en node legges til på køen av alle sine
+naboer (altså like mange ganger som det finnes kanter som går til noden).
+Det vil si at vi i verste tilfellet vil legge like mange elementer på heapen
+som antallet kanter i grafen, altså \(|E|\). Dermed ser det ut som at vi får
+\(O(|E| \cdot log(|E|))\) i kjøretid, som virker mindre effektivt siden kan
+finnes så mange som \(O(|V|^2)\) kanter i en graf. Denne intuisjonen stemmer
+ikke helt, fordi \(\log(x^2) \leq 2 \cdot \log(x^2)\) for alle \(1 \leq x\).
+Altså er \(O(|E| \cdot log(|E|)) = O(|E| \cdot log(|V|))\), og dermed har
+denne implementasjonen samme kjøretidskompleksitet som en mer tradisjonell
+implementasjon av Dijkstra.
+</p>
+
+<p>
+På samme måte som med bredde-først søk, for hver node lagre hvilken node som
+la den på køen, og på den måten kan vi hente ut de konkrete stiene.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #e45649;">def</span> <span style="color: #a626a4;">shortest_paths_from</span>(G, s):
+    <span style="color: #6a1868;">V</span>, <span style="color: #6a1868;">E</span>, <span style="color: #6a1868;">w</span> = G
+    <span style="color: #6a1868;">Q</span> = [(0, s)]
+    <span style="color: #6a1868;">D</span> = defaultdict(<span style="color: #e45649;">lambda</span>: <span style="color: #a626a4;">float</span>(<span style="color: #50a14f;">'inf'</span>))
+    <span style="color: #6a1868;">parents</span> = {s : <span style="color: #b751b6;">None</span>}
+    <span style="color: #6a1868;">D</span>[s] = 0
+
+    <span style="color: #e45649;">while</span> Q:
+        <span style="color: #6a1868;">cost</span>, <span style="color: #6a1868;">v</span> = heappop(Q)
+        <span style="color: #e45649;">for</span> u <span style="color: #e45649;">in</span> E[v]:
+            <span style="color: #6a1868;">c</span> = cost + w[(v, u)]
+            <span style="color: #e45649;">if</span> c &lt; D[u]:
+                <span style="color: #6a1868;">D</span>[u] = c
+                heappush(Q, (c, u))
+                <span style="color: #6a1868;">parents</span>[u] = v
+
+    <span style="color: #e45649;">return</span> parents
+</pre>
+</div>
+
+<p>
+Vi kan nå se på treet vi får fra å kjøre Dijkstra, og fra det kan du lese ut
+de korteste stiene fra \(A\) til alle andre noder.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #e45649;">def</span> <span style="color: #a626a4;">draw_parents_weighted</span>(G, parents, name):
+    <span style="color: #6a1868;">V</span>, <span style="color: #6a1868;">_</span>, <span style="color: #6a1868;">w</span> = G
+    <span style="color: #6a1868;">dot</span> = graphviz.Graph()
+    <span style="color: #e45649;">for</span> v <span style="color: #e45649;">in</span> parents:
+        <span style="color: #6a1868;">u</span> = parents[v]
+        <span style="color: #e45649;">if</span> u:
+            dot.edge(v, u, label=<span style="color: #a626a4;">str</span>(w[(v, u)]))
+    dot.render(name, <span style="color: #a626a4;">format</span>=<span style="color: #50a14f;">'svg'</span>)
+
+draw_parents_weighted(G, shortest_paths_from(G, <span style="color: #50a14f;">'A'</span>), <span style="color: #50a14f;">'dijkstra_spanningtree'</span>)
+</pre>
+</div>
+
+
+<div id="orgd8103d0" class="figure">
+<p><object type="image/svg+xml" data="./dijkstra_spanningtree.svg" class="org-svg">
+Sorry, your browser does not support SVG.</object>
+</p>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgfc34835" class="outline-2">
+<h2 id="orgfc34835">Minimale spenntrær</h2>
+<div class="outline-text-2" id="text-orgfc34835">
+<p>
+Vi har nå såvidt vært innom spenntrær. Ordet er veldig beskrivende: vi ønsker
+et tre som spenner en graf \(G = (V, E)\), altså at et tre som kobler alle
+nodene i \(V\), og kun bruker kanter fra \(E\). Det vi skal se på nå er å finne
+et <i>minimalt</i> spenntre, altså et tre der den totale vekten av kantene er
+minimert. Vi skal kun løse dette problemet for urettede og vektede grafer (i
+motsetning fra BFS, DFS og Dijkstra, som fungerer like godt på rettede
+grafer) som vi antar er sammenhengende.
+</p>
+</div>
+
+<div id="outline-container-orgf498e03" class="outline-3">
+<h3 id="orgf498e03">Prim's algoritme</h3>
+<div class="outline-text-3" id="text-orgf498e03">
+<p>
+I forelesningsvideoene dekker vi tre algoritmer for minimale spenntrær. Her
+kommer vi kun til å se på Prim's algoritme. Den har store likhetstrekk til
+Dijkstra.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #e45649;">def</span> <span style="color: #a626a4;">prim</span>(G):
+    <span style="color: #6a1868;">V</span>, <span style="color: #6a1868;">E</span>, <span style="color: #6a1868;">w</span> = G
+    <span style="color: #9ca0a4;"># </span><span style="color: #9ca0a4;">Pick arbitrary start vertex</span>
+    <span style="color: #6a1868;">s</span> = <span style="color: #a626a4;">next</span>(<span style="color: #a626a4;">iter</span>(V))
+    <span style="color: #6a1868;">Q</span> = [(0, s, <span style="color: #b751b6;">None</span>)]
+    <span style="color: #6a1868;">parents</span> = <span style="color: #a626a4;">dict</span>()
+
+    <span style="color: #e45649;">while</span> Q:
+        <span style="color: #6a1868;">_</span>, <span style="color: #6a1868;">v</span>, <span style="color: #6a1868;">p</span> = heappop(Q)
+        <span style="color: #e45649;">if</span> v <span style="color: #e45649;">in</span> parents:
+            <span style="color: #e45649;">continue</span>
+        <span style="color: #6a1868;">parents</span>[v] = p
+
+        <span style="color: #e45649;">for</span> u <span style="color: #e45649;">in</span> E[v]:
+            heappush(Q, (w[(v, u)], u, v))
+
+    <span style="color: #e45649;">return</span> parents
+</pre>
+</div>
+
+<p>
+Vi definerer en kø som starter med å inneholde et trippel, der \(s\) er en
+vilkårlig node, \(0\) er den assosierte vekten, og <code>None</code> representerer
+<i>fraværet</i> av en node som la \(s\) på heapen. I tillegg har vi et map
+<code>parents</code> for å holde på foreldre-pekere. Som vi har sett tidligere, så kan
+vi bruke et slikt map for å representere et spenntre etter en traversering.
+</p>
+
+<p>
+Vi traverserer så grafen ved å ta ut noder fra prioritetskøen. Her
+prioriterer vi nodene etter vekten på kanten, snarere enn den akkumulerte
+vekten av stien så langt (som vi gjorde for Dijkstra). For hver node \(v\) vi
+tar av prioritetskøen har vi en assosiert kostnad og en node \(p\) som la \(v\)
+på heapen. Når en node \(v\) er tatt av køen legger vi det til i <code>parents</code>
+dersom \(v\) ikke forekommer i <code>parents</code> fra før. På denne måten velger vi
+alltid den kanten med lavest vekt som er observert fra en node så langt. Ved
+å alltid velge den kanten med lavest vekt, så er vi også garantert å få det
+treet med lavest total vekt. Dette er et eksempel på en <i>grådig</i> algoritme.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python">draw_parents_weighted(G, prim(G), <span style="color: #50a14f;">'prim_minimal_spanningtree'</span>)
+</pre>
+</div>
+
+
+<div id="org5ee61f9" class="figure">
+<p><object type="image/svg+xml" data="./prim_minimal_spanningtree.svg" class="org-svg">
+Sorry, your browser does not support SVG.</object>
+</p>
+</div>
+</div>
+</div>
+</div>
+<div id="footnotes">
+<h2 class="footnotes">Fotnoter: </h2>
+<div id="text-footnotes">
+
+<div class="footdef"><sup><a id="fn.1" class="footnum" href="#fnr.1">1</a></sup> <div class="footpara"><p class="footpara">Dette kan gjøres på logaritmisk tid, men
+krever at man bruker <i>Locators</i> (som er beskrevet i seksjon 5.5 i Goodrich &amp;
+Tamassia), eller noe lignende.</p></div></div>
+
+
+</div>
+</div></div>
+</body>
+</html>

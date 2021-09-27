@@ -1,0 +1,571 @@
+#+TITLE: Utvalgte grafalgoritmer
+#+AUTHOR: Lars Tveito
+#+DATE: 28. September, 2021
+#+OPTIONS: toc:nil num:nil title:nil html-style:nil html-postamble:nil html-scripts:nil html-doctype:html5
+#+PROPERTY: header-args:python+ :session *Python*
+#+LANGUAGE: nb
+#+HTML_HEAD: <script type="text/javascript" src="js/script.js"></script>
+# Note that stylesheet is not placed in the head-clause. This is in order to
+# change the style of KaTeX, which is at the end of the head-clause.
+#+HTML: <link rel="stylesheet" type="text/css" href="Rethink/rethink.css" />
+
+I dette dokumentet skal vi gå gjennom noen sentrale grafalgoritmer for IN2010.
+Det kan brukes som et løsningsforslag for det som alltid er en god ukesoppgave:
+/implementer algoritmene som gjennomgås/. For både Dijkstra og Prim's
+algoritmer vil presentasjonen være litt annerledes enn den som er gitt i
+forelesningsvideoene.
+
+Vi tar utgangspunkt i grafen som ble vist i forelesningen som ser slik ut:
+
+#+ATTR_HTML: :width 400
+[[./forelesningsgraf.svg]]
+
+Den kan skrives ned ved å liste alle kantene sammen med vektene:
+
+#+NAME: example_graph
+#+begin_example
+A B 13
+A C 6
+B C 7
+B D 1
+C D 14
+C E 8
+C H 20
+D E 9
+D F 3
+E F 2
+E J 18
+G H 15
+G I 5
+G J 19
+G K 10
+H J 17
+I K 11
+J K 16
+J L 4
+K L 12
+#+end_example
+
+* Bygg grafen
+
+  Vi kan skrive en prosedyre som leser linjene og returnerer en graf $G = (V,
+  E)$, der $w$ er en vektfunksjon fra $V \times V \to \mathbb{N}$. Merk at
+  kodeblokkene er skjult, men dukker opp når du trykker på dem; det er ment som
+  en oppfordring til å prøve å løse problemet selv først!
+
+  #+begin_src python :results none
+  from collections import defaultdict
+
+  def buildgraph(lines):
+      V = set()
+      E = defaultdict(set)
+      w = dict()
+
+      for line in lines.splitlines():
+          v, u, weight = line.strip().split()
+
+          V.add(v)
+          V.add(u)
+
+          E[v].add(u)
+          E[u].add(v)
+
+          w[(v, u)] = int(weight)
+          w[(u, v)] = int(weight)
+
+      return V, E, w
+  #+end_src
+
+  Vi antar at linjene er gitt som en enkel streng. Siden grafen er /urettet/
+  representerer vi hver kant i begge retninger. For kantene $E$ bruker vi en
+  =defaultdict= slik at alle noder vi implisitt er assosiert med en tom mengde;
+  med en vanlig =dict= kunne vi for eksempel initialisert en tom mengde for
+  alle nodene først. Nå kan vi lese inn grafen, og antar at grafen er gitt i en
+  variabel =lines=.
+
+  #+begin_src python :var lines=example_graph :results none
+  G = buildgraph(lines)
+  #+end_src
+
+** Tegn grafen
+
+   Nå som vi har en måte å bygge grafen, kan det være kjekt å ha en måte å vise
+   grafen. Den enkleste måten jeg vet om er å bruke [[https://pypi.org/project/graphviz/][Python sitt bibliotek]] for
+   [[https://www.graphviz.org/][Graphviz]]. Dette er ikke viktig stoff for IN2010 (som betyr det ikke er
+   relevant i en eksamens-sammenheng), men verktøy som dette gjør det enklere å
+   oppdage feil i egen kode.
+
+   #+begin_src python :results none
+   import graphviz
+
+   def drawgraph(G):
+       V, E, w = G
+       dot = graphviz.Graph()
+       seen_edges = set()
+
+       for v in V:
+           dot.node(v)
+
+           for u in E[v]:
+               if (u, v) in seen_edges:
+                   continue
+               seen_edges.add((v, u))
+               dot.edge(v, u, label=str(w[(v, u)]))
+
+       dot.render('graph', format='svg')
+
+   drawgraph(G)
+   #+end_src
+
+   [[./graph.svg]]
+
+   Merk at den grafen vi ser her er den samme grafen som den på toppen av siden
+   (men den er ikke tegnet like pent).
+
+* Traverser grafen
+
+  Nå som vi har representert grafen, så kan vi traversere den. Det vil si at vi
+  systematisk går gjennom alle nodene i grafen.
+
+  Grafen vi jobber med er /sammenhengende/. Det betyr at det finnes en sti
+  mellom alle par av noder i $V$. Når en graf er sammenhengende, så er det
+  tilstrekkelig å starte med en vilkårlig node $v \in V$, og besøke $v$ sine
+  naboer, og deres naboer sine naboer, og så videre, og da vil vi til slutt ha
+  besøkt alle noder i $V$.
+
+  Det finnes to svært naturlige måter å utføre en slik traversering. Begge går
+  ut på å starte i en node, notere ned den sine naboer, besøke alle dem, og
+  notere ned deres naboer også, og fortsette slik. I tillegg må vi holde styr
+  på hvilke noder som er besøkt, slik at vi ikke besøker noder flere ganger, og
+  dermed risikere at traverseringen aldri terminerer. Distinksjonen mellom de
+  to naturlige måtene å traversere grafen på er i /valg av datastruktur/ når vi
+  skal notere ned hvilke noder som er i «besøkslista». De enkleste (og dermed
+  mest naturlige) er enten å:
+  - gå så dypt som mulig inn i grafen som mulig, det vil si at du følger
+    (ikke-besøkte) naboer så langt du kan;
+  - besøke alle direkte naboer før du besøker naboer sine naboer.
+  Den første strategien kalles /dybde-først søk/ (DFS) (eng: /depth-first
+  search/), og den andre kalles /bredde først søk/ (BFS) (eng: /breath-first
+  search/). Konkret er det eneste som skiller de to strategiene at et
+  dybde-først søk anvender en stack og et bredde-først søk anvender en kø.
+
+** Dybde-først søk
+
+   DFS fra en gitt node $s$ kan implementeres rekursivt på følgende måte:
+
+   #+begin_src python :results none
+   def dfs_rec(G, s, visited, result):
+       _, E, _ = G
+       result.append(s)
+       visited.add(s)
+       for v in E[s]:
+           if v not in visited:
+               dfs_rec(G, v, visited, result)
+       return result
+   #+end_src
+
+   Merk at vi her gir med to ekstra argumenter for å holde styr på hvilke noder
+   som er besøkt, og resultatlisten. Nå kan vi for eksempel kalle på =dfs_rec=
+   fra noden $A$:
+
+   #+begin_src python :exports both
+   dfs_rec(G, 'A', set(), [])
+   #+end_src
+
+   #+RESULTS:
+   | A | B | D | E | F | C | H | G | K | L | J | I |
+
+   Vi kan også gjøre et DFS-søk ved å bruke en stack. Merk at rekursive kall
+   legges på det som kalles en «[[https://www.wikiwand.com/en/Call_stack][call stack]]»; altså bytter vi egentlig bare ut
+   en stack med en annen!
+
+   #+begin_src python :results none
+   def dfs(G, s):
+       _, E, _ = G
+       visited = set([s])
+       stack = [s]
+       result = []
+
+       while stack:
+           v = stack.pop()
+           result.append(v)
+           for u in E[v]:
+               if u not in visited:
+                   visited.add(u)
+                   stack.append(u)
+       return result
+   #+end_src
+
+   #+begin_src python :exports both
+   dfs(G, 'A')
+   #+end_src
+
+   #+RESULTS:
+   | A | C | E | J | K | I | G | L | F | D | H | B |
+
+** Bredde-først søk
+
+   Ved å bruke en kø (altså en liste med «first-in-first-out» snarere enn en
+   «last-in-first-out»), i stedet for en stack, så får vi et bredde-først søk.
+
+   #+begin_src python :results none
+   from collections import deque
+
+   def bfs(G, s):
+       _, E, _ = G
+       visited = set([s])
+       queue = deque([s])
+       result = []
+
+       while queue:
+           v = deque.popleft(queue)
+           result.append(v)
+           for u in E[v]:
+               if u not in visited:
+                   visited.add(u)
+                   queue.append(u)
+       return result
+   #+end_src
+
+   Her bruker vi en =deque=, som gir konstant tid for innsetting og sletting på
+   hver ende av køen. Vi setter inn på slutten, og tar ut elementene i
+   begynnelsen. Merk at vi kunne like gjerne gjort motsatt, og satt inn på
+   begynnelsen og tatt ut på slutten.
+
+   #+begin_src python :exports both
+   bfs(G, 'A')
+   #+end_src
+
+   #+RESULTS:
+   | A | B | C | D | H | E | F | G | J | K | I | L |
+
+* Korteste stier
+
+  Når vi snakker om /korteste stier/ er det som ofte snakk om vektede grafer.
+  Men la oss for et øyeblikk tenke på hva det betyr for uvektede grafer. I
+  eksempelgrafen ovenfor kan vi ganske enkelt ignorere vektene, og anse grafen
+  å være uvektet. Den korteste stien mellom to noder i en uvektet graf, er
+  stien som går mellom de to nodene med færrest kanter. Da får vi faktisk den
+  korteste stien mellom to noder ved hjelp av et bredde-først søk, slik vi
+  gjorde ovenfor.
+
+** Bredde-først søk (igjen)
+
+   Det som mangler fra det forrige bredde-først søket er en måte å hente ut de
+   korteste stiene; det eneste vi «sparer på» under søket er rekkefølgen noder
+   blir besøkt i. En enkel måte å lagre stiene, er for hver node vi legger på
+   køen, også lagre hvilken node som la den på køen. Det kan gjøres slik:
+
+   #+begin_src python :results none
+   def bfs_shortest_paths_from(G, s):
+       _, E, _ = G
+       parents = {s : None}
+       queue = deque([s])
+       result = []
+
+       while queue:
+           v = deque.popleft(queue)
+           result.append(v)
+           for u in E[v]:
+               if u not in parents:
+                   parents[u] = v
+                   queue.append(u)
+       return parents
+   #+end_src
+
+   Her har vi kun byttet ut =visited= med =parents=, der =parents= er en
+   dictionary som mapper hver node $u$ til node $v$ som la den på køen. Vi kan
+   avgjøre om en node er besøkt før ved å sjekke om noden har en forelder.
+
+   Merk at denne mappingen av nodene utgjør et tre! Vi kan utforske den nærmere
+   ved å tegne treet (igjen med bruk av graphviz).
+
+   #+begin_src python :results none
+   def draw_parents(parents):
+       dot = graphviz.Graph()
+       for v in parents:
+           u = parents[v]
+           if u: dot.edge(v, u)
+       dot.render('bfs_spanningtree', format='svg')
+
+   draw_parents(bfs_shortest_paths_from(G, 'A'))
+   #+end_src
+
+   [[./bfs_spanningtree.svg]]
+
+   Fra dette treet kan man lese ut den korteste stien fra $A$ til alle andre
+   noder. For å finne den korteste stien mellom to noder $s$ og $t$ er det
+   tilstrekkelig å kalle på =bfs_shortest_paths_from(G, s)=, og følge =parents=
+   fra $t$ til roten av treet som er $s$ (akkurat som kattunge-oppgaven fra
+   Oblig 1!). Et slikt tre, som inneholder de samme nodene som en graf $G$
+   kalles et spenntre for $G$. Merk at dersom grafen ikke er sammenhengende, så
+   vil det ikke nødvendigvis finnes en sti fra $s$ til $t$, hvor vi her for
+   enkelhets skyld returnerer en tom liste.
+
+   #+begin_src python :results none
+   def bfs_shortest_path_between(G, s, t):
+       parents = bfs_shortest_paths_from(G, s)
+       v = t
+       path = []
+
+       if t not in parents:
+           return path
+
+       while v:
+           path.append(v)
+           v = parents[v]
+       return path[::-1]
+   #+end_src
+
+   Merk at =path[::-1]= er en måte å reversere en liste i Python. Med denne
+   prosedyren definert kan vi finne korteste vei mellom for eksempel nodene $A$
+   og $G$.
+
+   #+begin_src python :exports both
+   bfs_shortest_path_between(G, 'A', 'G')
+   #+end_src
+
+   #+RESULTS:
+   | A | C | H | G |
+
+   Vi kan også finne korteste veien fra en node til alle andre noder.
+
+   #+begin_src python :results none
+   def bfs_all_shortest_paths(G, s):
+       V, _, _ = G
+       parents = bfs_shortest_paths_from(G, s)
+       paths = []
+
+       for v in V:
+           path = []
+           while v:
+               path.append(v)
+               v = parents[v]
+           paths.append(path[::-1])
+       return paths
+   #+end_src
+
+   Med denne prosedyren definert kan vi finne korteste vei mellom alle par av
+   noder. Vi kan kalle på prosedyren fra noden $A$, og få ut de korteste stiene
+   fra $A$ til alle andre noder. Merk at vi kaller på =sorted= kun for å gjøre
+   tabellen litt enklere å lese.
+
+   #+begin_src python :exports both
+   sorted(bfs_all_shortest_paths(G, 'A'))
+   #+end_src
+
+   #+RESULTS:
+   | A |   |   |   |   |
+   | A | B |   |   |   |
+   | A | B | D |   |   |
+   | A | B | D | F |   |
+   | A | C |   |   |   |
+   | A | C | E |   |   |
+   | A | C | H |   |   |
+   | A | C | H | G |   |
+   | A | C | H | G | I |
+   | A | C | H | G | K |
+   | A | C | H | J |   |
+   | A | C | H | J | L |
+
+** Korteste stier for vektede grafer (Dijkstra)
+
+   La oss returnere til det mer interessante spørsmålet der vi har vekter på
+   kantene. For en graf $G = (V, E)$ med vektfunksjon $w$, er den korteste
+   stien mellom $s \in V$ og $t \in V$ den stien $v_1, v_2, \dots, v_n$ slik at
+   $v_1 = s$ og $v_n = t$ som minimerer $\sum_{i=1}^{n-1}w(v_i, v_{i+1})$. Det
+   vil si at den totale vekten (eller kostnadden) av en sti er gitt av summene
+   av vektene til kantene som utgjør stien.
+
+   Vi skal nå implementere Dijkstra sin algoritme for korteste vei fra en node
+   til alle andre noder. Der DFS bruker en stack og BFS bruker en FIFO-kø, så
+   bruker Dijkstra heller en /prioritetskø/. En prioritetskø trenger en total
+   ordning over elementene som legges på køen, altså et sorteringskriterie.
+   Tradisjonelt beskriver man Dijkstra ved å si at prioriteten til et element
+   er gitt av en avstandsmatrise $D$, slik at for en gitt $v \in V$ så angir
+   $D[v]$ den korteste avstanden fra startnoden til $v$ som er oppdaget så
+   langt. Dersom $v$ ikke er oppdaget enda har den avstand $\infty$.
+
+   En utfordring med å implementere Dijkstra er et steg som kalles /edge
+   relaxation/. Hvis vi er ved en node $v \in V$ som har en kant til en node $u
+   \in V$ med vekt $w(v, u)$, så er spørsmålet om vi har funnet en kortere vei
+   til $u$ enn den som er funnet så langt. Den korteste veien til en node så
+   langt er gitt av $D$, som vil si at det har kostet $D[v]$ å komme til $v$,
+   og det vil koste $D[v] + w(v, u)$ å komme til $u$ via $v$. Dersom $D[v] +
+   w(v, u)$ er mindre enn $D[u]$, så må vi erstatte prioriteten til $u$. Steget
+   kan beskrives slik, der =Q= referer til prioritetskøen:
+
+   #+begin_example
+   if D[v] + w((v, u)) < D[u]:
+       D[u] = D[v] + w((v, u))
+       change value of u in Q to D[u]
+   #+end_example
+
+   Vanskeligheten med dette er at prioritetskøene vi har sett så langt (der
+   binære heaps er den mest effektive) ikke har noen måte å oppdatere
+   prioriteten for en gitt node. [fn:: Dette kan gjøres på logaritmisk tid, men
+   krever at man bruker /Locators/ (som er beskrevet i seksjon 5.5 i Goodrich &
+   Tamassia), eller noe lignende.] I Python har vi ikke tilgang på en
+   prioritetskø som støtter å endre prioriteten til et element på logaritmisk
+   tid, så derfor vil bruke en litt annen strategi, som ligger litt tettere opp
+   mot bredde-først søk.
+
+   #+begin_src python :results none
+   from heapq import heappush, heappop
+
+   def dijkstra(G, s):
+       V, E, w = G
+       Q = [(0, s)]
+       D = defaultdict(lambda: float('inf'))
+       D[s] = 0
+
+       while Q:
+           cost, v = heappop(Q)
+           for u in E[v]:
+               c = cost + w[(v, u)]
+               if c < D[u]:
+                   D[u] = c
+                   heappush(Q, (c, u))
+
+       return D
+   #+end_src
+
+   Vi definerer en kø som starter med å inneholde et par $(0, s)$, der $0$ er
+   avstanden fra $s$ til $s$. I tillegg lager vi en avstandsmatrise, som her er
+   implementert som en =defaultdict=, slik at alle noder implisitt har en
+   avstand på =float('inf')=, som er det nærmeste vi kommer $\infty$
+   representert i Python, og setter avstanden til $s$ lik $0$.
+
+   Vi traverserer så grafen ved å ta ut noder fra prioritetskøen. For hver node
+   $v$ vi tar av prioritetskøen har vi en assosiert kostnad. Når en node $v$ er
+   tatt av køen, går vi gjennom hver kant fra $v$ til en node $u$. Dersom
+   kostnaden ved å gå til $u$ via $v$ er den laveste vi har observert så langt,
+   så oppdaterer vi avstanden til $u$ i $D$, og legger $u$ på køen, med den nye
+   kostnaden som prioritet.
+
+   #+begin_src python :exports both
+   D = dijkstra(G, 'A')
+   list(zip(*sorted(D.items())))
+   #+end_src
+
+   #+RESULTS:
+   | A |  B | C |  D |  E |  F |  G |  H |  I |  J |  K |  L |
+   | 0 | 13 | 6 | 14 | 14 | 16 | 41 | 26 | 46 | 32 | 48 | 36 |
+
+   Et spørsmål man bør stille seg, er om denne implementasjonen av Dijkstra har
+   samme kjøretidskompleksitet som den varianten som er presentert på
+   forelesning, altså $O(|E| \cdot \log(|V|))$. Intuitivt betyr det at vi har
+   tid til å gå gjennom alle kantene i grafen og for hver av disse gjøre en
+   $O(\log(|V|))$ operasjon, slik som innsetting og sletting fra en binær heap.
+   Det som skiller denne implementasjonen fra den som er gått gjennom i
+   forelesningsvideoen er at vi her risikerer å legge samme node på heapen
+   flere ganger! Da blir spørsmålet, hvor mange elementer kan legges på heapen
+   totalt? I verste tilfelle, så kan en node legges til på køen av alle sine
+   naboer (altså like mange ganger som det finnes kanter som går til noden).
+   Det vil si at vi i verste tilfellet vil legge like mange elementer på heapen
+   som antallet kanter i grafen, altså $|E|$. Dermed ser det ut som at vi får
+   $O(|E| \cdot log(|E|))$ i kjøretid, som virker mindre effektivt siden kan
+   finnes så mange som $O(|V|^2)$ kanter i en graf. Denne intuisjonen stemmer
+   ikke helt, fordi $\log(x^2) \leq 2 \cdot \log(x^2)$ for alle $1 \leq x$.
+   Altså er $O(|E| \cdot log(|E|)) = O(|E| \cdot log(|V|))$, og dermed har
+   denne implementasjonen samme kjøretidskompleksitet som en mer tradisjonell
+   implementasjon av Dijkstra.
+
+   På samme måte som med bredde-først søk, for hver node lagre hvilken node som
+   la den på køen, og på den måten kan vi hente ut de konkrete stiene.
+
+   #+begin_src python :results none
+   def shortest_paths_from(G, s):
+       V, E, w = G
+       Q = [(0, s)]
+       D = defaultdict(lambda: float('inf'))
+       parents = {s : None}
+       D[s] = 0
+
+       while Q:
+           cost, v = heappop(Q)
+           for u in E[v]:
+               c = cost + w[(v, u)]
+               if c < D[u]:
+                   D[u] = c
+                   heappush(Q, (c, u))
+                   parents[u] = v
+
+       return parents
+   #+end_src
+
+   Vi kan nå se på treet vi får fra å kjøre Dijkstra, og fra det kan du lese ut
+   de korteste stiene fra $A$ til alle andre noder.
+
+   #+begin_src python :results none
+   def draw_parents_weighted(G, parents, name):
+       V, _, w = G
+       dot = graphviz.Graph()
+       for v in parents:
+           u = parents[v]
+           if u:
+               dot.edge(v, u, label=str(w[(v, u)]))
+       dot.render(name, format='svg')
+
+   draw_parents_weighted(G, shortest_paths_from(G, 'A'), 'dijkstra_spanningtree')
+   #+end_src
+
+   [[./dijkstra_spanningtree.svg]]
+
+* Minimale spenntrær
+
+  Vi har nå såvidt vært innom spenntrær. Ordet er veldig beskrivende: vi ønsker
+  et tre som spenner en graf $G = (V, E)$, altså at et tre som kobler alle
+  nodene i $V$, og kun bruker kanter fra $E$. Det vi skal se på nå er å finne
+  et /minimalt/ spenntre, altså et tre der den totale vekten av kantene er
+  minimert. Vi skal kun løse dette problemet for urettede og vektede grafer (i
+  motsetning fra BFS, DFS og Dijkstra, som fungerer like godt på rettede
+  grafer) som vi antar er sammenhengende.
+
+** Prim's algoritme
+
+   I forelesningsvideoene dekker vi tre algoritmer for minimale spenntrær. Her
+   kommer vi kun til å se på Prim's algoritme. Den har store likhetstrekk til
+   Dijkstra.
+
+   #+begin_src python :results none
+   def prim(G):
+       V, E, w = G
+       # Pick arbitrary start vertex
+       s = next(iter(V))
+       Q = [(0, s, None)]
+       parents = dict()
+
+       while Q:
+           _, v, p = heappop(Q)
+           if v in parents:
+               continue
+           parents[v] = p
+
+           for u in E[v]:
+               heappush(Q, (w[(v, u)], u, v))
+
+       return parents
+   #+end_src
+
+    Vi definerer en kø som starter med å inneholde et trippel, der $s$ er en
+    vilkårlig node, $0$ er den assosierte vekten, og =None= representerer
+    /fraværet/ av en node som la $s$ på heapen. I tillegg har vi et map
+    =parents= for å holde på foreldre-pekere. Som vi har sett tidligere, så kan
+    vi bruke et slikt map for å representere et spenntre etter en traversering.
+
+    Vi traverserer så grafen ved å ta ut noder fra prioritetskøen. Her
+    prioriterer vi nodene etter vekten på kanten, snarere enn den akkumulerte
+    vekten av stien så langt (som vi gjorde for Dijkstra). For hver node $v$ vi
+    tar av prioritetskøen har vi en assosiert kostnad og en node $p$ som la $v$
+    på heapen. Når en node $v$ er tatt av køen legger vi det til i =parents=
+    dersom $v$ ikke forekommer i =parents= fra før. På denne måten velger vi
+    alltid den kanten med lavest vekt som er observert fra en node så langt. Ved
+    å alltid velge den kanten med lavest vekt, så er vi også garantert å få det
+    treet med lavest total vekt. Dette er et eksempel på en /grådig/ algoritme.
+
+   #+begin_src python :results none
+   draw_parents_weighted(G, prim(G), 'prim_minimal_spanningtree')
+   #+end_src
+
+   [[./prim_minimal_spanningtree.svg]]
