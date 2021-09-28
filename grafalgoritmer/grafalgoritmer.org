@@ -447,6 +447,16 @@ måtte vi ha listet alle nodene også.
    så oppdaterer vi avstanden til $u$ i $D$, og legger $u$ på køen, med den nye
    kostnaden som prioritet.
 
+   Merk at man kan gjøre flere små optimaliseringer her, men de vil ikke ha
+   noen påvirkning på kjøretidskompleksiteten. Man kan avslutte søket så fort
+   alle noder er besøkt, fremfor å fortsette til køen er tom. Man kan også la
+   være å gå gjennom kantene (altså =for=-loopen) dersom =cost > D[v]=. Denne
+   implementasjonen legger større vekt på å være /enkel/ enn å være effektiv,
+   så lenge kjøretidskompleksiteten er den samme.
+
+   Vi kan nå beregne avstanden til alle noder fra $A$. Python-magien her kan
+   fint ignoreres, og er der kun for å få en finere utskrift.
+
    #+begin_src python :exports both
    D = dijkstra(G, 'A')
    list(zip(*sorted(D.items())))

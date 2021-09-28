@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="nb" xml:lang="nb">
 <head>
-<!-- 2021-09-28 Tue 14:05 -->
+<!-- 2021-09-28 Tue 14:26 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Utvalgte grafalgoritmer</title>
@@ -36,7 +36,7 @@ Vi tar utgangspunkt i grafen som ble vist i forelesningen som ser slik ut:
 </p>
 
 
-<div id="org63516f2" class="figure">
+<div id="orgc3bc6b2" class="figure">
 <p><object type="image/svg+xml" data="./forelesningsgraf.svg" class="org-svg" width="400">
 Sorry, your browser does not support SVG.</object>
 </p>
@@ -46,7 +46,7 @@ Sorry, your browser does not support SVG.</object>
 Den kan skrives ned ved å liste alle kantene sammen med vektene:
 </p>
 
-<pre class="example" id="org3578496">
+<pre class="example" id="org3996e59">
 A B 13
 A C 6
 B C 7
@@ -75,9 +75,9 @@ kant i eksempelgrafen. Dersom vi hadde hatt noder som ikke hadde noen naboer
 måtte vi ha listet alle nodene også.
 </p>
 
-<div id="outline-container-orgec67572" class="outline-2">
-<h2 id="orgec67572">Bygg grafen</h2>
-<div class="outline-text-2" id="text-orgec67572">
+<div id="outline-container-org399eeaa" class="outline-2">
+<h2 id="org399eeaa">Bygg grafen</h2>
+<div class="outline-text-2" id="text-org399eeaa">
 <p>
 Vi kan skrive en prosedyre som leser linjene og returnerer en graf \(G = (V,
   E)\), der \(w\) er en vektfunksjon fra \(V \times V \to \mathbb{N}\). Merk at
@@ -124,9 +124,9 @@ variabel <code>lines</code>.
 </div>
 </div>
 
-<div id="outline-container-org0a8db4f" class="outline-3">
-<h3 id="org0a8db4f">Tegn grafen</h3>
-<div class="outline-text-3" id="text-org0a8db4f">
+<div id="outline-container-org276a09e" class="outline-3">
+<h3 id="org276a09e">Tegn grafen</h3>
+<div class="outline-text-3" id="text-org276a09e">
 <p>
 Nå som vi har en måte å bygge grafen, kan det være kjekt å ha en måte å vise
 grafen. Den enkleste måten jeg vet om er å bruke <a href="https://pypi.org/project/graphviz/">Python sitt bibliotek</a> for
@@ -159,7 +159,7 @@ drawgraph(G)
 </div>
 
 
-<div id="orgd20e716" class="figure">
+<div id="orga1baaf2" class="figure">
 <p><object type="image/svg+xml" data="./graph.svg" class="org-svg">
 Sorry, your browser does not support SVG.</object>
 </p>
@@ -173,9 +173,9 @@ Merk at den grafen vi ser her er den samme grafen som den på toppen av siden
 </div>
 </div>
 
-<div id="outline-container-org39c27b7" class="outline-2">
-<h2 id="org39c27b7">Traverser grafen</h2>
-<div class="outline-text-2" id="text-org39c27b7">
+<div id="outline-container-org53d1550" class="outline-2">
+<h2 id="org53d1550">Traverser grafen</h2>
+<div class="outline-text-2" id="text-org53d1550">
 <p>
 Nå som vi har representert grafen, så kan vi traversere den. Det vil si at vi
 systematisk går gjennom alle nodene i grafen.
@@ -212,9 +212,9 @@ dybde-først søk anvender en stack og et bredde-først søk anvender en kø.
 </p>
 </div>
 
-<div id="outline-container-orgb66606d" class="outline-3">
-<h3 id="orgb66606d">Dybde-først søk</h3>
-<div class="outline-text-3" id="text-orgb66606d">
+<div id="outline-container-orgca26b4b" class="outline-3">
+<h3 id="orgca26b4b">Dybde-først søk</h3>
+<div class="outline-text-3" id="text-orgca26b4b">
 <p>
 DFS fra en gitt node \(s\) kan implementeres rekursivt på følgende måte:
 </p>
@@ -365,9 +365,9 @@ en stack med en annen!
 </div>
 </div>
 
-<div id="outline-container-org510a8c8" class="outline-3">
-<h3 id="org510a8c8">Bredde-først søk</h3>
-<div class="outline-text-3" id="text-org510a8c8">
+<div id="outline-container-orgce39777" class="outline-3">
+<h3 id="orgce39777">Bredde-først søk</h3>
+<div class="outline-text-3" id="text-orgce39777">
 <p>
 Ved å bruke en kø (altså en liste med «first-in-first-out» snarere enn en
 «last-in-first-out»), i stedet for en stack, så får vi et bredde-først søk.
@@ -454,9 +454,9 @@ begynnelsen og tatt ut på slutten.
 </div>
 </div>
 
-<div id="outline-container-org120662e" class="outline-2">
-<h2 id="org120662e">Korteste stier</h2>
-<div class="outline-text-2" id="text-org120662e">
+<div id="outline-container-orga2a23be" class="outline-2">
+<h2 id="orga2a23be">Korteste stier</h2>
+<div class="outline-text-2" id="text-orga2a23be">
 <p>
 Når vi snakker om <i>korteste stier</i> er det som ofte snakk om vektede grafer.
 Men la oss for et øyeblikk tenke på hva det betyr for uvektede grafer. I
@@ -468,9 +468,9 @@ gjorde ovenfor.
 </p>
 </div>
 
-<div id="outline-container-org0b819fb" class="outline-3">
-<h3 id="org0b819fb">Bredde-først søk (igjen)</h3>
-<div class="outline-text-3" id="text-org0b819fb">
+<div id="outline-container-orgde32a63" class="outline-3">
+<h3 id="orgde32a63">Bredde-først søk (igjen)</h3>
+<div class="outline-text-3" id="text-orgde32a63">
 <p>
 Det som mangler fra det forrige bredde-først søket er en måte å hente ut de
 korteste stiene; det eneste vi «sparer på» under søket er rekkefølgen noder
@@ -520,7 +520,7 @@ draw_parents(bfs_shortest_paths_from(G, <span style="color: #50a14f;">'A'</span>
 </div>
 
 
-<div id="org75223e1" class="figure">
+<div id="orge66345c" class="figure">
 <p><object type="image/svg+xml" data="./bfs_spanningtree.svg" class="org-svg">
 Sorry, your browser does not support SVG.</object>
 </p>
@@ -733,9 +733,9 @@ tabellen litt enklere å lese.
 </div>
 </div>
 
-<div id="outline-container-orgd656a6c" class="outline-3">
-<h3 id="orgd656a6c">Korteste stier for vektede grafer (Dijkstra)</h3>
-<div class="outline-text-3" id="text-orgd656a6c">
+<div id="outline-container-org5cfa38b" class="outline-3">
+<h3 id="org5cfa38b">Korteste stier for vektede grafer (Dijkstra)</h3>
+<div class="outline-text-3" id="text-org5cfa38b">
 <p>
 La oss returnere til det mer interessante spørsmålet der vi har vekter på
 kantene. For en graf \(G = (V, E)\) med vektfunksjon \(w\), er den korteste
@@ -767,7 +767,7 @@ og det vil koste \(D[v] + w(v, u)\) å komme til \(u\) via \(v\). Dersom \(D[v] 
 kan beskrives slik, der <code>Q</code> referer til prioritetskøen:
 </p>
 
-<pre class="example" id="org5da650e">
+<pre class="example" id="orgf283e6e">
 if D[v] + w((v, u)) &lt; D[u]:
     D[u] = D[v] + w((v, u))
     change value of u in Q to D[u]
@@ -818,6 +818,20 @@ tatt av køen, går vi gjennom hver kant fra \(v\) til en node \(u\). Dersom
 kostnaden ved å gå til \(u\) via \(v\) er den laveste vi har observert så langt,
 så oppdaterer vi avstanden til \(u\) i \(D\), og legger \(u\) på køen, med den nye
 kostnaden som prioritet.
+</p>
+
+<p>
+Merk at man kan gjøre flere små optimaliseringer her, men de vil ikke ha
+noen påvirkning på kjøretidskompleksiteten. Man kan avslutte søket så fort
+alle noder er besøkt, fremfor å fortsette til køen er tom. Man kan også la
+være å gå gjennom kantene (altså <code>for</code>-loopen) dersom <code>cost &gt; D[v]</code>. Denne
+implementasjonen legger større vekt på å være <i>enkel</i> enn å være effektiv,
+så lenge kjøretidskompleksiteten er den samme.
+</p>
+
+<p>
+Vi kan nå beregne avstanden til alle noder fra \(A\). Python-magien her kan
+fint ignoreres, og er der kun for å få en finere utskrift.
 </p>
 
 <div class="org-src-container">
@@ -954,7 +968,7 @@ draw_parents_weighted(G, shortest_paths_from(G, <span style="color: #50a14f;">'A
 </div>
 
 
-<div id="org72bb438" class="figure">
+<div id="org2afcc43" class="figure">
 <p><object type="image/svg+xml" data="./dijkstra_spanningtree.svg" class="org-svg">
 Sorry, your browser does not support SVG.</object>
 </p>
@@ -963,9 +977,9 @@ Sorry, your browser does not support SVG.</object>
 </div>
 </div>
 
-<div id="outline-container-org204a6ac" class="outline-2">
-<h2 id="org204a6ac">Minimale spenntrær</h2>
-<div class="outline-text-2" id="text-org204a6ac">
+<div id="outline-container-orgd1471f9" class="outline-2">
+<h2 id="orgd1471f9">Minimale spenntrær</h2>
+<div class="outline-text-2" id="text-orgd1471f9">
 <p>
 Vi har nå såvidt vært innom spenntrær. Ordet er veldig beskrivende: vi ønsker
 et tre som spenner en graf \(G = (V, E)\), altså at et tre som kobler alle
@@ -977,9 +991,9 @@ grafer) som vi antar er sammenhengende.
 </p>
 </div>
 
-<div id="outline-container-org14430a3" class="outline-3">
-<h3 id="org14430a3">Prim's algoritme</h3>
-<div class="outline-text-3" id="text-org14430a3">
+<div id="outline-container-org1816faf" class="outline-3">
+<h3 id="org1816faf">Prim's algoritme</h3>
+<div class="outline-text-3" id="text-org1816faf">
 <p>
 I forelesningsvideoene dekker vi tre algoritmer for minimale spenntrær. Her
 kommer vi kun til å se på Prim's algoritme. Den har store likhetstrekk til
@@ -1033,7 +1047,7 @@ treet med lavest total vekt. Dette er et eksempel på en <i>grådig</i> algoritm
 </div>
 
 
-<div id="org8c7ff9a" class="figure">
+<div id="org01816d7" class="figure">
 <p><object type="image/svg+xml" data="./prim_minimal_spanningtree.svg" class="org-svg">
 Sorry, your browser does not support SVG.</object>
 </p>
