@@ -471,8 +471,8 @@ måtte vi ha listet alle nodene også.
    $O(|E| \cdot log(|E|))$ i kjøretid, som virker mindre effektivt siden kan
    finnes mange flere kanter enn noder i en graf. [fn::Det kan være så mange
    som $\frac{|V|(|V| - 1)}{2}$ kanter i en urettet graf.] Denne intuisjonen
-   stemmer ikke helt, fordi $\log(x^2) \leq 2 \cdot \log(x^2)$ for alle $1 \leq
-   x$. Altså er $O(|E| \cdot log(|E|)) = O(|E| \cdot log(|V|))$, og dermed har
+   stemmer ikke helt, fordi $\log(x^2) \leq 2 \cdot \log(x)$ for alle $0 < x$.
+   Altså er $O(|E| \cdot log(|E|)) = O(|E| \cdot log(|V|))$, og dermed har
    denne implementasjonen samme kjøretidskompleksitet som en mer tradisjonell
    implementasjon av Dijkstra.
 
