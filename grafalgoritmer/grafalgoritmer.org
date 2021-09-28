@@ -46,6 +46,10 @@ J L 4
 K L 12
 #+end_example
 
+Merk at denne måten å skrive ned grafen fungerer fordi alle noder har minst én
+kant i eksempelgrafen. Dersom vi hadde hatt noder som ikke hadde noen naboer
+måtte vi ha listet alle nodene også.
+
 * Bygg grafen
 
   Vi kan skrive en prosedyre som leser linjene og returnerer en graf $G = (V,
