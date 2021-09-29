@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="nb" xml:lang="nb">
 <head>
-<!-- 2021-09-28 Tue 14:26 -->
+<!-- 2021-09-29 Wed 16:01 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Utvalgte grafalgoritmer</title>
@@ -36,7 +36,7 @@ Vi tar utgangspunkt i grafen som ble vist i forelesningen som ser slik ut:
 </p>
 
 
-<div id="orgc3bc6b2" class="figure">
+<div id="orgd966911" class="figure">
 <p><object type="image/svg+xml" data="./forelesningsgraf.svg" class="org-svg" width="400">
 Sorry, your browser does not support SVG.</object>
 </p>
@@ -46,7 +46,7 @@ Sorry, your browser does not support SVG.</object>
 Den kan skrives ned ved å liste alle kantene sammen med vektene:
 </p>
 
-<pre class="example" id="org3996e59">
+<pre class="example" id="org2fb52a9">
 A B 13
 A C 6
 B C 7
@@ -75,9 +75,9 @@ kant i eksempelgrafen. Dersom vi hadde hatt noder som ikke hadde noen naboer
 måtte vi ha listet alle nodene også.
 </p>
 
-<div id="outline-container-org399eeaa" class="outline-2">
-<h2 id="org399eeaa">Bygg grafen</h2>
-<div class="outline-text-2" id="text-org399eeaa">
+<div id="outline-container-orge2f505d" class="outline-2">
+<h2 id="orge2f505d">Bygg grafen</h2>
+<div class="outline-text-2" id="text-orge2f505d">
 <p>
 Vi kan skrive en prosedyre som leser linjene og returnerer en graf \(G = (V,
   E)\), der \(w\) er en vektfunksjon fra \(V \times V \to \mathbb{N}\). Merk at
@@ -124,9 +124,9 @@ variabel <code>lines</code>.
 </div>
 </div>
 
-<div id="outline-container-org276a09e" class="outline-3">
-<h3 id="org276a09e">Tegn grafen</h3>
-<div class="outline-text-3" id="text-org276a09e">
+<div id="outline-container-org1187249" class="outline-3">
+<h3 id="org1187249">Tegn grafen</h3>
+<div class="outline-text-3" id="text-org1187249">
 <p>
 Nå som vi har en måte å bygge grafen, kan det være kjekt å ha en måte å vise
 grafen. Den enkleste måten jeg vet om er å bruke <a href="https://pypi.org/project/graphviz/">Python sitt bibliotek</a> for
@@ -159,7 +159,7 @@ drawgraph(G)
 </div>
 
 
-<div id="orga1baaf2" class="figure">
+<div id="org12aca51" class="figure">
 <p><object type="image/svg+xml" data="./graph.svg" class="org-svg">
 Sorry, your browser does not support SVG.</object>
 </p>
@@ -173,9 +173,9 @@ Merk at den grafen vi ser her er den samme grafen som den på toppen av siden
 </div>
 </div>
 
-<div id="outline-container-org53d1550" class="outline-2">
-<h2 id="org53d1550">Traverser grafen</h2>
-<div class="outline-text-2" id="text-org53d1550">
+<div id="outline-container-org6295a16" class="outline-2">
+<h2 id="org6295a16">Traverser grafen</h2>
+<div class="outline-text-2" id="text-org6295a16">
 <p>
 Nå som vi har representert grafen, så kan vi traversere den. Det vil si at vi
 systematisk går gjennom alle nodene i grafen.
@@ -212,9 +212,9 @@ dybde-først søk anvender en stack og et bredde-først søk anvender en kø.
 </p>
 </div>
 
-<div id="outline-container-orgca26b4b" class="outline-3">
-<h3 id="orgca26b4b">Dybde-først søk</h3>
-<div class="outline-text-3" id="text-orgca26b4b">
+<div id="outline-container-org0c7246a" class="outline-3">
+<h3 id="org0c7246a">Dybde-først søk</h3>
+<div class="outline-text-3" id="text-org0c7246a">
 <p>
 DFS fra en gitt node \(s\) kan implementeres rekursivt på følgende måte:
 </p>
@@ -273,17 +273,17 @@ fra noden \(A\):
 <tbody>
 <tr>
 <td class="org-left">A</td>
-<td class="org-left">B</td>
-<td class="org-left">D</td>
-<td class="org-left">E</td>
-<td class="org-left">F</td>
 <td class="org-left">C</td>
 <td class="org-left">H</td>
-<td class="org-left">G</td>
-<td class="org-left">K</td>
-<td class="org-left">L</td>
 <td class="org-left">J</td>
+<td class="org-left">K</td>
 <td class="org-left">I</td>
+<td class="org-left">G</td>
+<td class="org-left">L</td>
+<td class="org-left">E</td>
+<td class="org-left">D</td>
+<td class="org-left">B</td>
+<td class="org-left">F</td>
 </tr>
 </tbody>
 </table>
@@ -297,17 +297,18 @@ en stack med en annen!
 <div class="org-src-container">
 <pre class="src src-python"><span style="color: #e45649;">def</span> <span style="color: #a626a4;">dfs</span>(G, s):
     <span style="color: #6a1868;">_</span>, <span style="color: #6a1868;">E</span>, <span style="color: #6a1868;">_</span> = G
-    <span style="color: #6a1868;">visited</span> = <span style="color: #a626a4;">set</span>([s])
+    <span style="color: #6a1868;">visited</span> = <span style="color: #a626a4;">set</span>()
     <span style="color: #6a1868;">stack</span> = [s]
     <span style="color: #6a1868;">result</span> = []
 
     <span style="color: #e45649;">while</span> stack:
         <span style="color: #6a1868;">v</span> = stack.pop()
+        <span style="color: #e45649;">if</span> v <span style="color: #e45649;">in</span> visited:
+            <span style="color: #e45649;">continue</span>
         result.append(v)
+        visited.add(v)
         <span style="color: #e45649;">for</span> u <span style="color: #e45649;">in</span> E[v]:
-            <span style="color: #e45649;">if</span> u <span style="color: #e45649;">not</span> <span style="color: #e45649;">in</span> visited:
-                visited.add(u)
-                stack.append(u)
+            stack.append(u)
     <span style="color: #e45649;">return</span> result
 </pre>
 </div>
@@ -348,26 +349,42 @@ en stack med en annen!
 <tbody>
 <tr>
 <td class="org-left">A</td>
-<td class="org-left">C</td>
+<td class="org-left">B</td>
+<td class="org-left">D</td>
+<td class="org-left">F</td>
 <td class="org-left">E</td>
 <td class="org-left">J</td>
-<td class="org-left">K</td>
-<td class="org-left">I</td>
 <td class="org-left">G</td>
+<td class="org-left">K</td>
 <td class="org-left">L</td>
-<td class="org-left">F</td>
-<td class="org-left">D</td>
+<td class="org-left">I</td>
 <td class="org-left">H</td>
-<td class="org-left">B</td>
+<td class="org-left">C</td>
 </tr>
 </tbody>
 </table>
+
+<blockquote>
+<p>
+Korreksjon: I en tidligere versjon la vi noder til i <code>visited</code> samtidig som
+de ble lagt på stacken. På den måten kunne vi unngå å legge samme node på
+stacken flere ganger. Samtidig gjorde det at vi fikk en rekkefølge som ikke
+helt samsvarte med det vi forventer fra et dybde-først søk.
+</p>
+
+<p>
+I den oppdaterte versjonen kan samme node bli lagt på stacken flere ganger,
+men kun bli besøkt én gang. Algoritmen har fremdeles \(O(|V| + |E|)\) i
+kjøretidskompleksitet. Dette er fordi antallet ganger en node kan legges på
+stacken er begrenset av hvor mange naboer den har.
+</p>
+</blockquote>
 </div>
 </div>
 
-<div id="outline-container-orgce39777" class="outline-3">
-<h3 id="orgce39777">Bredde-først søk</h3>
-<div class="outline-text-3" id="text-orgce39777">
+<div id="outline-container-orga6c7b49" class="outline-3">
+<h3 id="orga6c7b49">Bredde-først søk</h3>
+<div class="outline-text-3" id="text-orga6c7b49">
 <p>
 Ved å bruke en kø (altså en liste med «first-in-first-out» snarere enn en
 «last-in-first-out»), i stedet for en stack, så får vi et bredde-først søk.
@@ -436,17 +453,17 @@ begynnelsen og tatt ut på slutten.
 <tbody>
 <tr>
 <td class="org-left">A</td>
-<td class="org-left">B</td>
 <td class="org-left">C</td>
-<td class="org-left">D</td>
+<td class="org-left">B</td>
 <td class="org-left">H</td>
 <td class="org-left">E</td>
-<td class="org-left">F</td>
-<td class="org-left">G</td>
+<td class="org-left">D</td>
 <td class="org-left">J</td>
+<td class="org-left">G</td>
+<td class="org-left">F</td>
 <td class="org-left">K</td>
-<td class="org-left">I</td>
 <td class="org-left">L</td>
+<td class="org-left">I</td>
 </tr>
 </tbody>
 </table>
@@ -454,9 +471,9 @@ begynnelsen og tatt ut på slutten.
 </div>
 </div>
 
-<div id="outline-container-orga2a23be" class="outline-2">
-<h2 id="orga2a23be">Korteste stier</h2>
-<div class="outline-text-2" id="text-orga2a23be">
+<div id="outline-container-org66b8f44" class="outline-2">
+<h2 id="org66b8f44">Korteste stier</h2>
+<div class="outline-text-2" id="text-org66b8f44">
 <p>
 Når vi snakker om <i>korteste stier</i> er det som ofte snakk om vektede grafer.
 Men la oss for et øyeblikk tenke på hva det betyr for uvektede grafer. I
@@ -468,9 +485,9 @@ gjorde ovenfor.
 </p>
 </div>
 
-<div id="outline-container-orgde32a63" class="outline-3">
-<h3 id="orgde32a63">Bredde-først søk (igjen)</h3>
-<div class="outline-text-3" id="text-orgde32a63">
+<div id="outline-container-orgbc5d933" class="outline-3">
+<h3 id="orgbc5d933">Bredde-først søk (igjen)</h3>
+<div class="outline-text-3" id="text-orgbc5d933">
 <p>
 Det som mangler fra det forrige bredde-først søket er en måte å hente ut de
 korteste stiene; det eneste vi «sparer på» under søket er rekkefølgen noder
@@ -520,7 +537,7 @@ draw_parents(bfs_shortest_paths_from(G, <span style="color: #50a14f;">'A'</span>
 </div>
 
 
-<div id="orge66345c" class="figure">
+<div id="org9c02136" class="figure">
 <p><object type="image/svg+xml" data="./bfs_spanningtree.svg" class="org-svg">
 Sorry, your browser does not support SVG.</object>
 </p>
@@ -651,24 +668,16 @@ tabellen litt enklere å lese.
 
 <tr>
 <td class="org-left">A</td>
-<td class="org-left">B</td>
-<td class="org-left">D</td>
+<td class="org-left">C</td>
 <td class="org-left">&#xa0;</td>
 <td class="org-left">&#xa0;</td>
-</tr>
-
-<tr>
-<td class="org-left">A</td>
-<td class="org-left">B</td>
-<td class="org-left">D</td>
-<td class="org-left">F</td>
 <td class="org-left">&#xa0;</td>
 </tr>
 
 <tr>
 <td class="org-left">A</td>
 <td class="org-left">C</td>
-<td class="org-left">&#xa0;</td>
+<td class="org-left">D</td>
 <td class="org-left">&#xa0;</td>
 <td class="org-left">&#xa0;</td>
 </tr>
@@ -678,6 +687,14 @@ tabellen litt enklere å lese.
 <td class="org-left">C</td>
 <td class="org-left">E</td>
 <td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">A</td>
+<td class="org-left">C</td>
+<td class="org-left">E</td>
+<td class="org-left">F</td>
 <td class="org-left">&#xa0;</td>
 </tr>
 
@@ -709,8 +726,8 @@ tabellen litt enklere å lese.
 <td class="org-left">A</td>
 <td class="org-left">C</td>
 <td class="org-left">H</td>
-<td class="org-left">G</td>
-<td class="org-left">K</td>
+<td class="org-left">J</td>
+<td class="org-left">&#xa0;</td>
 </tr>
 
 <tr>
@@ -718,7 +735,7 @@ tabellen litt enklere å lese.
 <td class="org-left">C</td>
 <td class="org-left">H</td>
 <td class="org-left">J</td>
-<td class="org-left">&#xa0;</td>
+<td class="org-left">K</td>
 </tr>
 
 <tr>
@@ -733,9 +750,9 @@ tabellen litt enklere å lese.
 </div>
 </div>
 
-<div id="outline-container-org5cfa38b" class="outline-3">
-<h3 id="org5cfa38b">Korteste stier for vektede grafer (Dijkstra)</h3>
-<div class="outline-text-3" id="text-org5cfa38b">
+<div id="outline-container-orgc193237" class="outline-3">
+<h3 id="orgc193237">Korteste stier for vektede grafer (Dijkstra)</h3>
+<div class="outline-text-3" id="text-orgc193237">
 <p>
 La oss returnere til det mer interessante spørsmålet der vi har vekter på
 kantene. For en graf \(G = (V, E)\) med vektfunksjon \(w\), er den korteste
@@ -767,7 +784,7 @@ og det vil koste \(D[v] + w(v, u)\) å komme til \(u\) via \(v\). Dersom \(D[v] 
 kan beskrives slik, der <code>Q</code> referer til prioritetskøen:
 </p>
 
-<pre class="example" id="orgf283e6e">
+<pre class="example" id="org3969bb1">
 if D[v] + w((v, u)) &lt; D[u]:
     D[u] = D[v] + w((v, u))
     change value of u in Q to D[u]
@@ -968,7 +985,7 @@ draw_parents_weighted(G, shortest_paths_from(G, <span style="color: #50a14f;">'A
 </div>
 
 
-<div id="org2afcc43" class="figure">
+<div id="orgc1d9672" class="figure">
 <p><object type="image/svg+xml" data="./dijkstra_spanningtree.svg" class="org-svg">
 Sorry, your browser does not support SVG.</object>
 </p>
@@ -977,9 +994,9 @@ Sorry, your browser does not support SVG.</object>
 </div>
 </div>
 
-<div id="outline-container-orgd1471f9" class="outline-2">
-<h2 id="orgd1471f9">Minimale spenntrær</h2>
-<div class="outline-text-2" id="text-orgd1471f9">
+<div id="outline-container-orgfbcba06" class="outline-2">
+<h2 id="orgfbcba06">Minimale spenntrær</h2>
+<div class="outline-text-2" id="text-orgfbcba06">
 <p>
 Vi har nå såvidt vært innom spenntrær. Ordet er veldig beskrivende: vi ønsker
 et tre som spenner en graf \(G = (V, E)\), altså at et tre som kobler alle
@@ -991,9 +1008,9 @@ grafer) som vi antar er sammenhengende.
 </p>
 </div>
 
-<div id="outline-container-org1816faf" class="outline-3">
-<h3 id="org1816faf">Prim's algoritme</h3>
-<div class="outline-text-3" id="text-org1816faf">
+<div id="outline-container-orgf88bbe2" class="outline-3">
+<h3 id="orgf88bbe2">Prim's algoritme</h3>
+<div class="outline-text-3" id="text-orgf88bbe2">
 <p>
 I forelesningsvideoene dekker vi tre algoritmer for minimale spenntrær. Her
 kommer vi kun til å se på Prim's algoritme. Den har store likhetstrekk til
@@ -1047,7 +1064,7 @@ treet med lavest total vekt. Dette er et eksempel på en <i>grådig</i> algoritm
 </div>
 
 
-<div id="org01816d7" class="figure">
+<div id="orga58e493" class="figure">
 <p><object type="image/svg+xml" data="./prim_minimal_spanningtree.svg" class="org-svg">
 Sorry, your browser does not support SVG.</object>
 </p>

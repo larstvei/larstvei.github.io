@@ -177,7 +177,7 @@ måtte vi ha listet alle nodene også.
    #+end_src
 
    #+RESULTS:
-   | A | B | D | E | F | C | H | G | K | L | J | I |
+   | A | C | H | J | K | I | G | L | E | D | B | F |
 
    Vi kan også gjøre et DFS-søk ved å bruke en stack. Merk at rekursive kall
    legges på det som kalles en «[[https://www.wikiwand.com/en/Call_stack][call stack]]»; altså bytter vi egentlig bare ut
@@ -186,17 +186,18 @@ måtte vi ha listet alle nodene også.
    #+begin_src python :results none
    def dfs(G, s):
        _, E, _ = G
-       visited = set([s])
+       visited = set()
        stack = [s]
        result = []
 
        while stack:
            v = stack.pop()
+           if v in visited:
+               continue
            result.append(v)
+           visited.add(v)
            for u in E[v]:
-               if u not in visited:
-                   visited.add(u)
-                   stack.append(u)
+               stack.append(u)
        return result
    #+end_src
 
@@ -205,7 +206,19 @@ måtte vi ha listet alle nodene også.
    #+end_src
 
    #+RESULTS:
-   | A | C | E | J | K | I | G | L | F | D | H | B |
+   | A | B | D | F | E | J | G | K | L | I | H | C |
+
+   #+begin_quote
+   Korreksjon: I en tidligere versjon la vi noder til i =visited= samtidig som
+   de ble lagt på stacken. På den måten kunne vi unngå å legge samme node på
+   stacken flere ganger. Samtidig gjorde det at vi fikk en rekkefølge som ikke
+   helt samsvarte med det vi forventer fra et dybde-først søk.
+
+   I den oppdaterte versjonen kan samme node bli lagt på stacken flere ganger,
+   men kun bli besøkt én gang. Algoritmen har fremdeles $O(|V| + |E|)$ i
+   kjøretidskompleksitet. Dette er fordi antallet ganger en node kan legges på
+   stacken er begrenset av hvor mange naboer den har.
+   #+end_quote
 
 ** Bredde-først søk
 
