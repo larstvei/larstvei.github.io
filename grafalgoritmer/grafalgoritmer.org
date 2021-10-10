@@ -254,7 +254,7 @@ måtte vi ha listet alle nodene også.
    #+end_src
 
    #+RESULTS:
-   | A | B | C | D | H | E | F | G | J | K | I | L |
+   | A | C | B | H | E | D | J | G | F | K | L | I |
 
 * Korteste stier
 
@@ -374,15 +374,15 @@ måtte vi ha listet alle nodene også.
    #+RESULTS:
    | A |   |   |   |   |
    | A | B |   |   |   |
-   | A | B | D |   |   |
-   | A | B | D | F |   |
    | A | C |   |   |   |
+   | A | C | D |   |   |
    | A | C | E |   |   |
+   | A | C | E | F |   |
    | A | C | H |   |   |
    | A | C | H | G |   |
    | A | C | H | G | I |
-   | A | C | H | G | K |
    | A | C | H | J |   |
+   | A | C | H | J | K |
    | A | C | H | J | L |
 
 ** Korteste stier for vektede grafer (Dijkstra)
@@ -597,3 +597,228 @@ måtte vi ha listet alle nodene også.
    #+end_src
 
    [[./prim_minimal_spanningtree.svg]]
+
+* Bikonnektivitet
+
+  Grafen som vi jobber med er /sammenhengende/. Det finnes altså en sti mellom
+  alle par av noder i $G$. I mange anvendelser så ønsker man ikke bare at
+  grafen skal være sammenhengende, men også at den skal være /bikonnektiv/. Det
+  betyr at hvis en node $v \in V$ fjernes fra grafen, så vil grafen fremdeles
+  være sammenhengende. Mer generelt sier vi at en graf er \(k\)-sammenhengende,
+  så hvis grafen forblir sammenhengende hvis man fjerner færre enn $k$ noder.
+  At en graf er bikonnektiv betyr det samme som at den er \(2\)-sammenhengende.
+
+  Dette er et nyttig begrep i anvendelser der det er et ønske om redundans. For
+  eksempel kan du se for deg en graf som representerer Ruter sitt
+  kollektivnett, der noder representerer holdeplasser, og kanter representerer
+  at det går en buss, trikk eller bane mellom holdeplassene. Dersom denne
+  grafen er bikonnektiv, så betyr det at dersom det er full stans ved en
+  holdeplass, så vil reisende fremdeles kunne komme frem til sitt stoppested
+  gjennom en annen rute.
+
+** Er $G$ er bikonnektiv?
+
+   La oss sjekke om $G$ er bikonnektiv ved å følge definisjonen veldig direkte.
+   Med andre ord prøver vi å fjerne hver node $v \in V$ fra $G$ og sjekke om
+   den resulterende grafen er bikonnektiv. Siden grafen er liten så er det lurt
+   å sjekke den er bikonnektiv før du går videre (dette er ganske lett å gjøre
+   ved å se på grafen).
+
+   Først trenger vi en hjelpeprosedyre for å fjerne en node. Merk at vi vil
+   unngå «ødelegge» den opprinnelige grafen $G$, så vi må passe på å jobbe på
+   kopier av $V$ og $V$. Siden vi ikke vil bruke vektene her, så lar vi $w$
+   forbli uendret (selv om dette er litt stygt).
+
+   #+begin_src python :results none
+   def removenode(G, v):
+       V, E, w = G
+
+       newV = V.copy()
+       newE = E.copy()
+
+       newV.discard(v)
+       del newE[v]
+
+       for u in newV:
+           neighbors = newE[u].copy()
+           neighbors.discard(v)
+           newE[u] = neighbors
+
+       return newV, newE, w
+   #+end_src
+
+   Vi har allerede implementert et dybde-først søk, så vi kan gjenbruke det
+   her. Søket forteller oss hvilke noder som kan nås fra en gitt startnode.
+   Siden vi lurer på om alle noder kan nå alle andre, så kan vi starte fra en
+   hvilken som helst node $v \in V$.
+
+   #+begin_src python :results none
+   def isbiconnected_naive(G):
+       V, E, _ = G
+       for v in V:
+           newV, _, _ = newG = removenode(G, v)
+           nodelist = dfs(newG, next(iter(newV)))
+           if set(nodelist) != newV:
+               return False
+       return True
+   #+end_src
+
+   Så, er $G$ bikonnektiv?
+
+   #+begin_src python :exports both
+   isbiconnected_naive(G)
+   #+end_src
+
+   #+RESULTS:
+   : True
+
+   Ja, $G$ er bikonnektiv, som betyr det samme som at $G$ er
+   \(2\)-sammenhengende. Men er $G$ \(3\)-sammenhengende? Prosedyren vår kan
+   bare sjekke bikonnektivitet, men vi kan sjekke dette ved hjelp av
+   =removenode= og =isbiconnected_naive=.
+
+   #+begin_src python :exports both
+   isbiconnected_naive(removenode(G, 'C'))
+   #+end_src
+
+   #+RESULTS:
+   : False
+
+*** Kjøretidskompleksitet
+
+    For hver node $v \in V$, bygger den en ny graf $G'$ med $v$ (og tilhørende
+    kanter) er fjernet, og gjør et DFS-søk. DFS-søk har som kjent
+    $O(|V| + |E|)$ kjøretid, og det samme har =removenode=, siden grafen
+    essensielt kopieres. Dette gjøres for /hver/ node $v \in V$, som gir oss
+    $O(|V|\cdot(|V| + |E|))$ i kjøretid.
+
+** Separasjonsnoder og bikonnektivitet
+
+   Dette problemet kan løses mye mer effektivt enn =isbiconnected_naive=. Når
+   en algoritme følger definisjonen så direkte, pleier vi å si at algoritmen er
+   /brute force/. Nå skal vi se en algoritme (som er godt forklart i en
+   forelesningsvideo) som er i $O(|V| + |E|)$. Den gjør et dybde-først søk, og
+   lagrer litt ekstra informasjon på veien som lar oss avgjøre hvorvidt grafen
+   er bikonnektiv eller ikke. Algoritmen går ut på å identifisere det som
+   kalles /separasjonsnoder/.
+
+   En separasjonsnode er intuitivt en node som holder grafen sammenhengende.
+   Hvis en separasjonsnode fjernes, så får grafen /flere komponenter/ (altså at
+   den ikke lenger sammenhengende). Dersom alle stier mellom to noder går
+   gjennom en node $v \in V$, så er $v$ en separasjonsnode.
+
+   Når vi gjør et dybde-først søk får vi også et spenntre (akkurat slik vi har
+   sett for andre traverseringsmetoder). Vi sier at hvis $T$ er et spenntre for
+   $G$, og $v \in V$ er en forfeder av $u \in V$ i treet, så kalles en kant
+   mellom $u$ og $v$ en /tilbakekant/ (eng: back-edge). Dersom vi har en
+   tilbakekant $(u, v)$ som ikke er i treet, så vet vi at det finnes minst to
+   distinkte stier mellom $u$ og $v$.
+
+   Det er to egenskaper vi kan sjekke ved et slikt spenntre, som sammen
+   forteller oss om en node i den underliggende grafen er en separasjonsnode:
+   1. Hvis rotnoden $r \in V$ i spenntreet har mer enn ett barn, så er roten
+      $r$ i treet en separasjonsnode i $G$.
+   2. Hvis $u \in V$ ikke er en rotnoden, og det ikke finnes en etterfølger $v$
+      av $u$ (der $u \neq v$) med en tilbakekant til en forfeder av $u$, så er
+      $u$ en separasjonsnode i $G$.
+
+   Det første punktet er ganske enkelt å avgjøre: vi kan for eksempel velge en
+   vilkårlig node $s$, og starte søket fra en vilkårlig nabo av $s$. Dersom det
+   finnes naboer av $s$ som ikke er besøkt etter søket, så er roten en
+   separasjonsnode.
+
+   For å sjekke det andre punktet vil algoritmen for å finne separasjonsnoder
+   holde styr på to tall for hver node $u \in V$ som sammen lar oss
+   identifisere alle separasjonsnoder i grafen. Det ene tallet =depth[u]= (som
+   kalles =index[u]= i forelesningsvideoen) forteller oss hvor langt unna $u$
+   er fra roten i spenntreet. Det andre tallet =low[u]= angir den laveste
+   dybden som kan nås ved å følge etterkommere av $u$ og en tilbakekant. Dersom
+   ~depth[u] <= low[v]~ der $u$ er en node og $v$ er et barn av $u$, så er $u$
+   en separasjonsnode.
+
+   #+begin_src python :results none
+   def separationnodes_rec(E, u, d, depth, low, seps):
+       depth[u] = low[u] = d
+       for v in E[u]:
+           if v in depth:
+               low[u] = min(low[u], depth[v])
+               continue
+           separationnodes_rec(E, v, d + 1, depth, low, seps)
+           low[u] = min(low[u], low[v])
+           if d <= low[v]:
+               seps.add(u)
+
+   def separationnodes(G):
+       V, E, _ = G
+       s = next(iter(V))
+       depth = {s: 0}
+       low = {s: 0}
+       seps = set()
+
+       for u in E[s]:
+           if u not in depth:
+               separationnodes_rec(E, u, 1, depth, low, seps)
+
+       if len([u for u in E[s] if depth[u] == 1]) > 1:
+           seps.add(s)
+
+       return seps
+   #+end_src
+
+   Det første man kan legge merke til skiller Python-koden fra pseudokoden fra
+   forelesningsvideoen er at vi her splitter arbeidet opp i to prosedyrer. Det
+   er to grunner til dette:
+   - Siden algoritmen er avhengig av flere datastrukturer (som vi
+     tilgjengeliggjør som argumenter, til fordel for globale variabler), så kan
+     vi initialisere disse i en egen prosedyre, og la den rekursive prosedyren,
+     som står for mesteparten av «arbeidet», ta disse som argumenter.
+   - Rotnoden i spenntreet (altså startnoden i søket) behandles forskjellig fra
+     andre noder. Ved å skille prosedyren i to, kan vi slippe å behandle
+     spesialtilfeller for roten i den rekursive prosedyren, og heller ta høyde
+     for disse i prosedyren som kalles.
+
+   Vi kan kalle på prosedyren med $G$ som argument. Siden $G$ er bikonnektiv bør
+   vi heller ikke få noen separasjonsnoder.
+
+   #+begin_src python :exports both
+   separationnodes(G)
+   #+end_src
+
+   #+RESULTS:
+   : set([])
+
+   Det får vi heller ikke. Men hvis vi forsøker å fjerne noden =C=, hvilke
+   noder blir da separasjonsnoder?
+
+   #+begin_src python :exports both
+   sorted(separationnodes(removenode(G, 'C')))
+   #+end_src
+
+   #+RESULTS:
+   | B | D | E | J |
+
+   Med en algoritme for å finne separasjonsnoder i $O(|V| + |E|)$ på plass er
+   det enkelt å skrive en prosedyre som sjekker om en graf er bikonnektiv med
+   samme kjøretidskompleksitet.
+
+   #+begin_src python :results none
+   def isbiconnected(G):
+       return len(separationnodes(G)) == 0
+   #+end_src
+
+   Denne kan kalles på samme måte som =isbiconnected_naive=, men har betydelig
+   mye bedre kjøretidskompleksitet.
+
+      #+begin_src python :exports both
+   isbiconnected(G)
+   #+end_src
+
+   #+RESULTS:
+   : True
+
+   #+begin_src python :exports both
+   isbiconnected(removenode(G, 'C'))
+   #+end_src
+
+   #+RESULTS:
+   : False

@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="nb" xml:lang="nb">
 <head>
-<!-- 2021-09-29 Wed 16:01 -->
+<!-- 2021-10-10 Sun 13:54 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Utvalgte grafalgoritmer</title>
@@ -36,7 +36,7 @@ Vi tar utgangspunkt i grafen som ble vist i forelesningen som ser slik ut:
 </p>
 
 
-<div id="orgd966911" class="figure">
+<div id="org04a1f30" class="figure">
 <p><object type="image/svg+xml" data="./forelesningsgraf.svg" class="org-svg" width="400">
 Sorry, your browser does not support SVG.</object>
 </p>
@@ -46,7 +46,7 @@ Sorry, your browser does not support SVG.</object>
 Den kan skrives ned ved å liste alle kantene sammen med vektene:
 </p>
 
-<pre class="example" id="org2fb52a9">
+<pre class="example" id="org22fd475">
 A B 13
 A C 6
 B C 7
@@ -75,9 +75,9 @@ kant i eksempelgrafen. Dersom vi hadde hatt noder som ikke hadde noen naboer
 måtte vi ha listet alle nodene også.
 </p>
 
-<div id="outline-container-orge2f505d" class="outline-2">
-<h2 id="orge2f505d">Bygg grafen</h2>
-<div class="outline-text-2" id="text-orge2f505d">
+<div id="outline-container-orgbdfcfc8" class="outline-2">
+<h2 id="orgbdfcfc8">Bygg grafen</h2>
+<div class="outline-text-2" id="text-orgbdfcfc8">
 <p>
 Vi kan skrive en prosedyre som leser linjene og returnerer en graf \(G = (V,
   E)\), der \(w\) er en vektfunksjon fra \(V \times V \to \mathbb{N}\). Merk at
@@ -124,9 +124,9 @@ variabel <code>lines</code>.
 </div>
 </div>
 
-<div id="outline-container-org1187249" class="outline-3">
-<h3 id="org1187249">Tegn grafen</h3>
-<div class="outline-text-3" id="text-org1187249">
+<div id="outline-container-orge678765" class="outline-3">
+<h3 id="orge678765">Tegn grafen</h3>
+<div class="outline-text-3" id="text-orge678765">
 <p>
 Nå som vi har en måte å bygge grafen, kan det være kjekt å ha en måte å vise
 grafen. Den enkleste måten jeg vet om er å bruke <a href="https://pypi.org/project/graphviz/">Python sitt bibliotek</a> for
@@ -159,7 +159,7 @@ drawgraph(G)
 </div>
 
 
-<div id="org12aca51" class="figure">
+<div id="org25e7ec1" class="figure">
 <p><object type="image/svg+xml" data="./graph.svg" class="org-svg">
 Sorry, your browser does not support SVG.</object>
 </p>
@@ -173,9 +173,9 @@ Merk at den grafen vi ser her er den samme grafen som den på toppen av siden
 </div>
 </div>
 
-<div id="outline-container-org6295a16" class="outline-2">
-<h2 id="org6295a16">Traverser grafen</h2>
-<div class="outline-text-2" id="text-org6295a16">
+<div id="outline-container-org1a2cce1" class="outline-2">
+<h2 id="org1a2cce1">Traverser grafen</h2>
+<div class="outline-text-2" id="text-org1a2cce1">
 <p>
 Nå som vi har representert grafen, så kan vi traversere den. Det vil si at vi
 systematisk går gjennom alle nodene i grafen.
@@ -212,9 +212,9 @@ dybde-først søk anvender en stack og et bredde-først søk anvender en kø.
 </p>
 </div>
 
-<div id="outline-container-org0c7246a" class="outline-3">
-<h3 id="org0c7246a">Dybde-først søk</h3>
-<div class="outline-text-3" id="text-org0c7246a">
+<div id="outline-container-org1f44d8e" class="outline-3">
+<h3 id="org1f44d8e">Dybde-først søk</h3>
+<div class="outline-text-3" id="text-org1f44d8e">
 <p>
 DFS fra en gitt node \(s\) kan implementeres rekursivt på følgende måte:
 </p>
@@ -382,9 +382,9 @@ stacken er begrenset av hvor mange naboer den har.
 </div>
 </div>
 
-<div id="outline-container-orga6c7b49" class="outline-3">
-<h3 id="orga6c7b49">Bredde-først søk</h3>
-<div class="outline-text-3" id="text-orga6c7b49">
+<div id="outline-container-org91415c4" class="outline-3">
+<h3 id="org91415c4">Bredde-først søk</h3>
+<div class="outline-text-3" id="text-org91415c4">
 <p>
 Ved å bruke en kø (altså en liste med «first-in-first-out» snarere enn en
 «last-in-first-out»), i stedet for en stack, så får vi et bredde-først søk.
@@ -471,9 +471,9 @@ begynnelsen og tatt ut på slutten.
 </div>
 </div>
 
-<div id="outline-container-org66b8f44" class="outline-2">
-<h2 id="org66b8f44">Korteste stier</h2>
-<div class="outline-text-2" id="text-org66b8f44">
+<div id="outline-container-orgea22e5c" class="outline-2">
+<h2 id="orgea22e5c">Korteste stier</h2>
+<div class="outline-text-2" id="text-orgea22e5c">
 <p>
 Når vi snakker om <i>korteste stier</i> er det som ofte snakk om vektede grafer.
 Men la oss for et øyeblikk tenke på hva det betyr for uvektede grafer. I
@@ -485,9 +485,9 @@ gjorde ovenfor.
 </p>
 </div>
 
-<div id="outline-container-orgbc5d933" class="outline-3">
-<h3 id="orgbc5d933">Bredde-først søk (igjen)</h3>
-<div class="outline-text-3" id="text-orgbc5d933">
+<div id="outline-container-org97fc370" class="outline-3">
+<h3 id="org97fc370">Bredde-først søk (igjen)</h3>
+<div class="outline-text-3" id="text-org97fc370">
 <p>
 Det som mangler fra det forrige bredde-først søket er en måte å hente ut de
 korteste stiene; det eneste vi «sparer på» under søket er rekkefølgen noder
@@ -537,7 +537,7 @@ draw_parents(bfs_shortest_paths_from(G, <span style="color: #50a14f;">'A'</span>
 </div>
 
 
-<div id="org9c02136" class="figure">
+<div id="org0ae531c" class="figure">
 <p><object type="image/svg+xml" data="./bfs_spanningtree.svg" class="org-svg">
 Sorry, your browser does not support SVG.</object>
 </p>
@@ -750,9 +750,9 @@ tabellen litt enklere å lese.
 </div>
 </div>
 
-<div id="outline-container-orgc193237" class="outline-3">
-<h3 id="orgc193237">Korteste stier for vektede grafer (Dijkstra)</h3>
-<div class="outline-text-3" id="text-orgc193237">
+<div id="outline-container-org99e0117" class="outline-3">
+<h3 id="org99e0117">Korteste stier for vektede grafer (Dijkstra)</h3>
+<div class="outline-text-3" id="text-org99e0117">
 <p>
 La oss returnere til det mer interessante spørsmålet der vi har vekter på
 kantene. For en graf \(G = (V, E)\) med vektfunksjon \(w\), er den korteste
@@ -784,7 +784,7 @@ og det vil koste \(D[v] + w(v, u)\) å komme til \(u\) via \(v\). Dersom \(D[v] 
 kan beskrives slik, der <code>Q</code> referer til prioritetskøen:
 </p>
 
-<pre class="example" id="org3969bb1">
+<pre class="example" id="org69eb657">
 if D[v] + w((v, u)) &lt; D[u]:
     D[u] = D[v] + w((v, u))
     change value of u in Q to D[u]
@@ -985,7 +985,7 @@ draw_parents_weighted(G, shortest_paths_from(G, <span style="color: #50a14f;">'A
 </div>
 
 
-<div id="orgc1d9672" class="figure">
+<div id="org007d3db" class="figure">
 <p><object type="image/svg+xml" data="./dijkstra_spanningtree.svg" class="org-svg">
 Sorry, your browser does not support SVG.</object>
 </p>
@@ -994,9 +994,9 @@ Sorry, your browser does not support SVG.</object>
 </div>
 </div>
 
-<div id="outline-container-orgfbcba06" class="outline-2">
-<h2 id="orgfbcba06">Minimale spenntrær</h2>
-<div class="outline-text-2" id="text-orgfbcba06">
+<div id="outline-container-org54faa7f" class="outline-2">
+<h2 id="org54faa7f">Minimale spenntrær</h2>
+<div class="outline-text-2" id="text-org54faa7f">
 <p>
 Vi har nå såvidt vært innom spenntrær. Ordet er veldig beskrivende: vi ønsker
 et tre som spenner en graf \(G = (V, E)\), altså at et tre som kobler alle
@@ -1008,9 +1008,9 @@ grafer) som vi antar er sammenhengende.
 </p>
 </div>
 
-<div id="outline-container-orgf88bbe2" class="outline-3">
-<h3 id="orgf88bbe2">Prim's algoritme</h3>
-<div class="outline-text-3" id="text-orgf88bbe2">
+<div id="outline-container-orgaaaa05e" class="outline-3">
+<h3 id="orgaaaa05e">Prim's algoritme</h3>
+<div class="outline-text-3" id="text-orgaaaa05e">
 <p>
 I forelesningsvideoene dekker vi tre algoritmer for minimale spenntrær. Her
 kommer vi kun til å se på Prim's algoritme. Den har store likhetstrekk til
@@ -1064,11 +1064,327 @@ treet med lavest total vekt. Dette er et eksempel på en <i>grådig</i> algoritm
 </div>
 
 
-<div id="orga58e493" class="figure">
+<div id="orgc814226" class="figure">
 <p><object type="image/svg+xml" data="./prim_minimal_spanningtree.svg" class="org-svg">
 Sorry, your browser does not support SVG.</object>
 </p>
 </div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org80b8df0" class="outline-2">
+<h2 id="org80b8df0">Bikonnektivitet</h2>
+<div class="outline-text-2" id="text-org80b8df0">
+<p>
+Grafen som vi jobber med er <i>sammenhengende</i>. Det finnes altså en sti mellom
+alle par av noder i \(G\). I mange anvendelser så ønsker man ikke bare at
+grafen skal være sammenhengende, men også at den skal være <i>bikonnektiv</i>. Det
+betyr at hvis en node \(v \in V\) fjernes fra grafen, så vil grafen fremdeles
+være sammenhengende. Mer generelt sier vi at en graf er \(k\)-sammenhengende,
+så hvis grafen forblir sammenhengende hvis man fjerner færre enn \(k\) noder.
+At en graf er bikonnektiv betyr det samme som at den er \(2\)-sammenhengende.
+</p>
+
+<p>
+Dette er et nyttig begrep i anvendelser der det er et ønske om redundans. For
+eksempel kan du se for deg en graf som representerer Ruter sitt
+kollektivnett, der noder representerer holdeplasser, og kanter representerer
+at det går en buss, trikk eller bane mellom holdeplassene. Dersom denne
+grafen er bikonnektiv, så betyr det at dersom det er full stans ved en
+holdeplass, så vil reisende fremdeles kunne komme frem til sitt stoppested
+gjennom en annen rute.
+</p>
+</div>
+
+<div id="outline-container-org5756374" class="outline-3">
+<h3 id="org5756374">Er \(G\) er bikonnektiv?</h3>
+<div class="outline-text-3" id="text-org5756374">
+<p>
+La oss sjekke om \(G\) er bikonnektiv ved å følge definisjonen veldig direkte.
+Med andre ord prøver vi å fjerne hver node \(v \in V\) fra \(G\) og sjekke om
+den resulterende grafen er bikonnektiv. Siden grafen er liten så er det lurt
+å sjekke den er bikonnektiv før du går videre (dette er ganske lett å gjøre
+ved å se på grafen).
+</p>
+
+<p>
+Først trenger vi en hjelpeprosedyre for å fjerne en node. Merk at vi vil
+unngå «ødelegge» den opprinnelige grafen \(G\), så vi må passe på å jobbe på
+kopier av \(V\) og \(V\). Siden vi ikke vil bruke vektene her, så lar vi \(w\)
+forbli uendret (selv om dette er litt stygt).
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #e45649;">def</span> <span style="color: #a626a4;">removenode</span>(G, v):
+    <span style="color: #6a1868;">V</span>, <span style="color: #6a1868;">E</span>, <span style="color: #6a1868;">w</span> = G
+
+    <span style="color: #6a1868;">newV</span> = V.copy()
+    <span style="color: #6a1868;">newE</span> = E.copy()
+
+    newV.discard(v)
+    <span style="color: #e45649;">del</span> newE[v]
+
+    <span style="color: #e45649;">for</span> u <span style="color: #e45649;">in</span> newV:
+        <span style="color: #6a1868;">neighbors</span> = newE[u].copy()
+        neighbors.discard(v)
+        <span style="color: #6a1868;">newE</span>[u] = neighbors
+
+    <span style="color: #e45649;">return</span> newV, newE, w
+</pre>
+</div>
+
+<p>
+Vi har allerede implementert et dybde-først søk, så vi kan gjenbruke det
+her. Søket forteller oss hvilke noder som kan nås fra en gitt startnode.
+Siden vi lurer på om alle noder kan nå alle andre, så kan vi starte fra en
+hvilken som helst node \(v \in V\).
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #e45649;">def</span> <span style="color: #a626a4;">isbiconnected_naive</span>(G):
+    <span style="color: #6a1868;">V</span>, <span style="color: #6a1868;">E</span>, <span style="color: #6a1868;">_</span> = G
+    <span style="color: #e45649;">for</span> v <span style="color: #e45649;">in</span> V:
+        <span style="color: #6a1868;">newV</span>, <span style="color: #6a1868;">_</span>, <span style="color: #6a1868;">_</span> = <span style="color: #6a1868;">newG</span> = removenode(G, v)
+        <span style="color: #6a1868;">nodelist</span> = dfs(newG, <span style="color: #a626a4;">next</span>(<span style="color: #a626a4;">iter</span>(newV)))
+        <span style="color: #e45649;">if</span> <span style="color: #a626a4;">set</span>(nodelist) != newV:
+            <span style="color: #e45649;">return</span> <span style="color: #b751b6;">False</span>
+    <span style="color: #e45649;">return</span> <span style="color: #b751b6;">True</span>
+</pre>
+</div>
+
+<p>
+Så, er \(G\) bikonnektiv?
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python">isbiconnected_naive(G)
+</pre>
+</div>
+
+<pre class="example">
+True
+</pre>
+
+
+<p>
+Ja, \(G\) er bikonnektiv, som betyr det samme som at \(G\) er
+\(2\)-sammenhengende. Men er \(G\) \(3\)-sammenhengende? Prosedyren vår kan
+bare sjekke bikonnektivitet, men vi kan sjekke dette ved hjelp av
+<code>removenode</code> og <code>isbiconnected_naive</code>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python">isbiconnected_naive(removenode(G, <span style="color: #50a14f;">'C'</span>))
+</pre>
+</div>
+
+<pre class="example">
+False
+</pre>
+</div>
+
+<div id="outline-container-org8225f60" class="outline-4">
+<h4 id="org8225f60">Kjøretidskompleksitet</h4>
+<div class="outline-text-4" id="text-org8225f60">
+<p>
+For hver node \(v \in V\), bygger den en ny graf \(G'\) med \(v\) (og tilhørende
+kanter) er fjernet, og gjør et DFS-søk. DFS-søk har som kjent
+\(O(|V| + |E|)\) kjøretid, og det samme har <code>removenode</code>, siden grafen
+essensielt kopieres. Dette gjøres for <i>hver</i> node \(v \in V\), som gir oss
+\(O(|V|\cdot(|V| + |E|))\) i kjøretid.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgb9ffb50" class="outline-3">
+<h3 id="orgb9ffb50">Separasjonsnoder og bikonnektivitet</h3>
+<div class="outline-text-3" id="text-orgb9ffb50">
+<p>
+Dette problemet kan løses mye mer effektivt enn <code>isbiconnected_naive</code>. Når
+en algoritme følger definisjonen så direkte, pleier vi å si at algoritmen er
+<i>brute force</i>. Nå skal vi se en algoritme (som er godt forklart i en
+forelesningsvideo) som er i \(O(|V| + |E|)\). Den gjør et dybde-først søk, og
+lagrer litt ekstra informasjon på veien som lar oss avgjøre hvorvidt grafen
+er bikonnektiv eller ikke. Algoritmen går ut på å identifisere det som
+kalles <i>separasjonsnoder</i>.
+</p>
+
+<p>
+En separasjonsnode er intuitivt en node som holder grafen sammenhengende.
+Hvis en separasjonsnode fjernes, så får grafen <i>flere komponenter</i> (altså at
+den ikke lenger sammenhengende). Dersom alle stier mellom to noder går
+gjennom en node \(v \in V\), så er \(v\) en separasjonsnode.
+</p>
+
+<p>
+Når vi gjør et dybde-først søk får vi også et spenntre (akkurat slik vi har
+sett for andre traverseringsmetoder). Vi sier at hvis \(T\) er et spenntre for
+\(G\), og \(v \in V\) er en forfeder av \(u \in V\) i treet, så kalles en kant
+mellom \(u\) og \(v\) en <i>tilbakekant</i> (eng: back-edge). Dersom vi har en
+tilbakekant \((u, v)\) som ikke er i treet, så vet vi at det finnes minst to
+distinkte stier mellom \(u\) og \(v\).
+</p>
+
+<p>
+Det er to egenskaper vi kan sjekke ved et slikt spenntre, som sammen
+forteller oss om en node i den underliggende grafen er en separasjonsnode:
+</p>
+<ol class="org-ol">
+<li>Hvis rotnoden \(r \in V\) i spenntreet har mer enn ett barn, så er roten
+\(r\) i treet en separasjonsnode i \(G\).</li>
+<li>Hvis \(u \in V\) ikke er en rotnoden, og det ikke finnes en etterfølger \(v\)
+av \(u\) (der \(u \neq v\)) med en tilbakekant til en forfeder av \(u\), så er
+\(u\) en separasjonsnode i \(G\).</li>
+</ol>
+
+<p>
+Det første punktet er ganske enkelt å avgjøre: vi kan for eksempel velge en
+vilkårlig node \(s\), og starte søket fra en vilkårlig nabo av \(s\). Dersom det
+finnes naboer av \(s\) som ikke er besøkt etter søket, så er roten en
+separasjonsnode.
+</p>
+
+<p>
+For å sjekke det andre punktet vil algoritmen for å finne separasjonsnoder
+holde styr på to tall for hver node \(u \in V\) som sammen lar oss
+identifisere alle separasjonsnoder i grafen. Det ene tallet <code>depth[u]</code> (som
+kalles <code>index[u]</code> i forelesningsvideoen) forteller oss hvor langt unna \(u\)
+er fra roten i spenntreet. Det andre tallet <code>low[u]</code> angir den laveste
+dybden som kan nås ved å følge etterkommere av \(u\) og en tilbakekant. Dersom
+<code>depth[u] &lt;= low[v]</code> der \(u\) er en node og \(v\) er et barn av \(u\), så er \(u\)
+en separasjonsnode.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #e45649;">def</span> <span style="color: #a626a4;">separationnodes_rec</span>(E, u, d, depth, low, seps):
+    <span style="color: #6a1868;">depth</span>[u] = <span style="color: #6a1868;">low</span>[u] = d
+    <span style="color: #e45649;">for</span> v <span style="color: #e45649;">in</span> E[u]:
+        <span style="color: #e45649;">if</span> v <span style="color: #e45649;">in</span> depth:
+            <span style="color: #6a1868;">low</span>[u] = <span style="color: #a626a4;">min</span>(low[u], depth[v])
+            <span style="color: #e45649;">continue</span>
+        separationnodes_rec(E, v, d + 1, depth, low, seps)
+        <span style="color: #6a1868;">low</span>[u] = <span style="color: #a626a4;">min</span>(low[u], low[v])
+        <span style="color: #e45649;">if</span> d &lt;= low[v]:
+            seps.add(u)
+
+<span style="color: #e45649;">def</span> <span style="color: #a626a4;">separationnodes</span>(G):
+    <span style="color: #6a1868;">V</span>, <span style="color: #6a1868;">E</span>, <span style="color: #6a1868;">_</span> = G
+    <span style="color: #6a1868;">s</span> = <span style="color: #a626a4;">next</span>(<span style="color: #a626a4;">iter</span>(V))
+    <span style="color: #6a1868;">depth</span> = {s: 0}
+    <span style="color: #6a1868;">low</span> = {s: 0}
+    <span style="color: #6a1868;">seps</span> = <span style="color: #a626a4;">set</span>()
+
+    <span style="color: #e45649;">for</span> u <span style="color: #e45649;">in</span> E[s]:
+        <span style="color: #e45649;">if</span> u <span style="color: #e45649;">not</span> <span style="color: #e45649;">in</span> depth:
+            separationnodes_rec(E, u, 1, depth, low, seps)
+
+    <span style="color: #e45649;">if</span> <span style="color: #a626a4;">len</span>([u <span style="color: #e45649;">for</span> u <span style="color: #e45649;">in</span> E[s] <span style="color: #e45649;">if</span> depth[u] == 1]) &gt; 1:
+        seps.add(s)
+
+    <span style="color: #e45649;">return</span> seps
+</pre>
+</div>
+
+<p>
+Det første man kan legge merke til skiller Python-koden fra pseudokoden fra
+forelesningsvideoen er at vi her splitter arbeidet opp i to prosedyrer. Det
+er to grunner til dette:
+</p>
+<ul class="org-ul">
+<li>Siden algoritmen er avhengig av flere datastrukturer (som vi
+tilgjengeliggjør som argumenter, til fordel for globale variabler), så kan
+vi initialisere disse i en egen prosedyre, og la den rekursive prosedyren,
+som står for mesteparten av «arbeidet», ta disse som argumenter.</li>
+<li>Rotnoden i spenntreet (altså startnoden i søket) behandles forskjellig fra
+andre noder. Ved å skille prosedyren i to, kan vi slippe å behandle
+spesialtilfeller for roten i den rekursive prosedyren, og heller ta høyde
+for disse i prosedyren som kalles.</li>
+</ul>
+
+<p>
+Vi kan kalle på prosedyren med \(G\) som argument. Siden \(G\) er bikonnektiv bør
+vi heller ikke få noen separasjonsnoder.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python">separationnodes(G)
+</pre>
+</div>
+
+<pre class="example">
+set([])
+</pre>
+
+
+<p>
+Det får vi heller ikke. Men hvis vi forsøker å fjerne noden <code>C</code>, hvilke
+noder blir da separasjonsnoder?
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #a626a4;">sorted</span>(separationnodes(removenode(G, <span style="color: #50a14f;">'C'</span>)))
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left">B</td>
+<td class="org-left">D</td>
+<td class="org-left">E</td>
+<td class="org-left">J</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+Med en algoritme for å finne separasjonsnoder i \(O(|V| + |E|)\) på plass er
+det enkelt å skrive en prosedyre som sjekker om en graf er bikonnektiv med
+samme kjøretidskompleksitet.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #e45649;">def</span> <span style="color: #a626a4;">isbiconnected</span>(G):
+    <span style="color: #e45649;">return</span> <span style="color: #a626a4;">len</span>(separationnodes(G)) == 0
+</pre>
+</div>
+
+<p>
+Denne kan kalles på samme måte som <code>isbiconnected_naive</code>, men har betydelig
+mye bedre kjøretidskompleksitet.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python">isbiconnected(G)
+</pre>
+</div>
+
+<pre class="example">
+True
+</pre>
+
+
+<div class="org-src-container">
+<pre class="src src-python">isbiconnected(removenode(G, <span style="color: #50a14f;">'C'</span>))
+</pre>
+</div>
+
+<pre class="example">
+False
+</pre>
 </div>
 </div>
 </div>
