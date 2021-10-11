@@ -11,7 +11,7 @@
 
 I dette dokumentet skal vi gå gjennom noen sentrale grafalgoritmer for IN2010.
 Det kan brukes som et løsningsforslag for det som alltid er en god ukesoppgave:
-/implementer algoritmene som gjennomgås/. For både Dijkstra og Prim's
+/implementer algoritmene som gjennomgås/. For både Dijkstra og Prims
 algoritmer vil presentasjonen være litt annerledes enn den som er gitt i
 forelesningsvideoene.
 
@@ -177,7 +177,7 @@ måtte vi ha listet alle nodene også.
    #+end_src
 
    #+RESULTS:
-   | A | C | H | J | K | I | G | L | E | D | B | F |
+   | A | B | D | F | E | J | G | K | L | I | H | C |
 
    Vi kan også gjøre et DFS-søk ved å bruke en stack. Merk at rekursive kall
    legges på det som kalles en «[[https://www.wikiwand.com/en/Call_stack][call stack]]»; altså bytter vi egentlig bare ut
@@ -206,7 +206,7 @@ måtte vi ha listet alle nodene også.
    #+end_src
 
    #+RESULTS:
-   | A | B | D | F | E | J | G | K | L | I | H | C |
+   | A | C | D | E | F | J | K | I | G | H | L | B |
 
    #+begin_quote
    Korreksjon: I en tidligere versjon la vi noder til i =visited= samtidig som
@@ -254,7 +254,7 @@ måtte vi ha listet alle nodene også.
    #+end_src
 
    #+RESULTS:
-   | A | C | B | H | E | D | J | G | F | K | L | I |
+   | A | B | C | D | E | H | F | J | G | L | K | I |
 
 * Korteste stier
 
@@ -374,16 +374,16 @@ måtte vi ha listet alle nodene også.
    #+RESULTS:
    | A |   |   |   |   |
    | A | B |   |   |   |
+   | A | B | D |   |   |
+   | A | B | D | F |   |
    | A | C |   |   |   |
-   | A | C | D |   |   |
    | A | C | E |   |   |
-   | A | C | E | F |   |
+   | A | C | E | J |   |
+   | A | C | E | J | K |
+   | A | C | E | J | L |
    | A | C | H |   |   |
    | A | C | H | G |   |
    | A | C | H | G | I |
-   | A | C | H | J |   |
-   | A | C | H | J | K |
-   | A | C | H | J | L |
 
 ** Korteste stier for vektede grafer (Dijkstra)
 
@@ -550,10 +550,10 @@ måtte vi ha listet alle nodene også.
   motsetning fra BFS, DFS og Dijkstra, som fungerer like godt på rettede
   grafer) som vi antar er sammenhengende.
 
-** Prim's algoritme
+** Prims algoritme
 
    I forelesningsvideoene dekker vi tre algoritmer for minimale spenntrær. Her
-   kommer vi kun til å se på Prim's algoritme. Den har store likhetstrekk til
+   kommer vi kun til å se på Prims algoritme. Den har store likhetstrekk til
    Dijkstra.
 
    #+begin_src python :results none
@@ -785,7 +785,7 @@ måtte vi ha listet alle nodene også.
    #+end_src
 
    #+RESULTS:
-   : set([])
+   : set()
 
    Det får vi heller ikke. Men hvis vi forsøker å fjerne noden =C=, hvilke
    noder blir da separasjonsnoder?
@@ -822,3 +822,224 @@ måtte vi ha listet alle nodene også.
 
    #+RESULTS:
    : False
+
+* Sterkt sammenhengende komponenter
+
+  #+ATTR_HTML: :width 400
+  [[./forelesningsgraf2.svg]]
+
+  For å snakke om sterkt sammenhengende komponenter må vi gjøre det i
+  konteksten av /rettede/ grafer. I en sterkt sammenhengende komponent må alle
+  noder ha en sti til alle andre noder i samme sterkt sammenhengende komponent.
+  I tillegg må en sterkt sammenhengende komponent være /maksimal/, altså
+  snakker vi om den største mulige sterkt sammenhengende komponenten.
+
+  En viktig innsikt er at de sterkt sammenhengende komponentene av en graf $G$
+  består av de samme nodene som i den /reverserte/ grafen $G_r$; den reverserte
+  grafen består av de samme nodene, men der alle kanter er snudd. Altså for
+  hver kant $(u, v) \in E$ erstattes med kanten $(v, u)$.
+  
+  Grafen vi ser på bildet ovenfor er en rettet graf som består av tre sterkt
+  sammenhengende komponenter. Grafen kan skrives ned slik:
+
+  #+NAME: example_digraph
+  #+begin_example
+  A B
+  B C
+  B E
+  B F
+  C D
+  C G
+  D C
+  D H
+  E A
+  E F
+  F G
+  G F
+  H D
+  H G
+  #+end_example
+
+  La oss nå bygge denne grafen, men her ta høyde for at vi jobber med en graf
+  som er rettet og uvektet.
+
+  #+begin_src python :results none
+  def builddigraph(lines):
+      V = set()
+      E = defaultdict(set)
+
+      for line in lines.splitlines():
+          v, u = line.strip().split()
+          V.add(v)
+          V.add(u)
+          E[v].add(u)
+
+      return V, E
+  #+end_src
+
+  La oss nå erstatte $G$ med denne nye grafen. Igjen antar vi at beskrivelsen
+  ovenfor er gitt i en variabel =lines=.
+
+  #+begin_src python :var lines=example_digraph :results none
+  G = builddigraph(lines)
+  #+end_src
+
+  Og la oss tegne denne nye grafen, i likhet med den forrige.
+
+  #+begin_src python :results none
+  def drawdigraph(G, name):
+       V, E = G
+       dot = graphviz.Digraph()
+
+       for u in V:
+            dot.node(u)
+
+            for v in E[u]:
+                 dot.edge(u, v)
+
+       dot.render(name, format='svg')
+
+  drawdigraph(G, 'digraph')
+  #+end_src
+
+   [[./digraph.svg]]
+
+   Vi kommer til å få bruk for den reverserte grafen, så la oss skrive en
+   hjelpeprosedyre for dette.
+
+   #+begin_src python :results none
+   def reversegraph(G):
+       V, E = G
+       rE = defaultdict(set)
+
+       for u in V:
+           for v in E[u]:
+               rE[v].add(u)
+       return V, rE
+   #+end_src
+
+   La oss sjekke om resultatet ser rimelig ut ved å tegne den.
+
+   #+begin_src python :results none
+   drawdigraph(reversegraph(G), 'digraph_r')
+   #+end_src
+
+   [[./digraph_r.svg]]
+
+   Det er lurt å sjekke de to grafene, og forsikre seg selv om at de sterkt
+   sammenhengende komponentene er de samme.
+
+** DFS og topologisk sortering
+
+   Vi har allerede sett en algoritme for topologisk sortering. Men nå som vi er
+   nærmere kjent med dybde-først søk skal vi se at vi kan topologisk sortere
+   noder kun ved hjelp av et dybde-først søk. Det er overraskende enkelt: gjør
+   et dybde-først søk, der en node legges på en stack etter alle naboer er
+   besøkt. Til slutt, vil den stacken være en topologisk sortering for grafen.
+
+   #+begin_src python :results none
+   def dfsvisit(G, u, visited, stack):
+       V, E = G
+       visited.add(u)
+       for v in E[u]:
+           if v not in visited:
+               dfsvisit(G, v, visited, stack)
+       stack.append(u)
+
+   def dfstopsort(G):
+       V, E = G
+       visited = set()
+       stack = []
+       for u in V:
+           if u not in visited:
+               dfsvisit(G, u, visited, stack)
+       return stack
+   #+end_src
+
+   Husk at topologisk sortering kun fungerer på asykliske grafer. Vi har ikke
+   en slik for hånden, så vi etterlater å teste denne prosedyren som en oppgave
+   til leseren.
+
+** Kosarajus algoritme
+
+   Algoritmen vi skal se på for sterkt sammenhengende komponenter er utrolig
+   elegant, og bygger et par viktige innsikter. Den første har vi allerede
+   etablert: de sterkt sammenhengende komponentene til en graf $G$ er de samme
+   som de sterkt sammenhengende komponentene til den reverserte grafen $G_r$.
+   Intuitivt kan vi tenke på en sterkt sammenhengende komponent som en sykel.
+   
+   En annen innsikt er at hvis vi ønsker å finne den sterkt sammenhengende
+   komponenten for en node $v \in V$, så er det tilstrekkelig å finne nodene
+   som kan nås fra $v$ i $G$ (for eksempel ved et dybde-først søk), og finne
+   nodene som kan nås fra $v$ i den reverserte grafen $G_r$. Nodene som kan nås
+   fra $v$ i både $G$ og $G_r$ utgjør den sterkt sammenhengende komponenten til
+   $v$. Vi kunne gjort dette for hver node $v \in V$, og funnet de sterkt
+   sammenhengende komponentene i $O(|V|\cdot(|V| + |E|))$, men igjen vil vi
+   finne en mer effektiv algoritme.
+
+   Hvis vi anser hver sterkt sammenhengende komponent som en enkelt node (altså
+   at vi anser det røde, grønne og lilla områdene i grafen ovenfor som noder),
+   så får vi det vi kaller /komponentgrafen/. Denne grafen er garantert å ikke
+   inneholde noen sykel, altså er komponentgrafen garantert å være asyklisk.
+   Dersom to komponenter var en del av samme sykel, så kunne alle nodene i de
+   to komponentene hatt en sti til hverandre; dette er en motsigelse, fordi
+   hvis alle nodene fra to komponenter kan nå hverandre, så er de også nødt til
+   å være i samme sterkt sammenhengende komponent.
+
+   La oss anta at vi har den underliggende komponentgrafen. Merk at dette
+   faller på sin egen urimelighet, fordi det er jo den vi ønsker å finne, men
+   gå med på antagelsen inntil videre. Hvis vi gjør en /topologisk sortering/
+   av komponentgrafen, så vet vi at den topologisk siste komponenten umulig kan
+   ha en kant til noen andre komponenter. Den topologisk nest siste komponenten
+   kan umulig ha en kant til andre komponenter enn den topologisk siste grafen,
+   og så videre. Dette er den siste innsikten vi trenger for Kosaraju sin
+   algoritme for sterkt sammenhengende komponenter.
+
+   Algoritmen kan i korte trekk beskrives slik:
+   1. Gjør et (fullt) dybde-først søk i en graf $G$, der hver node legges på en
+      stack etter alle naboer er besøkt (akkurat slik som =dfstopsort=).
+   2. Konstruer den reverserte grafen $G_r$
+   3. Gjør et nytt (fullt) dybde-først søk på $G_r$, der det rekkefølgen i det
+      fulle dybde-først søket er diktert av den reverserte stacken fra det
+      første søket.
+
+   I kode kan det uttrykkes slik (der vi benytter oss av =dfstopsort= og
+   =dfsvisit=):
+
+   #+begin_src python :results none
+   def stronglyconnectedcomponents(G):
+       V, E = G
+
+       stack = dfstopsort(G)
+
+       Gr = reversegraph(G)
+       visited = set()
+       components = []
+       for u in reversed(stack):
+           if u not in visited:
+               component = []
+               dfsvisit(Gr, u, visited, component)
+               components.append(component)
+
+       return components
+   #+end_src
+
+   Det er viktig å presisere at =dfstopsort= ikke faktisk gjør en topologisk
+   sortering av $G$. Siden $G$ inneholder sykler så har den heller ingen
+   topologisk sortering. Det vi får er en topologisk sortering av den
+   underliggende /komponentgrafen/. For hver node vi kaller =dfsvisit= på i den
+   reverserte grafen, så vil vi alle nodene i den resulterende komponenten
+   legges til i =visited= og ikke bli besøkt igjen. Den neste noden som besøkes
+   vil tilhøre en topologisk tidligere komponent.
+
+   Det siste som gjenstår er å sjekke at prosedyren fungerer på eksempel
+   grafen.
+
+   #+begin_src python :exports both
+   stronglyconnectedcomponents(G)
+   #+end_src
+
+   #+RESULTS:
+   | B | E | A |
+   | H | D | C |
+   | F | G |   |

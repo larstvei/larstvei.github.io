@@ -3,16 +3,20 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="nb" xml:lang="nb">
 <head>
-<!-- 2021-10-10 Sun 13:54 -->
+<!-- 2021-10-11 Mon 02:34 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Utvalgte grafalgoritmer</title>
 <meta name="generator" content="Org mode" />
 <meta name="author" content="Lars Tveito" />
 <script type="text/javascript" src="js/script.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.css" integrity="sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y" crossorigin="anonymous"/>
-<script defer="defer" src="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.js" integrity="sha384-K3vbOmF2BtaVai+Qk37uypf7VrgBubhQreNQe9aGsz9lB63dIFiQVlJbr92dw2Lx" crossorigin="anonymous"></script>
-<script defer="defer" src="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/contrib/auto-render.min.js" integrity="sha384-kmZOZB5ObwgQnS/DuDg6TScgOiWWBiVt0plIRkZCmE6rDZGrEOQeHM5PcHi+nyqe" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.18/dist/katex.min.css" integrity="sha384-zTROYFVGOfTw7JV7KUu8udsvW2fx4lWOsCEDqhBreBwlHI4ioVRtmIvEThzJHGET" crossorigin="anonymous">
+<!-- The loading of KaTeX is deferred to speed up page rendering -->
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.13.18/dist/katex.min.js" integrity="sha384-GxNFqL3r9uRJQhR+47eDxuPoNE7yLftQM8LcxzgS4HT73tp970WS/wV5p8UzCOmb" crossorigin="anonymous"></script>
+
+<!-- To automatically render math in text elements, include the auto-render extension: -->
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.13.18/dist/contrib/auto-render.min.js" integrity="sha384-vZTG03m+2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
 </head>
 <body>
 <div id="preamble" class="status">
@@ -26,7 +30,7 @@
 <p>
 I dette dokumentet skal vi gå gjennom noen sentrale grafalgoritmer for IN2010.
 Det kan brukes som et løsningsforslag for det som alltid er en god ukesoppgave:
-<i>implementer algoritmene som gjennomgås</i>. For både Dijkstra og Prim's
+<i>implementer algoritmene som gjennomgås</i>. For både Dijkstra og Prims
 algoritmer vil presentasjonen være litt annerledes enn den som er gitt i
 forelesningsvideoene.
 </p>
@@ -36,7 +40,7 @@ Vi tar utgangspunkt i grafen som ble vist i forelesningen som ser slik ut:
 </p>
 
 
-<div id="org04a1f30" class="figure">
+<div id="orgf391335" class="figure">
 <p><object type="image/svg+xml" data="./forelesningsgraf.svg" class="org-svg" width="400">
 Sorry, your browser does not support SVG.</object>
 </p>
@@ -46,7 +50,7 @@ Sorry, your browser does not support SVG.</object>
 Den kan skrives ned ved å liste alle kantene sammen med vektene:
 </p>
 
-<pre class="example" id="org22fd475">
+<pre class="example" id="orgb7aecc3">
 A B 13
 A C 6
 B C 7
@@ -75,9 +79,9 @@ kant i eksempelgrafen. Dersom vi hadde hatt noder som ikke hadde noen naboer
 måtte vi ha listet alle nodene også.
 </p>
 
-<div id="outline-container-orgbdfcfc8" class="outline-2">
-<h2 id="orgbdfcfc8">Bygg grafen</h2>
-<div class="outline-text-2" id="text-orgbdfcfc8">
+<div id="outline-container-orgb5ce4f1" class="outline-2">
+<h2 id="orgb5ce4f1">Bygg grafen</h2>
+<div class="outline-text-2" id="text-orgb5ce4f1">
 <p>
 Vi kan skrive en prosedyre som leser linjene og returnerer en graf \(G = (V,
   E)\), der \(w\) er en vektfunksjon fra \(V \times V \to \mathbb{N}\). Merk at
@@ -124,9 +128,9 @@ variabel <code>lines</code>.
 </div>
 </div>
 
-<div id="outline-container-orge678765" class="outline-3">
-<h3 id="orge678765">Tegn grafen</h3>
-<div class="outline-text-3" id="text-orge678765">
+<div id="outline-container-org90cf39b" class="outline-3">
+<h3 id="org90cf39b">Tegn grafen</h3>
+<div class="outline-text-3" id="text-org90cf39b">
 <p>
 Nå som vi har en måte å bygge grafen, kan det være kjekt å ha en måte å vise
 grafen. Den enkleste måten jeg vet om er å bruke <a href="https://pypi.org/project/graphviz/">Python sitt bibliotek</a> for
@@ -159,7 +163,7 @@ drawgraph(G)
 </div>
 
 
-<div id="org25e7ec1" class="figure">
+<div id="org1cbf90f" class="figure">
 <p><object type="image/svg+xml" data="./graph.svg" class="org-svg">
 Sorry, your browser does not support SVG.</object>
 </p>
@@ -173,9 +177,9 @@ Merk at den grafen vi ser her er den samme grafen som den på toppen av siden
 </div>
 </div>
 
-<div id="outline-container-org1a2cce1" class="outline-2">
-<h2 id="org1a2cce1">Traverser grafen</h2>
-<div class="outline-text-2" id="text-org1a2cce1">
+<div id="outline-container-org1b450ad" class="outline-2">
+<h2 id="org1b450ad">Traverser grafen</h2>
+<div class="outline-text-2" id="text-org1b450ad">
 <p>
 Nå som vi har representert grafen, så kan vi traversere den. Det vil si at vi
 systematisk går gjennom alle nodene i grafen.
@@ -212,9 +216,9 @@ dybde-først søk anvender en stack og et bredde-først søk anvender en kø.
 </p>
 </div>
 
-<div id="outline-container-org1f44d8e" class="outline-3">
-<h3 id="org1f44d8e">Dybde-først søk</h3>
-<div class="outline-text-3" id="text-org1f44d8e">
+<div id="outline-container-org4d0d122" class="outline-3">
+<h3 id="org4d0d122">Dybde-først søk</h3>
+<div class="outline-text-3" id="text-org4d0d122">
 <p>
 DFS fra en gitt node \(s\) kan implementeres rekursivt på følgende måte:
 </p>
@@ -273,17 +277,17 @@ fra noden \(A\):
 <tbody>
 <tr>
 <td class="org-left">A</td>
-<td class="org-left">C</td>
-<td class="org-left">H</td>
-<td class="org-left">J</td>
-<td class="org-left">K</td>
-<td class="org-left">I</td>
-<td class="org-left">G</td>
-<td class="org-left">L</td>
-<td class="org-left">E</td>
-<td class="org-left">D</td>
 <td class="org-left">B</td>
+<td class="org-left">D</td>
 <td class="org-left">F</td>
+<td class="org-left">E</td>
+<td class="org-left">J</td>
+<td class="org-left">G</td>
+<td class="org-left">K</td>
+<td class="org-left">L</td>
+<td class="org-left">I</td>
+<td class="org-left">H</td>
+<td class="org-left">C</td>
 </tr>
 </tbody>
 </table>
@@ -349,17 +353,17 @@ en stack med en annen!
 <tbody>
 <tr>
 <td class="org-left">A</td>
-<td class="org-left">B</td>
-<td class="org-left">D</td>
-<td class="org-left">F</td>
-<td class="org-left">E</td>
-<td class="org-left">J</td>
-<td class="org-left">G</td>
-<td class="org-left">K</td>
-<td class="org-left">L</td>
-<td class="org-left">I</td>
-<td class="org-left">H</td>
 <td class="org-left">C</td>
+<td class="org-left">D</td>
+<td class="org-left">E</td>
+<td class="org-left">F</td>
+<td class="org-left">J</td>
+<td class="org-left">K</td>
+<td class="org-left">I</td>
+<td class="org-left">G</td>
+<td class="org-left">H</td>
+<td class="org-left">L</td>
+<td class="org-left">B</td>
 </tr>
 </tbody>
 </table>
@@ -382,9 +386,9 @@ stacken er begrenset av hvor mange naboer den har.
 </div>
 </div>
 
-<div id="outline-container-org91415c4" class="outline-3">
-<h3 id="org91415c4">Bredde-først søk</h3>
-<div class="outline-text-3" id="text-org91415c4">
+<div id="outline-container-orgfc70d1a" class="outline-3">
+<h3 id="orgfc70d1a">Bredde-først søk</h3>
+<div class="outline-text-3" id="text-orgfc70d1a">
 <p>
 Ved å bruke en kø (altså en liste med «first-in-first-out» snarere enn en
 «last-in-first-out»), i stedet for en stack, så får vi et bredde-først søk.
@@ -453,16 +457,16 @@ begynnelsen og tatt ut på slutten.
 <tbody>
 <tr>
 <td class="org-left">A</td>
-<td class="org-left">C</td>
 <td class="org-left">B</td>
-<td class="org-left">H</td>
-<td class="org-left">E</td>
+<td class="org-left">C</td>
 <td class="org-left">D</td>
+<td class="org-left">E</td>
+<td class="org-left">H</td>
+<td class="org-left">F</td>
 <td class="org-left">J</td>
 <td class="org-left">G</td>
-<td class="org-left">F</td>
-<td class="org-left">K</td>
 <td class="org-left">L</td>
+<td class="org-left">K</td>
 <td class="org-left">I</td>
 </tr>
 </tbody>
@@ -471,9 +475,9 @@ begynnelsen og tatt ut på slutten.
 </div>
 </div>
 
-<div id="outline-container-orgea22e5c" class="outline-2">
-<h2 id="orgea22e5c">Korteste stier</h2>
-<div class="outline-text-2" id="text-orgea22e5c">
+<div id="outline-container-org2ab2e29" class="outline-2">
+<h2 id="org2ab2e29">Korteste stier</h2>
+<div class="outline-text-2" id="text-org2ab2e29">
 <p>
 Når vi snakker om <i>korteste stier</i> er det som ofte snakk om vektede grafer.
 Men la oss for et øyeblikk tenke på hva det betyr for uvektede grafer. I
@@ -485,9 +489,9 @@ gjorde ovenfor.
 </p>
 </div>
 
-<div id="outline-container-org97fc370" class="outline-3">
-<h3 id="org97fc370">Bredde-først søk (igjen)</h3>
-<div class="outline-text-3" id="text-org97fc370">
+<div id="outline-container-orgcdaa6b7" class="outline-3">
+<h3 id="orgcdaa6b7">Bredde-først søk (igjen)</h3>
+<div class="outline-text-3" id="text-orgcdaa6b7">
 <p>
 Det som mangler fra det forrige bredde-først søket er en måte å hente ut de
 korteste stiene; det eneste vi «sparer på» under søket er rekkefølgen noder
@@ -537,7 +541,7 @@ draw_parents(bfs_shortest_paths_from(G, <span style="color: #50a14f;">'A'</span>
 </div>
 
 
-<div id="org0ae531c" class="figure">
+<div id="org42b9b34" class="figure">
 <p><object type="image/svg+xml" data="./bfs_spanningtree.svg" class="org-svg">
 Sorry, your browser does not support SVG.</object>
 </p>
@@ -668,15 +672,7 @@ tabellen litt enklere å lese.
 
 <tr>
 <td class="org-left">A</td>
-<td class="org-left">C</td>
-<td class="org-left">&#xa0;</td>
-<td class="org-left">&#xa0;</td>
-<td class="org-left">&#xa0;</td>
-</tr>
-
-<tr>
-<td class="org-left">A</td>
-<td class="org-left">C</td>
+<td class="org-left">B</td>
 <td class="org-left">D</td>
 <td class="org-left">&#xa0;</td>
 <td class="org-left">&#xa0;</td>
@@ -684,6 +680,22 @@ tabellen litt enklere å lese.
 
 <tr>
 <td class="org-left">A</td>
+<td class="org-left">B</td>
+<td class="org-left">D</td>
+<td class="org-left">F</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">A</td>
+<td class="org-left">C</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">A</td>
 <td class="org-left">C</td>
 <td class="org-left">E</td>
 <td class="org-left">&#xa0;</td>
@@ -694,8 +706,24 @@ tabellen litt enklere å lese.
 <td class="org-left">A</td>
 <td class="org-left">C</td>
 <td class="org-left">E</td>
-<td class="org-left">F</td>
+<td class="org-left">J</td>
 <td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">A</td>
+<td class="org-left">C</td>
+<td class="org-left">E</td>
+<td class="org-left">J</td>
+<td class="org-left">K</td>
+</tr>
+
+<tr>
+<td class="org-left">A</td>
+<td class="org-left">C</td>
+<td class="org-left">E</td>
+<td class="org-left">J</td>
+<td class="org-left">L</td>
 </tr>
 
 <tr>
@@ -721,38 +749,14 @@ tabellen litt enklere å lese.
 <td class="org-left">G</td>
 <td class="org-left">I</td>
 </tr>
-
-<tr>
-<td class="org-left">A</td>
-<td class="org-left">C</td>
-<td class="org-left">H</td>
-<td class="org-left">J</td>
-<td class="org-left">&#xa0;</td>
-</tr>
-
-<tr>
-<td class="org-left">A</td>
-<td class="org-left">C</td>
-<td class="org-left">H</td>
-<td class="org-left">J</td>
-<td class="org-left">K</td>
-</tr>
-
-<tr>
-<td class="org-left">A</td>
-<td class="org-left">C</td>
-<td class="org-left">H</td>
-<td class="org-left">J</td>
-<td class="org-left">L</td>
-</tr>
 </tbody>
 </table>
 </div>
 </div>
 
-<div id="outline-container-org99e0117" class="outline-3">
-<h3 id="org99e0117">Korteste stier for vektede grafer (Dijkstra)</h3>
-<div class="outline-text-3" id="text-org99e0117">
+<div id="outline-container-org894b652" class="outline-3">
+<h3 id="org894b652">Korteste stier for vektede grafer (Dijkstra)</h3>
+<div class="outline-text-3" id="text-org894b652">
 <p>
 La oss returnere til det mer interessante spørsmålet der vi har vekter på
 kantene. For en graf \(G = (V, E)\) med vektfunksjon \(w\), er den korteste
@@ -784,7 +788,7 @@ og det vil koste \(D[v] + w(v, u)\) å komme til \(u\) via \(v\). Dersom \(D[v] 
 kan beskrives slik, der <code>Q</code> referer til prioritetskøen:
 </p>
 
-<pre class="example" id="org69eb657">
+<pre class="example" id="orgd322f6d">
 if D[v] + w((v, u)) &lt; D[u]:
     D[u] = D[v] + w((v, u))
     change value of u in Q to D[u]
@@ -985,7 +989,7 @@ draw_parents_weighted(G, shortest_paths_from(G, <span style="color: #50a14f;">'A
 </div>
 
 
-<div id="org007d3db" class="figure">
+<div id="org35ed9e5" class="figure">
 <p><object type="image/svg+xml" data="./dijkstra_spanningtree.svg" class="org-svg">
 Sorry, your browser does not support SVG.</object>
 </p>
@@ -994,9 +998,9 @@ Sorry, your browser does not support SVG.</object>
 </div>
 </div>
 
-<div id="outline-container-org54faa7f" class="outline-2">
-<h2 id="org54faa7f">Minimale spenntrær</h2>
-<div class="outline-text-2" id="text-org54faa7f">
+<div id="outline-container-org4aa7a2c" class="outline-2">
+<h2 id="org4aa7a2c">Minimale spenntrær</h2>
+<div class="outline-text-2" id="text-org4aa7a2c">
 <p>
 Vi har nå såvidt vært innom spenntrær. Ordet er veldig beskrivende: vi ønsker
 et tre som spenner en graf \(G = (V, E)\), altså at et tre som kobler alle
@@ -1008,12 +1012,12 @@ grafer) som vi antar er sammenhengende.
 </p>
 </div>
 
-<div id="outline-container-orgaaaa05e" class="outline-3">
-<h3 id="orgaaaa05e">Prim's algoritme</h3>
-<div class="outline-text-3" id="text-orgaaaa05e">
+<div id="outline-container-orgfd1f68c" class="outline-3">
+<h3 id="orgfd1f68c">Prims algoritme</h3>
+<div class="outline-text-3" id="text-orgfd1f68c">
 <p>
 I forelesningsvideoene dekker vi tre algoritmer for minimale spenntrær. Her
-kommer vi kun til å se på Prim's algoritme. Den har store likhetstrekk til
+kommer vi kun til å se på Prims algoritme. Den har store likhetstrekk til
 Dijkstra.
 </p>
 
@@ -1064,7 +1068,7 @@ treet med lavest total vekt. Dette er et eksempel på en <i>grådig</i> algoritm
 </div>
 
 
-<div id="orgc814226" class="figure">
+<div id="orgd8aeaca" class="figure">
 <p><object type="image/svg+xml" data="./prim_minimal_spanningtree.svg" class="org-svg">
 Sorry, your browser does not support SVG.</object>
 </p>
@@ -1073,9 +1077,9 @@ Sorry, your browser does not support SVG.</object>
 </div>
 </div>
 
-<div id="outline-container-org80b8df0" class="outline-2">
-<h2 id="org80b8df0">Bikonnektivitet</h2>
-<div class="outline-text-2" id="text-org80b8df0">
+<div id="outline-container-org38b5fdd" class="outline-2">
+<h2 id="org38b5fdd">Bikonnektivitet</h2>
+<div class="outline-text-2" id="text-org38b5fdd">
 <p>
 Grafen som vi jobber med er <i>sammenhengende</i>. Det finnes altså en sti mellom
 alle par av noder i \(G\). I mange anvendelser så ønsker man ikke bare at
@@ -1097,9 +1101,9 @@ gjennom en annen rute.
 </p>
 </div>
 
-<div id="outline-container-org5756374" class="outline-3">
-<h3 id="org5756374">Er \(G\) er bikonnektiv?</h3>
-<div class="outline-text-3" id="text-org5756374">
+<div id="outline-container-org9b69d7c" class="outline-3">
+<h3 id="org9b69d7c">Er \(G\) er bikonnektiv?</h3>
+<div class="outline-text-3" id="text-org9b69d7c">
 <p>
 La oss sjekke om \(G\) er bikonnektiv ved å følge definisjonen veldig direkte.
 Med andre ord prøver vi å fjerne hver node \(v \in V\) fra \(G\) og sjekke om
@@ -1184,9 +1188,9 @@ False
 </pre>
 </div>
 
-<div id="outline-container-org8225f60" class="outline-4">
-<h4 id="org8225f60">Kjøretidskompleksitet</h4>
-<div class="outline-text-4" id="text-org8225f60">
+<div id="outline-container-org7ef1169" class="outline-4">
+<h4 id="org7ef1169">Kjøretidskompleksitet</h4>
+<div class="outline-text-4" id="text-org7ef1169">
 <p>
 For hver node \(v \in V\), bygger den en ny graf \(G'\) med \(v\) (og tilhørende
 kanter) er fjernet, og gjør et DFS-søk. DFS-søk har som kjent
@@ -1198,9 +1202,9 @@ essensielt kopieres. Dette gjøres for <i>hver</i> node \(v \in V\), som gir oss
 </div>
 </div>
 
-<div id="outline-container-orgb9ffb50" class="outline-3">
-<h3 id="orgb9ffb50">Separasjonsnoder og bikonnektivitet</h3>
-<div class="outline-text-3" id="text-orgb9ffb50">
+<div id="outline-container-org0f671ed" class="outline-3">
+<h3 id="org0f671ed">Separasjonsnoder og bikonnektivitet</h3>
+<div class="outline-text-3" id="text-org0f671ed">
 <p>
 Dette problemet kan løses mye mer effektivt enn <code>isbiconnected_naive</code>. Når
 en algoritme følger definisjonen så direkte, pleier vi å si at algoritmen er
@@ -1314,7 +1318,7 @@ vi heller ikke få noen separasjonsnoder.
 </div>
 
 <pre class="example">
-set([])
+set()
 </pre>
 
 
@@ -1385,6 +1389,323 @@ True
 <pre class="example">
 False
 </pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgdc51ab0" class="outline-2">
+<h2 id="orgdc51ab0">Sterkt sammenhengende komponenter</h2>
+<div class="outline-text-2" id="text-orgdc51ab0">
+
+<div id="orgace40d7" class="figure">
+<p><object type="image/svg+xml" data="./forelesningsgraf2.svg" class="org-svg" width="400">
+Sorry, your browser does not support SVG.</object>
+</p>
+</div>
+
+<p>
+For å snakke om sterkt sammenhengende komponenter må vi gjøre det i
+konteksten av <i>rettede</i> grafer. I en sterkt sammenhengende komponent må alle
+noder ha en sti til alle andre noder i samme sterkt sammenhengende komponent.
+I tillegg må en sterkt sammenhengende komponent være <i>maksimal</i>, altså
+snakker vi om den største mulige sterkt sammenhengende komponenten.
+</p>
+
+<p>
+En viktig innsikt er at de sterkt sammenhengende komponentene av en graf \(G\)
+består av de samme nodene som i den <i>reverserte</i> grafen \(G_r\); den reverserte
+grafen består av de samme nodene, men der alle kanter er snudd. Altså for
+hver kant \((u, v) \in E\) erstattes med kanten \((v, u)\).
+</p>
+
+<p>
+Grafen vi ser på bildet ovenfor er en rettet graf som består av tre sterkt
+sammenhengende komponenter. Grafen kan skrives ned slik:
+</p>
+
+<pre class="example" id="orga55f85a">
+A B
+B C
+B E
+B F
+C D
+C G
+D C
+D H
+E A
+E F
+F G
+G F
+H D
+H G
+</pre>
+
+<p>
+La oss nå bygge denne grafen, men her ta høyde for at vi jobber med en graf
+som er rettet og uvektet.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #e45649;">def</span> <span style="color: #a626a4;">builddigraph</span>(lines):
+    <span style="color: #6a1868;">V</span> = <span style="color: #a626a4;">set</span>()
+    <span style="color: #6a1868;">E</span> = defaultdict(<span style="color: #a626a4;">set</span>)
+
+    <span style="color: #e45649;">for</span> line <span style="color: #e45649;">in</span> lines.splitlines():
+        <span style="color: #6a1868;">v</span>, <span style="color: #6a1868;">u</span> = line.strip().split()
+        V.add(v)
+        V.add(u)
+        E[v].add(u)
+
+    <span style="color: #e45649;">return</span> V, E
+</pre>
+</div>
+
+<p>
+La oss nå erstatte \(G\) med denne nye grafen. Igjen antar vi at beskrivelsen
+ovenfor er gitt i en variabel <code>lines</code>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #6a1868;">G</span> = builddigraph(lines)
+</pre>
+</div>
+
+<p>
+Og la oss tegne denne nye grafen, i likhet med den forrige.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #e45649;">def</span> <span style="color: #a626a4;">drawdigraph</span>(G, name):
+     <span style="color: #6a1868;">V</span>, <span style="color: #6a1868;">E</span> = G
+     <span style="color: #6a1868;">dot</span> = graphviz.Digraph()
+
+     <span style="color: #e45649;">for</span> u <span style="color: #e45649;">in</span> V:
+          dot.node(u)
+
+          <span style="color: #e45649;">for</span> v <span style="color: #e45649;">in</span> E[u]:
+               dot.edge(u, v)
+
+     dot.render(name, <span style="color: #a626a4;">format</span>=<span style="color: #50a14f;">'svg'</span>)
+
+drawdigraph(G, <span style="color: #50a14f;">'digraph'</span>)
+</pre>
+</div>
+
+
+<div id="org3aa8186" class="figure">
+<p><object type="image/svg+xml" data="./digraph.svg" class="org-svg">
+Sorry, your browser does not support SVG.</object>
+</p>
+</div>
+
+<p>
+Vi kommer til å få bruk for den reverserte grafen, så la oss skrive en
+hjelpeprosedyre for dette.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #e45649;">def</span> <span style="color: #a626a4;">reversegraph</span>(G):
+    <span style="color: #6a1868;">V</span>, <span style="color: #6a1868;">E</span> = G
+    <span style="color: #6a1868;">rE</span> = defaultdict(<span style="color: #a626a4;">set</span>)
+
+    <span style="color: #e45649;">for</span> u <span style="color: #e45649;">in</span> V:
+        <span style="color: #e45649;">for</span> v <span style="color: #e45649;">in</span> E[u]:
+            rE[v].add(u)
+    <span style="color: #e45649;">return</span> V, rE
+</pre>
+</div>
+
+<p>
+La oss sjekke om resultatet ser rimelig ut ved å tegne den.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python">drawdigraph(reversegraph(G), <span style="color: #50a14f;">'digraph_r'</span>)
+</pre>
+</div>
+
+
+<div id="org8965842" class="figure">
+<p><object type="image/svg+xml" data="./digraph_r.svg" class="org-svg">
+Sorry, your browser does not support SVG.</object>
+</p>
+</div>
+
+<p>
+Det er lurt å sjekke de to grafene, og forsikre seg selv om at de sterkt
+sammenhengende komponentene er de samme.
+</p>
+</div>
+
+<div id="outline-container-org0fef310" class="outline-3">
+<h3 id="org0fef310">DFS og topologisk sortering</h3>
+<div class="outline-text-3" id="text-org0fef310">
+<p>
+Vi har allerede sett en algoritme for topologisk sortering. Men nå som vi er
+nærmere kjent med dybde-først søk skal vi se at vi kan topologisk sortere
+noder kun ved hjelp av et dybde-først søk. Det er overraskende enkelt: gjør
+et dybde-først søk, der en node legges på en stack etter alle naboer er
+besøkt. Til slutt, vil den stacken være en topologisk sortering for grafen.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #e45649;">def</span> <span style="color: #a626a4;">dfsvisit</span>(G, u, visited, stack):
+    <span style="color: #6a1868;">V</span>, <span style="color: #6a1868;">E</span> = G
+    visited.add(u)
+    <span style="color: #e45649;">for</span> v <span style="color: #e45649;">in</span> E[u]:
+        <span style="color: #e45649;">if</span> v <span style="color: #e45649;">not</span> <span style="color: #e45649;">in</span> visited:
+            dfsvisit(G, v, visited, stack)
+    stack.append(u)
+
+<span style="color: #e45649;">def</span> <span style="color: #a626a4;">dfstopsort</span>(G):
+    <span style="color: #6a1868;">V</span>, <span style="color: #6a1868;">E</span> = G
+    <span style="color: #6a1868;">visited</span> = <span style="color: #a626a4;">set</span>()
+    <span style="color: #6a1868;">stack</span> = []
+    <span style="color: #e45649;">for</span> u <span style="color: #e45649;">in</span> V:
+        <span style="color: #e45649;">if</span> u <span style="color: #e45649;">not</span> <span style="color: #e45649;">in</span> visited:
+            dfsvisit(G, u, visited, stack)
+    <span style="color: #e45649;">return</span> stack
+</pre>
+</div>
+
+<p>
+Husk at topologisk sortering kun fungerer på asykliske grafer. Vi har ikke
+en slik for hånden, så vi etterlater å teste denne prosedyren som en oppgave
+til leseren.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgfc3efd0" class="outline-3">
+<h3 id="orgfc3efd0">Kosarajus algoritme</h3>
+<div class="outline-text-3" id="text-orgfc3efd0">
+<p>
+Algoritmen vi skal se på for sterkt sammenhengende komponenter er utrolig
+elegant, og bygger et par viktige innsikter. Den første har vi allerede
+etablert: de sterkt sammenhengende komponentene til en graf \(G\) er de samme
+som de sterkt sammenhengende komponentene til den reverserte grafen \(G_r\).
+Intuitivt kan vi tenke på en sterkt sammenhengende komponent som en sykel.
+</p>
+
+<p>
+En annen innsikt er at hvis vi ønsker å finne den sterkt sammenhengende
+komponenten for en node \(v \in V\), så er det tilstrekkelig å finne nodene
+som kan nås fra \(v\) i \(G\) (for eksempel ved et dybde-først søk), og finne
+nodene som kan nås fra \(v\) i den reverserte grafen \(G_r\). Nodene som kan nås
+fra \(v\) i både \(G\) og \(G_r\) utgjør den sterkt sammenhengende komponenten til
+\(v\). Vi kunne gjort dette for hver node \(v \in V\), og funnet de sterkt
+sammenhengende komponentene i \(O(|V|\cdot(|V| + |E|))\), men igjen vil vi
+finne en mer effektiv algoritme.
+</p>
+
+<p>
+Hvis vi anser hver sterkt sammenhengende komponent som en enkelt node (altså
+at vi anser det røde, grønne og lilla områdene i grafen ovenfor som noder),
+så får vi det vi kaller <i>komponentgrafen</i>. Denne grafen er garantert å ikke
+inneholde noen sykel, altså er komponentgrafen garantert å være asyklisk.
+Dersom to komponenter var en del av samme sykel, så kunne alle nodene i de
+to komponentene hatt en sti til hverandre; dette er en motsigelse, fordi
+hvis alle nodene fra to komponenter kan nå hverandre, så er de også nødt til
+å være i samme sterkt sammenhengende komponent.
+</p>
+
+<p>
+La oss anta at vi har den underliggende komponentgrafen. Merk at dette
+faller på sin egen urimelighet, fordi det er jo den vi ønsker å finne, men
+gå med på antagelsen inntil videre. Hvis vi gjør en <i>topologisk sortering</i>
+av komponentgrafen, så vet vi at den topologisk siste komponenten umulig kan
+ha en kant til noen andre komponenter. Den topologisk nest siste komponenten
+kan umulig ha en kant til andre komponenter enn den topologisk siste grafen,
+og så videre. Dette er den siste innsikten vi trenger for Kosaraju sin
+algoritme for sterkt sammenhengende komponenter.
+</p>
+
+<p>
+Algoritmen kan i korte trekk beskrives slik:
+</p>
+<ol class="org-ol">
+<li>Gjør et (fullt) dybde-først søk i en graf \(G\), der hver node legges på en
+stack etter alle naboer er besøkt (akkurat slik som <code>dfstopsort</code>).</li>
+<li>Konstruer den reverserte grafen \(G_r\)</li>
+<li>Gjør et nytt (fullt) dybde-først søk på \(G_r\), der det rekkefølgen i det
+fulle dybde-først søket er diktert av den reverserte stacken fra det
+første søket.</li>
+</ol>
+
+<p>
+I kode kan det uttrykkes slik (der vi benytter oss av <code>dfstopsort</code> og
+<code>dfsvisit</code>):
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #e45649;">def</span> <span style="color: #a626a4;">stronglyconnectedcomponents</span>(G):
+    <span style="color: #6a1868;">V</span>, <span style="color: #6a1868;">E</span> = G
+
+    <span style="color: #6a1868;">stack</span> = dfstopsort(G)
+
+    <span style="color: #6a1868;">Gr</span> = reversegraph(G)
+    <span style="color: #6a1868;">visited</span> = <span style="color: #a626a4;">set</span>()
+    <span style="color: #6a1868;">components</span> = []
+    <span style="color: #e45649;">for</span> u <span style="color: #e45649;">in</span> <span style="color: #a626a4;">reversed</span>(stack):
+        <span style="color: #e45649;">if</span> u <span style="color: #e45649;">not</span> <span style="color: #e45649;">in</span> visited:
+            <span style="color: #6a1868;">component</span> = []
+            dfsvisit(Gr, u, visited, component)
+            components.append(component)
+
+    <span style="color: #e45649;">return</span> components
+</pre>
+</div>
+
+<p>
+Det er viktig å presisere at <code>dfstopsort</code> ikke faktisk gjør en topologisk
+sortering av \(G\). Siden \(G\) inneholder sykler så har den heller ingen
+topologisk sortering. Det vi får er en topologisk sortering av den
+underliggende <i>komponentgrafen</i>. For hver node vi kaller <code>dfsvisit</code> på i den
+reverserte grafen, så vil vi alle nodene i den resulterende komponenten
+legges til i <code>visited</code> og ikke bli besøkt igjen. Den neste noden som besøkes
+vil tilhøre en topologisk tidligere komponent.
+</p>
+
+<p>
+Det siste som gjenstår er å sjekke at prosedyren fungerer på eksempel
+grafen.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python">stronglyconnectedcomponents(G)
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left">B</td>
+<td class="org-left">E</td>
+<td class="org-left">A</td>
+</tr>
+
+<tr>
+<td class="org-left">H</td>
+<td class="org-left">D</td>
+<td class="org-left">C</td>
+</tr>
+
+<tr>
+<td class="org-left">F</td>
+<td class="org-left">G</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>
