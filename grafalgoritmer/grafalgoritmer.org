@@ -603,10 +603,11 @@ måtte vi ha listet alle nodene også.
   Grafen som vi jobber med er /sammenhengende/. Det finnes altså en sti mellom
   alle par av noder i $G$. I mange anvendelser så ønsker man ikke bare at
   grafen skal være sammenhengende, men også at den skal være /bikonnektiv/. Det
-  betyr at hvis en node $v \in V$ fjernes fra grafen, så vil grafen fremdeles
-  være sammenhengende. Mer generelt sier vi at en graf er \(k\)-sammenhengende,
-  så hvis grafen forblir sammenhengende hvis man fjerner færre enn $k$ noder.
-  At en graf er bikonnektiv betyr det samme som at den er \(2\)-sammenhengende.
+  betyr at hvis en hvilken som helst node $v \in V$ fjernes fra grafen, så vil
+  grafen fremdeles være sammenhengende. Mer generelt sier vi at en graf er
+  \(k\)-sammenhengende, så hvis grafen forblir sammenhengende hvis man fjerner
+  færre enn $k$ noder. At en graf er bikonnektiv betyr det samme som at den er
+  \(2\)-sammenhengende.
 
   Dette er et nyttig begrep i anvendelser der det er et ønske om redundans. For
   eksempel kan du se for deg en graf som representerer Ruter sitt
@@ -626,7 +627,7 @@ måtte vi ha listet alle nodene også.
 
    Først trenger vi en hjelpeprosedyre for å fjerne en node. Merk at vi vil
    unngå «ødelegge» den opprinnelige grafen $G$, så vi må passe på å jobbe på
-   kopier av $V$ og $V$. Siden vi ikke vil bruke vektene her, så lar vi $w$
+   kopier av $V$ og $E$. Siden vi ikke vil bruke vektene her, så lar vi $w$
    forbli uendret (selv om dette er litt stygt).
 
    #+begin_src python :results none
@@ -684,11 +685,15 @@ måtte vi ha listet alle nodene også.
    #+RESULTS:
    : False
 
+   Ved å først fjerne en velvalgt node =C=, så kan vi se at grafen ikke lenger
+   er \(2\)-sammenhengende, som vil si at grafen $G$ ikke er
+   \(2\)-sammenhengende, men ikke \(3\)-sammenhengende.
+
 *** Kjøretidskompleksitet
 
-    For hver node $v \in V$, bygger den en ny graf $G'$ med $v$ (og tilhørende
-    kanter) er fjernet, og gjør et DFS-søk. DFS-søk har som kjent
-    $O(|V| + |E|)$ kjøretid, og det samme har =removenode=, siden grafen
+    For hver node $v \in V$, bygger =isbiconnected_naive= en ny graf $G'$ med
+    $v$ (og tilhørende kanter) er fjernet, og gjør et DFS-søk. DFS-søk har som
+    kjent $O(|V| + |E|)$ kjøretid, og det samme har =removenode=, siden grafen
     essensielt kopieres. Dette gjøres for /hver/ node $v \in V$, som gir oss
     $O(|V|\cdot(|V| + |E|))$ i kjøretid.
 
@@ -732,9 +737,9 @@ måtte vi ha listet alle nodene også.
    identifisere alle separasjonsnoder i grafen. Det ene tallet =depth[u]= (som
    kalles =index[u]= i forelesningsvideoen) forteller oss hvor langt unna $u$
    er fra roten i spenntreet. Det andre tallet =low[u]= angir den laveste
-   dybden som kan nås ved å følge etterkommere av $u$ og en tilbakekant. Dersom
-   ~depth[u] <= low[v]~ der $u$ er en node og $v$ er et barn av $u$, så er $u$
-   en separasjonsnode.
+   dybden som kan nås ved å følge én eller flere etterkommere av $u$ og
+   maksimalt en tilbakekant. Dersom ~depth[u] <= low[v]~ der $u$ er en node og
+   $v$ er et barn av $u$, så er $u$ en separasjonsnode.
 
    #+begin_src python :results none
    def separationnodes_rec(E, u, d, depth, low, seps):
@@ -835,7 +840,7 @@ måtte vi ha listet alle nodene også.
   snakker vi om den største mulige sterkt sammenhengende komponenten.
 
   En viktig innsikt er at de sterkt sammenhengende komponentene av en graf $G$
-  består av de samme nodene som i den /reverserte/ grafen $G_r$; den reverserte
+  består av de samme nodene som i den /reverserte/ grafen $G_r$. Den reverserte
   grafen består av de samme nodene, men der alle kanter er snudd. Altså for
   hver kant $(u, v) \in E$ erstattes med kanten $(v, u)$.
   
