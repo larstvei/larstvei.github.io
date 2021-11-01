@@ -1,0 +1,1544 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="nb" xml:lang="nb">
+<head>
+<!-- 2021-11-01 Mon 10:47 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hashing</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="Lars Tveito" />
+<link rel="stylesheet" type="text/css" href="Rethink/rethink.css"/>
+<script type="text/javascript" src="js/script.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.18/dist/katex.min.css" integrity="sha384-zTROYFVGOfTw7JV7KUu8udsvW2fx4lWOsCEDqhBreBwlHI4ioVRtmIvEThzJHGET" crossorigin="anonymous">
+<!-- The loading of KaTeX is deferred to speed up page rendering -->
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.13.18/dist/katex.min.js" integrity="sha384-GxNFqL3r9uRJQhR+47eDxuPoNE7yLftQM8LcxzgS4HT73tp970WS/wV5p8UzCOmb" crossorigin="anonymous"></script>
+
+<!-- To automatically render math in text elements, include the auto-render extension: -->
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.13.18/dist/contrib/auto-render.min.js" integrity="sha384-vZTG03m+2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+<link rel="stylesheet" type="text/css" href="Rethink/katex-style.css" />
+</head>
+<body>
+<div id="preamble" class="status">
+<h1 class="title">Hashing</h1>
+                                                  <p class="author">Lars Tveito</p>
+                                                  <p class="date">Høst 2021</p>
+</div>
+<div id="content">
+<p>
+Blant de mest effektive og anvendelige datastrukturene er basert på en teknikk
+som heter <i>hashing</i>. Dersom du bruker <code>HashMap</code> eller <code>HashSet</code> i Java, eller
+bruker <code>dict</code> eller <code>set</code> i Python så bruker du datastrukturer som er basert på
+hashing. I likhet med binære søketrær støtter disse datastrukturene innsetting,
+oppslag og sletting av nøkler, som assosieres til verdier. Vi skal lære hvordan
+slike datastrukturer som kan implementeres enda mer effektivt.
+</p>
+
+<p>
+Hashing kan brytes opp i tre problemer:
+</p>
+<ol class="org-ol">
+<li>Gjøre en vilkårlig verdi om til et tall som brukes som en indeks.</li>
+<li>Hvordan håndtere to verdier som får samme indeks.</li>
+<li>Opprettholde en ideell størrelse på arrayet.</li>
+</ol>
+
+<p>
+Vi skal se at vi oppnår det som kalles <i>amortisert</i> (eng: amortized) konstant
+tid på samtlige operasjoner.
+</p>
+
+<div id="outline-container-org80a2097" class="outline-2">
+<h2 id="org80a2097">Map</h2>
+<div class="outline-text-2" id="text-org80a2097">
+<p>
+Et map, eller en mapping, er en abstrakt datatype. Helt generelt assosierer
+en nøkkel \(k\) med nøyaktig én verdi \(v\).
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides" width="95%">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left"><object type="image/svg+xml" data="./map1.svg" class="org-svg">
+Sorry, your browser does not support SVG.</object></td>
+<td class="org-left"><object type="image/svg+xml" data="./map2.svg" class="org-svg">
+Sorry, your browser does not support SVG.</object></td>
+</tr>
+</tbody>
+</table>
+
+<p>
+Den abstrakte datatypen for map krever at vi kan sette inn, slå opp og slette
+elementer. Dette kan oppnås med lineær tid på alle operasjoner dersom vi
+implementerer et map ved hjelp av ordinære lenkede lister, der hvert element
+i listen er et par \((k, v)\). Vi har sett at binære søketrær kan gi oss
+logaritmisk tid på samtlige operasjoner, dersom vi antar at nøklene er totalt
+ordnet. Ved hjelp av hashing kan vi gjøre disse operasjonene enda raskere.
+</p>
+
+<p>
+Det er verdt å merke seg at vi kan implementere mengder som maps, der hver
+nøkkel en vilkårlig verdi (for eksempel <code>null</code>).
+</p>
+</div>
+
+<div id="outline-container-org4502b37" class="outline-3">
+<h3 id="org4502b37">Hashmaps</h3>
+<div class="outline-text-3" id="text-org4502b37">
+<p>
+Et hashmap er en måte å materialisere den abstrakte datatypen map. Vi bruker
+kun et enkelt array \(A\), sammen med en <i>hashfunksjon</i> \(h\). Hashfunksjonen
+konverterer en nøkkel \(k\) til et tall \(i\) der \(0 \leq i < |A|\). Vi en slik
+konvertering «å hashe».
+</p>
+
+<p>
+Som regel finnes det utrolig mange <i>mulige</i> nøkler. Det finnes for eksempel
+uendelig mange forskjellige strenger. Det er umulig å koke uendelig mange
+ting ned til \(|A|\) tall, uansett hva størrelsen på \(A\) er. Derfor vil er vi
+bundet til å få <i>kollisjoner</i>, altså at to ulike nøkler blir konvertert til
+det samme tallet \(i\). Vi skal se på to måter å håndtere kollisjoner på.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgf6019de" class="outline-2">
+<h2 id="orgf6019de">Hashfunksjoner</h2>
+<div class="outline-text-2" id="text-orgf6019de">
+<p>
+En <i>funksjon</i> returner samme output for et gitt input <i>hver gang</i>.<sup><a id="fnr.1" class="footref" href="#fn.1">1</a></sup> En
+hashfunksjon \(h\) får en nøkkel \(k\) og et positivt heltall \(N\) som input, og
+returnerer et positivt heltall slik at \(0 \leq h(k, N) < N\). Kravene til
+denne funksjonen er:
+</p>
+<ul class="org-ul">
+<li>Den må være <i>konsistent</i> (altså være en <i>funksjon</i>). Det vil si at samme
+input gir <i>alltid</i> samme output.</li>
+<li>Den må gi få <i>kollisjoner</i> (altså være godt distribuert). Det vil si at
+ulike input bør hashe til ulike output så ofte som mulig.</li>
+</ul>
+
+<p>
+Det vi ønsker er en funksjon som oppfører seg <i>tilsynelatende</i> tilfeldig
+(altså som et kall på <code>random</code>), men som garanterer samme svar hver gang.
+Ulike datastrukturer kan trenge egne hashfunksjoner. For heltall er det
+ganske enkelt; et tall hasher til seg selv. For strenger må vi tenke litt
+hardere.
+</p>
+</div>
+
+<div id="outline-container-org86f9ba7" class="outline-3">
+<h3 id="org86f9ba7">Hashfunksjon for strenger</h3>
+<div class="outline-text-3" id="text-org86f9ba7">
+<p>
+Vi skal se på to mulige hashfunksjoner for strenger, for å illustrere
+viktigheten av å velge en fornuftig hashfunksjon. Den første utfordringen er
+å koke strengen ned til et tall mellom \(0\) og \(N\). Den underliggende
+representasjonen av en streng er et array av positive heltall, der hvert
+heltall representerer en bokstav. I Python kan vi hente ut de underliggende
+tallene ved å kalle på <code>ord</code>. Her er et eksempel:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python">[<span style="color: #a626a4;">ord</span>(c) <span style="color: #e45649;">for</span> c <span style="color: #e45649;">in</span> <span style="color: #50a14f;">'algorithm'</span>]
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-right">97</td>
+<td class="org-right">108</td>
+<td class="org-right">103</td>
+<td class="org-right">111</td>
+<td class="org-right">114</td>
+<td class="org-right">105</td>
+<td class="org-right">116</td>
+<td class="org-right">104</td>
+<td class="org-right">109</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+Altså er <code>a</code> assosiert med tallet \(97\), <code>l</code> er assosiert med tallet \(108\) og
+så videre. Det viktige her er ikke hvilke bokstaver som er assosiert med
+hvilke tall, men at for alle bokstaver så det <i>finnes</i> det et tall bokstaven
+er assosiert med.
+</p>
+
+<p>
+En rimelig (men kanskje litt naiv) hashfunksjon for strenger er å ta summen
+av tallene bokstavene er assosiert med. For at tallet skal holde seg mellom
+\(0\) og \(N\) gir vi summen modulo \(N\).
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #e45649;">def</span> <span style="color: #a626a4;">hash_string_bad</span>(s, N):
+    <span style="color: #e45649;">return</span> <span style="color: #a626a4;">sum</span>(<span style="color: #a626a4;">ord</span>(c) <span style="color: #e45649;">for</span> c <span style="color: #e45649;">in</span> s) % N
+</pre>
+</div>
+
+<p>
+Dette er en gyldig hashfunksjon, men allikevel er den ikke veldig bra i
+praksis. Dette kommer delevis av at menneskeskapt data har en tendens til å
+inneholde symmetrier som gjenspeiles i summen av bokstavene. En annen grunn
+til at den ikke egner seg er at summen ikke vokser raskt nok; bare svært
+lange strenger kan hashe til store tall.
+</p>
+
+<p>
+Her er en bedre hashfunksjon for strenger, som er den som brukes i <a href="https://hg.openjdk.java.net/jdk7u/jdk7u6/jdk/file/8c2c5d63a17e/src/share/classes/java/lang/String.java#l1432">Java</a>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #e45649;">def</span> <span style="color: #a626a4;">hash_string_good</span>(s, N):
+    <span style="color: #6a1868;">h</span> = 0
+    <span style="color: #e45649;">for</span> c <span style="color: #e45649;">in</span> s:
+        <span style="color: #6a1868;">h</span> = 31 * h + <span style="color: #a626a4;">ord</span>(c)
+    <span style="color: #e45649;">return</span> h % N
+</pre>
+</div>
+
+<p>
+Den eneste forskjellen er at vi ganger den foreløpige hashen med \(31\) i hver
+iterasjon. Dette gjør at permutasjoner ikke lenger hasher til det samme
+elementet, og at tallet vokser veldig fort. Det er ikke noe veldig spesielt
+med tallet \(31\), men det er stort nok til at selv ganske korte strenger kan
+få rimelig store tall, det er et primtall, og det får plass i en byte.
+</p>
+</div>
+
+<div id="outline-container-org800086a" class="outline-4">
+<h4 id="org800086a">Sammenligning av hashfunksjoner</h4>
+<div class="outline-text-4" id="text-org800086a">
+<blockquote>
+<p>
+Merk at denne seksjonen viser hvordan vi kan illustrere hvor godt en
+hashfunksjon distribuerer. Måten vi lager illustrasjonene og bibliotekene
+som brukes er ikke relevant for pensum i IN2010, men tas med for å gi et
+komplett bilde av hva de resulterende illustrasjonene viser.
+</p>
+</blockquote>
+
+<p>
+La oss forsøke å illustrere forskjellen mellom disse to hashfunksjonene ved
+å undersøke hvor mange kollisjoner som forekommer ved bruk av henholdsvis
+<code>hash_string_bad</code> og <code>hash_string_good</code> på et stort datasett. Vi kan ta
+utgangspunkt i en ordliste som brukes av mange stavekontrollprogrammer og
+ligger lett tilgjengelig i <code>/usr/share/dict/words</code> på de fleste
+unix-systemer.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #e45649;">with</span> <span style="color: #a626a4;">open</span>(<span style="color: #50a14f;">'/usr/share/dict/words'</span>, <span style="color: #50a14f;">'r'</span>) <span style="color: #e45649;">as</span> f:
+    <span style="color: #6a1868;">words</span> = [line.strip() <span style="color: #e45649;">for</span> line <span style="color: #e45649;">in</span> f]
+</pre>
+</div>
+
+<p>
+Vi kan raskt sjekke hvor mange ord som ligger i ordlisten:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #a626a4;">len</span>(words)
+</pre>
+</div>
+
+<pre class="example">
+235886
+</pre>
+
+
+<p>
+Nå kan vi skrive en prosedyre som anvender en gitt hashfunksjon \(h\) med
+tilhørende \(N\) på alle strengene i en liste av strenger. Den returnerer en
+mapping fra posisjoner \(0 \leq i < N\) til antall strenger \(s\) i listen som
+hasher til \(i\). Vi kaller dette distribusjonen for hashfunksjonen \(h\). For
+å gjøre dette kan vi benytte oss av Python's <a href="https://docs.python.org/3/library/collections.html#collections.Counter"><code>Counter</code></a> datastruktur.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #e45649;">from</span> collections <span style="color: #e45649;">import</span> Counter
+
+<span style="color: #e45649;">def</span> <span style="color: #a626a4;">hash_distribution</span>(hashfn, N, strings):
+    <span style="color: #e45649;">return</span> Counter([hashfn(s, N) <span style="color: #e45649;">for</span> s <span style="color: #e45649;">in</span> strings])
+</pre>
+</div>
+
+<p>
+Vi kan vi lage en bitteliten tabell som viser hvordan hashfunksjonene
+distribuerer for \(N = 7\).
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #6a1868;">dist_bad</span> = hash_distribution(hash_string_bad, 7, words)
+<span style="color: #6a1868;">dist_good</span> = hash_distribution(hash_string_good, 7, words)
+<span style="color: #6a1868;">header</span> = [<span style="color: #50a14f;">'i'</span>, <span style="color: #50a14f;">'bad'</span>, <span style="color: #50a14f;">'good'</span>]
+<span style="color: #6a1868;">rows</span> = [[i, dist_bad[i], dist_good[i]] <span style="color: #e45649;">for</span> i <span style="color: #e45649;">in</span> <span style="color: #a626a4;">range</span>(7)]
+[header] + rows
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-right">i</td>
+<td class="org-right">bad</td>
+<td class="org-right">good</td>
+</tr>
+
+<tr>
+<td class="org-right">0</td>
+<td class="org-right">33934</td>
+<td class="org-right">33889</td>
+</tr>
+
+<tr>
+<td class="org-right">1</td>
+<td class="org-right">33564</td>
+<td class="org-right">33902</td>
+</tr>
+
+<tr>
+<td class="org-right">2</td>
+<td class="org-right">33770</td>
+<td class="org-right">33345</td>
+</tr>
+
+<tr>
+<td class="org-right">3</td>
+<td class="org-right">33805</td>
+<td class="org-right">33971</td>
+</tr>
+
+<tr>
+<td class="org-right">4</td>
+<td class="org-right">33571</td>
+<td class="org-right">33545</td>
+</tr>
+
+<tr>
+<td class="org-right">5</td>
+<td class="org-right">33497</td>
+<td class="org-right">33672</td>
+</tr>
+
+<tr>
+<td class="org-right">6</td>
+<td class="org-right">33745</td>
+<td class="org-right">33562</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+Hvis vi ser på antall strenger (\(235886\)) og deler det på \(N\) får vi
+\(\frac{235886}{7} = 33698\); det forteller oss at med en perfekt
+distribusjon ville alle posisjoner blitt hashet til \(33698\) ganger. Vi kan
+se at begge hashfunksjonene gir en ganske god distribusjon. For å få en
+bedre innsikt trenger vi å se på langt større \(N\), og da kan det være
+hensiktsmessig å lage en illustrasjon. Her bruker vi et enkelt bibliotek
+<a href="https://pypi.org/project/svgwrite/">svgwrite</a> for å lage <a href="https://en.wikipedia.org/wiki/Scalable_Vector_Graphics">SVG</a>-filer.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgadfbcf6" class="outline-4">
+<h4 id="orgadfbcf6">Lag illustrasjoner</h4>
+<div class="outline-text-4" id="text-orgadfbcf6">
+<p>
+La oss anta at \(N\) er et kvadrattall der \(s^2 = N\). Da kan vi lage et \(s
+    \times s\) bilde, der hvert punkt svarer til en posisjon \(i\). Gitt to
+positive heltall \(0 \leq x < s\) og \(0 \leq y < s\), så svarer \(x + y \cdot
+    s\) til en unik posisjon \(i\) (dette er en vanlig måte å konvertere mellom 1-
+og 2-dimensjonale arrayer). Vi lar hvert punkt fargelegges med styrke som
+er proporsjonal med hvor mange strenger som hasher til \(k\). Hvert punkt
+tegnes som en sirkel med radius \(r = \frac{1}{2}\).
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #e45649;">import</span> svgwrite
+<span style="color: #e45649;">from</span> svgwrite.shapes <span style="color: #e45649;">import</span> Circle
+
+<span style="color: #e45649;">def</span> <span style="color: #a626a4;">draw_distribution</span>(dist, N):
+    <span style="color: #6a1868;">s</span> = <span style="color: #a626a4;">int</span>(N**0.5)
+    <span style="color: #6a1868;">r</span> = 0.5
+    <span style="color: #6a1868;">svg</span> = svgwrite.Drawing(size=(s, s))
+    svg.viewbox(0, 0, s, s)
+    <span style="color: #6a1868;">m</span> = dist.most_common(1)[0][1]
+    <span style="color: #e45649;">for</span> y <span style="color: #e45649;">in</span> <span style="color: #a626a4;">range</span>(s):
+        <span style="color: #e45649;">for</span> x <span style="color: #e45649;">in</span> <span style="color: #a626a4;">range</span>(s):
+            <span style="color: #6a1868;">k</span> = x + y * s
+            <span style="color: #6a1868;">opacity</span> = dist[k]/m
+            svg.add(Circle((x + r, y + r), r,
+                           fill = <span style="color: #50a14f;">'purple'</span>,
+                           fill_opacity = opacity))
+    <span style="color: #e45649;">return</span> svg
+</pre>
+</div>
+
+<p>
+Nå kan vi tegne distribusjoner for den dårlige og den gode hashfunksjonen,
+og se hvordan de sammenlignes for ulike verdier av \(N\). Vi skriver en liten
+hjelpefunksjon for dette.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #e45649;">def</span> <span style="color: #a626a4;">drawhashfunctions</span>(Ns, hashfunctions, strings):
+    <span style="color: #e45649;">for</span> N <span style="color: #e45649;">in</span> Ns:
+        <span style="color: #e45649;">for</span> hashfn <span style="color: #e45649;">in</span> hashfunctions:
+            <span style="color: #6a1868;">name</span> = hashfn.<span style="color: #a626a4;">__name__</span> + <span style="color: #50a14f;">'_'</span> + <span style="color: #a626a4;">str</span>(N) + <span style="color: #50a14f;">'.svg'</span>
+            <span style="color: #6a1868;">dist</span> = hash_distribution(hashfn, N, strings)
+            <span style="color: #6a1868;">svg</span> = draw_distribution(dist, N)
+            svg.saveas(name)
+</pre>
+</div>
+
+<p>
+Vi kan kalle på denne for rimelige verdier av \(N\) og hashfunksjonene vi
+ønsker å vise.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python">drawhashfunctions([100, 400, 1024, 2500, 4096],
+                  [hash_string_bad, hash_string_good],
+                  words)
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orge6dd7d3" class="outline-4">
+<h4 id="orge6dd7d3">Resultater</h4>
+<div class="outline-text-4" id="text-orge6dd7d3">
+<p>
+For \(N = 100\) kan vi allerede se at det er større variasjon i distribusjonen
+for <code>hash_string_bad</code> enn <code>hash_string_good</code>.
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides" width="95%">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left"><object type="image/svg+xml" data="./hash_string_bad_100.svg" class="org-svg">
+Sorry, your browser does not support SVG.</object></td>
+<td class="org-left"><object type="image/svg+xml" data="./hash_string_good_100.svg" class="org-svg">
+Sorry, your browser does not support SVG.</object></td>
+</tr>
+</tbody>
+</table>
+
+<p>
+For \(N = 400\) blir forskjellen noe mer markant.
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides" width="95%">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left"><object type="image/svg+xml" data="./hash_string_bad_400.svg" class="org-svg">
+Sorry, your browser does not support SVG.</object></td>
+<td class="org-left"><object type="image/svg+xml" data="./hash_string_good_400.svg" class="org-svg">
+Sorry, your browser does not support SVG.</object></td>
+</tr>
+</tbody>
+</table>
+
+<p>
+For \(N = 1024\) ser vi helt tydelig at det hashes til noen nøkler mye oftere
+enn andre for <code>hash_string_bad</code>, men det er ingen slike mønstre for
+<code>hash_string_good</code>.
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides" width="95%">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left"><object type="image/svg+xml" data="./hash_string_bad_1024.svg" class="org-svg">
+Sorry, your browser does not support SVG.</object></td>
+<td class="org-left"><object type="image/svg+xml" data="./hash_string_good_1024.svg" class="org-svg">
+Sorry, your browser does not support SVG.</object></td>
+</tr>
+</tbody>
+</table>
+
+<p>
+For \(N = 2500\) kan vi identifisere nytt problem med <code>hash_string_bad</code>. Ingen
+ord hasher til et tall som blir større enn \(N\) (før vi anvender modulo), og
+dermed er det mange nøkler som aldri hashes til. Det vil resultere i ubrukte
+plasser i et array som brukes for a representere et hashmap.
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides" width="95%">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left"><object type="image/svg+xml" data="./hash_string_bad_2500.svg" class="org-svg">
+Sorry, your browser does not support SVG.</object></td>
+<td class="org-left"><object type="image/svg+xml" data="./hash_string_good_2500.svg" class="org-svg">
+Sorry, your browser does not support SVG.</object></td>
+</tr>
+</tbody>
+</table>
+
+<p>
+Til slutt kan vi se for \(N = 4096\) at problemet vedvarer for den dårlige
+hashfunksjonen, men den gode fortsetter å gi en jevn distribusjon.
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides" width="95%">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left"><object type="image/svg+xml" data="./hash_string_bad_4096.svg" class="org-svg">
+Sorry, your browser does not support SVG.</object></td>
+<td class="org-left"><object type="image/svg+xml" data="./hash_string_good_4096.svg" class="org-svg">
+Sorry, your browser does not support SVG.</object></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org6bf288e" class="outline-2">
+<h2 id="org6bf288e">Kollisjonshåndtering</h2>
+<div class="outline-text-2" id="text-org6bf288e">
+<p>
+Den overordnede idéen for å implementere en hashmap er å la hashmapet være
+representert som et array \(A\) av størrelse \(N\), og bruke en hashfunksjon
+\(h(k, N)\) til å angi indeksen for en gitt nøkkel \(k\). Selv hvis vi lar \(N\)
+være mye større enn antall elementer \(n\) som er lagret i hashmapet, så vil
+det kunne oppstå kollisjoner (altså to nøkler som sogner til samme indeks).
+Vi skal se to måter å håndtere slike konflikter på. Den ene går ut på å la
+hver posisjon i arrayet peke til en <i>liste</i> av nøkkel- og verdipar \((k, v)\).
+Denne teknikken kalles «separate chaining». Den andre teknikken går ut på å
+først forsøke å plassere \((k, v)\) på indeksen som er gitt av hashfunksjonen;
+dersom det ikke er ledig på den plassen, så prøver vi neste plass, og neste
+helt frem til vi finner en ledig plass. Denne teknikken kalles «linear
+probing».
+</p>
+
+<p>
+Felles for begge teknikkene er at effektiviteten blir svært dårlig dersom det
+oppstår <i>mange</i> kollisjoner. I det ekstreme (og helt usannsynlige) tilfellet
+der alle nøkler hasher til samme posisjon, så får vi lineær tid på alle
+operasjoner. Dette håndteres ved å sørge for at det til enhver tid er godt
+med plass i arrayet. Hvis \(n\) er antall elementer som lagres, og \(N\) er
+størrelsen på arrayet, så gir \(\frac{n}{N}\) det vi kaller en <i>load factor</i>.
+En vanlig strategi for å sørge for at det alltid er godt med plass er å doble
+størrelsen på arrayet når \(\frac{n}{N}\) overstiger \(0.75\).
+</p>
+
+<p>
+Vi kan lage en klasse <code>MyMap</code> som inneholder oppførselen som er felles for
+begge varianter. Den eksponerer en metode <code>ensurecapacity</code>, som dobler
+størrelsen på arrayet dersom det er for fullt. En slik størrelsesendring
+kalles en <i>rehash</i>, fordi alle nøkler må hashes på nytt med hensyn til en
+større \(N\), og plasseres tilbake i arrayet.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #e45649;">class</span> <span style="color: #986801;">MyMap</span>():
+    <span style="color: #6a1868;">LOAD_FACTOR_THRESHOLD</span> = 0.75
+
+    <span style="color: #e45649;">def</span> <span style="color: #a626a4;">__init__</span>(<span style="color: #e45649;">self</span>):
+        <span style="color: #e45649;">self</span>.n = 0
+        <span style="color: #e45649;">self</span>.N = 1
+        <span style="color: #e45649;">self</span>.A = [<span style="color: #b751b6;">None</span>] * <span style="color: #e45649;">self</span>.N
+
+    <span style="color: #e45649;">def</span> <span style="color: #a626a4;">__loadfactor</span>(<span style="color: #e45649;">self</span>):
+        <span style="color: #e45649;">return</span> <span style="color: #e45649;">self</span>.n / <span style="color: #e45649;">self</span>.N
+
+    <span style="color: #e45649;">def</span> <span style="color: #a626a4;">__rehash</span>(<span style="color: #e45649;">self</span>):
+        <span style="color: #6a1868;">kvs</span> = [(k, v) <span style="color: #e45649;">for</span> k, v <span style="color: #e45649;">in</span> <span style="color: #e45649;">self</span>]
+        <span style="color: #e45649;">self</span>.n = 0
+        <span style="color: #e45649;">self</span>.N *= 2
+        <span style="color: #e45649;">self</span>.A = [<span style="color: #b751b6;">None</span>] * <span style="color: #e45649;">self</span>.N
+        <span style="color: #e45649;">for</span> k, v <span style="color: #e45649;">in</span> kvs:
+            <span style="color: #e45649;">self</span>[k] = v
+
+    <span style="color: #e45649;">def</span> <span style="color: #a626a4;">ensurecapacity</span>(<span style="color: #e45649;">self</span>):
+        <span style="color: #e45649;">if</span> <span style="color: #e45649;">self</span>.__loadfactor() &gt;= <span style="color: #e45649;">self</span>.LOAD_FACTOR_THRESHOLD:
+            <span style="color: #e45649;">self</span>.__rehash()
+</pre>
+</div>
+
+<p>
+Merk at vi her antar at vi også implementerer en iterator for klassene som
+arver fra <code>MyMap</code> (i Java ville <code>MyMap</code> vært implementert som en abstrakt
+klasse, som hadde vært noe bedre objektorientert stil).
+</p>
+
+<p>
+I implementasjonene under vil vi bruke Python sin innebygde hashfunksjon
+<code>hash</code>, som fungerer på (nesten<sup><a id="fnr.2" class="footref" href="#fn.2">2</a></sup>) alle typer i Python, til fordel for de
+som ble implementert i forrige seksjon. Denne returnerer et tall uten hensyn
+til \(N\), så vi må selv ta modulo \(N\) av resultatet.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org4110e6f" class="outline-2">
+<h2 id="org4110e6f">Separate Chaining</h2>
+<div class="outline-text-2" id="text-org4110e6f">
+<p>
+Husk at idéen er å la hver posisjon i arrayet peke til en liste, og plassere
+</p>
+
+<p>
+nøkkel-/​verdiparene i den listen. Lister i denne konteksten kalles ofte
+<i>bøtter</i>. I stedet for å opprette mange tomme lister, lar vi heller hver
+posisjon i arrayet peke på <code>None</code>, og opprette en liste ved behov. Dersom
+det allerede finnes en verdi med samme nøkkel, så skal vi erstatte verdien.
+</p>
+
+<p>
+La oss lage et skall for et hashmap basert på separate chaining.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python" id="orgdb97acb"><span style="color: #e45649;">class</span> <span style="color: #986801;">SeparateChainingMap</span>(MyMap):
+
+    &lt;&lt;separate_chaining_insert&gt;&gt;
+
+
+    &lt;&lt;separate_chaining_get&gt;&gt;
+
+
+    &lt;&lt;separate_chaining_delete&gt;&gt;
+
+
+    &lt;&lt;separate_chaining_iter&gt;&gt;
+
+
+    &lt;&lt;separate_chaining_repr&gt;&gt;
+</pre>
+</div>
+
+<p>
+Syntaksen eksemplifisert ved <code>&lt;&lt;separate_chaining_insert&gt;&gt;</code> brukes som
+plassholder for kodeblokker vi skal skrive. Metodene kommer i de neste
+delseksjonene, og siste delseksjon for separate chaining inneholder den
+fulle implementasjonen.
+</p>
+</div>
+
+<div id="outline-container-org6003968" class="outline-4">
+<h4 id="org6003968">Innsetting</h4>
+<div class="outline-text-4" id="text-org6003968">
+<p>
+For innsetting av et nøkkel-/verdipar \((k, v)\) er strategien som følger:
+</p>
+<ul class="org-ul">
+<li>Passe på at det er nok plass (kalle på <code>ensurecapacity</code>).</li>
+<li>Finne indeksen \(i\) hvor nøkkel-/verdiparet skal plasseres.</li>
+<li>Sørge for at det er en bøtte vi kan putte nøkkel-/verdiparet i.</li>
+<li>Erstatte verdien hvis det er aktuelt.</li>
+<li>Legg til nøkkel-/verdiparet hvis nøkkelen ikke var i hashmapet fra før.</li>
+</ul>
+
+<p>
+Ved å kalle metoden <code>__setitem__</code>, så kan vi bruke Python sin <code>d[k] = v</code>
+syntaks, der <code>d</code> er en ordbok (eller i vårt tilfelle, en
+<code>SeparateChainingMap</code>).
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python" id="org240118a"><span style="color: #e45649;">def</span> <span style="color: #a626a4;">__setitem__</span>(<span style="color: #e45649;">self</span>, k, v):
+    <span style="color: #e45649;">self</span>.ensurecapacity()
+
+    <span style="color: #6a1868;">i</span> = <span style="color: #a626a4;">hash</span>(k) % <span style="color: #e45649;">self</span>.N
+
+    <span style="color: #e45649;">if</span> <span style="color: #e45649;">self</span>.A[i] == <span style="color: #b751b6;">None</span>:
+        <span style="color: #e45649;">self</span>.A[i] = []
+
+    <span style="color: #6a1868;">bucket</span> = <span style="color: #e45649;">self</span>.A[i]
+
+    <span style="color: #e45649;">for</span> j <span style="color: #e45649;">in</span> <span style="color: #a626a4;">range</span>(<span style="color: #a626a4;">len</span>(bucket)):
+        <span style="color: #6a1868;">kj</span>, <span style="color: #6a1868;">vj</span> = bucket[j]
+        <span style="color: #e45649;">if</span> kj == k:
+            <span style="color: #6a1868;">bucket</span>[j] = (k, v)
+            <span style="color: #e45649;">return</span>
+
+    <span style="color: #e45649;">self</span>.n += 1
+    bucket.append((k, v))
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org30ef315" class="outline-4">
+<h4 id="org30ef315">Oppslag</h4>
+<div class="outline-text-4" id="text-org30ef315">
+<p>
+Å finne verdien for en gitt nøkkel \(k\) i hashmapet følger i stor grad samme
+fremgangsmåte som innsetting, men er litt enklere. Vi finner bøtta \(k\) skal
+være i, og leter gjennom den. Dersom vi finner nøkkelen \(k\) skal den
+korresponderende verdien returneres.
+</p>
+
+<p>
+Ved å kalle metoden <code>__getitem__</code>, så kan vi bruke Python sin <code>d[k]</code>
+syntaks.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python" id="org2a8486d"><span style="color: #e45649;">def</span> <span style="color: #a626a4;">__getitem__</span>(<span style="color: #e45649;">self</span>, k):
+    <span style="color: #6a1868;">i</span> = <span style="color: #a626a4;">hash</span>(k) % <span style="color: #e45649;">self</span>.N
+    <span style="color: #6a1868;">bucket</span> = <span style="color: #e45649;">self</span>.A[i]
+
+    <span style="color: #e45649;">if</span> bucket == <span style="color: #b751b6;">None</span>:
+        <span style="color: #e45649;">return</span>
+
+    <span style="color: #e45649;">for</span> ki, v <span style="color: #e45649;">in</span> bucket:
+        <span style="color: #e45649;">if</span> ki == k:
+            <span style="color: #e45649;">return</span> v
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgbc1c0cb" class="outline-4">
+<h4 id="orgbc1c0cb">Sletting</h4>
+<div class="outline-text-4" id="text-orgbc1c0cb">
+<p>
+Igjen er det mye likt for sletting. Vi finner riktig bøtte for en gitt
+nøkkel \(k\), og sletter \((k, v)\) fra listen. Her gjøres dette ved hjelp av
+en <a href="https://docs.python.org/3/tutorial/datastructures.html#list-comprehensions">list comprehension</a>.
+</p>
+
+<p>
+Ved å kalle metoden <code>__delitem__</code>, så kan vi bruke Python sin <code>del d[k]</code>
+syntaks.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python" id="org34890c5"><span style="color: #e45649;">def</span> <span style="color: #a626a4;">__delitem__</span>(<span style="color: #e45649;">self</span>, k):
+    <span style="color: #6a1868;">i</span> = <span style="color: #a626a4;">hash</span>(k) % <span style="color: #e45649;">self</span>.N
+    <span style="color: #6a1868;">bucket</span> = <span style="color: #e45649;">self</span>.A[i]
+
+    <span style="color: #e45649;">if</span> bucket == <span style="color: #b751b6;">None</span>:
+        <span style="color: #e45649;">return</span>
+
+    <span style="color: #e45649;">self</span>.A[i] = [(ki, v) <span style="color: #e45649;">for</span> ki, v <span style="color: #e45649;">in</span> bucket <span style="color: #e45649;">if</span> ki != k]
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org4e65a3c" class="outline-4">
+<h4 id="org4e65a3c">Iterator</h4>
+<div class="outline-text-4" id="text-org4e65a3c">
+<p>
+Iteratoren for hashmapet kan skrives ved å gå gjennom arrayet, og gå
+gjennom hver (ikke-tomme) bøtte, og gi hvert nøkkel-/verdipar. For å få en
+iterator bruker vi <code>yield</code>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python" id="orgdc1ff8d"><span style="color: #e45649;">def</span> <span style="color: #a626a4;">__iter__</span>(<span style="color: #e45649;">self</span>):
+    <span style="color: #e45649;">for</span> bucket <span style="color: #e45649;">in</span> <span style="color: #e45649;">self</span>.A:
+        <span style="color: #e45649;">if</span> bucket:
+            <span style="color: #e45649;">for</span> kv <span style="color: #e45649;">in</span> bucket:
+                <span style="color: #e45649;">yield</span> kv
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgdc7934b" class="outline-4">
+<h4 id="orgdc7934b">Representasjon</h4>
+<div class="outline-text-4" id="text-orgdc7934b">
+<p>
+Til slutt er det lurt å implementere <code>__repr__</code>, som får Python til å
+printe vår implementasjon av hashmap på et lesbart format.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python" id="org4b50c28"><span style="color: #e45649;">def</span> <span style="color: #a626a4;">__repr__</span>(<span style="color: #e45649;">self</span>):
+    <span style="color: #6a1868;">kv_strs</span> = [f<span style="color: #50a14f;">'{k} &#8614; {v}'</span> <span style="color: #e45649;">for</span> k, v <span style="color: #e45649;">in</span> <span style="color: #a626a4;">iter</span>(<span style="color: #e45649;">self</span>)]
+    <span style="color: #e45649;">return</span> <span style="color: #50a14f;">'{'</span> + <span style="color: #50a14f;">', '</span>.join(kv_strs) + <span style="color: #50a14f;">'}'</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org6f0178d" class="outline-4">
+<h4 id="org6f0178d">Minitest</h4>
+<div class="outline-text-4" id="text-org6f0178d">
+<p>
+La oss sjekke om dette hashmapet faktisk kan holde på elementer slik vi
+forventer. Vi nøyer oss med å mappe bokstavene <code>a</code>, <code>b</code>, <code>c</code> og <code>d</code>, til
+henholdsvis <code>1</code>, <code>2</code>, <code>3</code> og <code>4</code>, og printer ut hashmapet mellom hver
+operasjon.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #6a1868;">d</span> = SeparateChainingMap()
+<span style="color: #6a1868;">d</span>[<span style="color: #50a14f;">'a'</span>] = 0
+<span style="color: #e45649;">print</span>(d)
+<span style="color: #6a1868;">d</span>[<span style="color: #50a14f;">'b'</span>] = 1
+<span style="color: #e45649;">print</span>(d)
+<span style="color: #6a1868;">d</span>[<span style="color: #50a14f;">'c'</span>] = 2
+<span style="color: #e45649;">print</span>(d)
+<span style="color: #6a1868;">d</span>[<span style="color: #50a14f;">'d'</span>] = 3
+<span style="color: #e45649;">print</span>(d)
+<span style="color: #e45649;">del</span> d[<span style="color: #50a14f;">'a'</span>]
+<span style="color: #e45649;">print</span>(d)
+<span style="color: #e45649;">del</span> d[<span style="color: #50a14f;">'b'</span>]
+<span style="color: #e45649;">print</span>(d)
+<span style="color: #e45649;">del</span> d[<span style="color: #50a14f;">'c'</span>]
+<span style="color: #e45649;">print</span>(d)
+<span style="color: #e45649;">del</span> d[<span style="color: #50a14f;">'d'</span>]
+<span style="color: #e45649;">print</span>(d)
+</pre>
+</div>
+
+<pre class="example">
+{a ↦ 0}
+{a ↦ 0, b ↦ 1}
+{a ↦ 0, b ↦ 1, c ↦ 2}
+{a ↦ 0, b ↦ 1, c ↦ 2, d ↦ 3}
+{b ↦ 1, c ↦ 2, d ↦ 3}
+{c ↦ 2, d ↦ 3}
+{d ↦ 3}
+{}
+</pre>
+
+
+<p>
+Det ser rimelig ut! Det er verdt å merke seg at elementene ikke kommer ut
+sortert etter nøkkel. Det er forventet, siden hashmaps ikke er ordnede. 
+</p>
+
+<div class="collapsible" id="org993971e">
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #e45649;">class</span> <span style="color: #986801;">SeparateChainingMap</span>(MyMap):
+
+    <span style="color: #e45649;">def</span> <span style="color: #a626a4;">__setitem__</span>(<span style="color: #e45649;">self</span>, k, v):
+        <span style="color: #e45649;">self</span>.ensurecapacity()
+
+        <span style="color: #6a1868;">i</span> = <span style="color: #a626a4;">hash</span>(k) % <span style="color: #e45649;">self</span>.N
+
+        <span style="color: #e45649;">if</span> <span style="color: #e45649;">self</span>.A[i] == <span style="color: #b751b6;">None</span>:
+            <span style="color: #e45649;">self</span>.A[i] = []
+
+        <span style="color: #6a1868;">bucket</span> = <span style="color: #e45649;">self</span>.A[i]
+
+        <span style="color: #e45649;">for</span> j <span style="color: #e45649;">in</span> <span style="color: #a626a4;">range</span>(<span style="color: #a626a4;">len</span>(bucket)):
+            <span style="color: #6a1868;">kj</span>, <span style="color: #6a1868;">vj</span> = bucket[j]
+            <span style="color: #e45649;">if</span> kj == k:
+                <span style="color: #6a1868;">bucket</span>[j] = (k, v)
+                <span style="color: #e45649;">return</span>
+
+        <span style="color: #e45649;">self</span>.n += 1
+        bucket.append((k, v))
+
+
+    <span style="color: #e45649;">def</span> <span style="color: #a626a4;">__getitem__</span>(<span style="color: #e45649;">self</span>, k):
+        <span style="color: #6a1868;">i</span> = <span style="color: #a626a4;">hash</span>(k) % <span style="color: #e45649;">self</span>.N
+        <span style="color: #6a1868;">bucket</span> = <span style="color: #e45649;">self</span>.A[i]
+
+        <span style="color: #e45649;">if</span> bucket == <span style="color: #b751b6;">None</span>:
+            <span style="color: #e45649;">return</span>
+
+        <span style="color: #e45649;">for</span> ki, v <span style="color: #e45649;">in</span> bucket:
+            <span style="color: #e45649;">if</span> ki == k:
+                <span style="color: #e45649;">return</span> v
+
+
+    <span style="color: #e45649;">def</span> <span style="color: #a626a4;">__delitem__</span>(<span style="color: #e45649;">self</span>, k):
+        <span style="color: #6a1868;">i</span> = <span style="color: #a626a4;">hash</span>(k) % <span style="color: #e45649;">self</span>.N
+        <span style="color: #6a1868;">bucket</span> = <span style="color: #e45649;">self</span>.A[i]
+
+        <span style="color: #e45649;">if</span> bucket == <span style="color: #b751b6;">None</span>:
+            <span style="color: #e45649;">return</span>
+
+        <span style="color: #e45649;">self</span>.A[i] = [(ki, v) <span style="color: #e45649;">for</span> ki, v <span style="color: #e45649;">in</span> bucket <span style="color: #e45649;">if</span> ki != k]
+
+
+    <span style="color: #e45649;">def</span> <span style="color: #a626a4;">__iter__</span>(<span style="color: #e45649;">self</span>):
+        <span style="color: #e45649;">for</span> bucket <span style="color: #e45649;">in</span> <span style="color: #e45649;">self</span>.A:
+            <span style="color: #e45649;">if</span> bucket:
+                <span style="color: #e45649;">for</span> kv <span style="color: #e45649;">in</span> bucket:
+                    <span style="color: #e45649;">yield</span> kv
+
+
+    <span style="color: #e45649;">def</span> <span style="color: #a626a4;">__repr__</span>(<span style="color: #e45649;">self</span>):
+        <span style="color: #6a1868;">kv_strs</span> = [f<span style="color: #50a14f;">'{k} &#8614; {v}'</span> <span style="color: #e45649;">for</span> k, v <span style="color: #e45649;">in</span> <span style="color: #a626a4;">iter</span>(<span style="color: #e45649;">self</span>)]
+        <span style="color: #e45649;">return</span> <span style="color: #50a14f;">'{'</span> + <span style="color: #50a14f;">', '</span>.join(kv_strs) + <span style="color: #50a14f;">'}'</span>
+</pre>
+</div>
+
+</div>
+
+<p>
+Klikk på kodeblokken ovenfor for å se hele implementasjonen av hashmap med
+separate chaining.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgb6a01d9" class="outline-2">
+<h2 id="orgb6a01d9">Linear Probing</h2>
+<div class="outline-text-2" id="text-orgb6a01d9">
+<p>
+Idéen bak linear probing er å se på \(i = h(k, N)\) som den ideelle posisjonen
+for en nøkkel \(k\), og hvis denne posisjonen er opptatt, så prøver vi neste
+posisjon \(i + 1 \mod N\), og så neste helt frem vi når en ledig posisjon.
+Merk at den siste posisjonen \(N - 1\) i arrayet sin neste er \(0\); vi modulo
+\(N\) for å alltid sørge for at vi holder oss innenfor grensene av arrayet.
+Når vi skal hente ut en verdi med nøkkel \(k\) vil vi igjen starte å lete på
+posisjonen \(i = h(k, N)\). Dersom vi finner et nøkkel-/verdipar med \(k\) som
+nøkkel kan vi returnere verdien \(v\). Dersom plassen er ledig kan vi
+konkludere med at nøkkelen ikke er i hashmapet. Dersom vi finner en nøkkel
+som er ulik \(k\), så kan vi lete videre på neste plass, og fortsette slik
+frem til vi finner \(k\) (og i så fall returnerer verdien) eller vi finner en
+ledig plass, og i så fall konkludere med at nøkkelen ikke er i hashmapet.
+</p>
+
+<p>
+Både insetting og oppslag er egentlig ganske rett frem med linear probing.
+Strategien med å starte på plass \(i = h(k, N)\) og lete etter neste frem til
+vi finner \(k\) eller en ledig plass er i grunn litt naiv. Det fungerer fordi
+at den eneste grunnen til at \(k\) ligger på en plass etter \(i\) er at det
+allerede lå en verdi på plass \(i\) da \(k\) ble lagt til; hvis de elementene
+som lå mellom \(i\) og der \(k\) ble lagt til fremdeles ligger der når vi skal
+søke etter \(k\), så fungerer alt som det skal. Et problem oppstår dersom vi
+skulle fjerne verdien som ligger på plass \(i\); da vil et oppslag på \(k\)
+avslutte, fordi plass \(i\) er ledig. Det betyr at ved sletting, så er vi nødt
+til å tette eventuelle «hull» som oppstår ved å fjerne et element. Vi ønsker
+å tette hullet med det første nøkkel-<i>verdiparet /etter</i> \(i\) som ville blitt
+plassert på plass \(i\) dersom det ble plassert i hashmapet nå som plass \(i\)
+er ledig. Det er nøyaktig de nøklene som \(k\) som hasher til en posisjon \(i\)
+eller «tidligere». Vi vil konkretisere hva «tidligere» betyr når vi jobber
+med modulo \(N\) i delseksjonen om sletting nedenfor.
+</p>
+
+<p>
+<a href="https://larstvei.github.io/linear-probing/">Denne interaktive visualiseringen</a> kan hjelpe for å bygge intuisjon for
+algoritmene for linear probing. Kort bruker-guide:
+</p>
+<ul class="org-ul">
+<li>Implementasjonen viser et hashset (altså lagrer vi kun nøkler, og ikke
+verdier).</li>
+<li>Nøklene er heltall.</li>
+<li>Hashfunksjonen som brukes er \(h(k, N) = k \mod N\).</li>
+<li>Feltet <code>random</code> kan overskrives med et heltall.</li>
+<li>Hver knapp operasjon har en én-bokstavs keybinding, indikert med en
+<span class="underline">u</span>​nderstrek under bokstaven det gjelder.</li>
+</ul>
+
+<p>
+La oss igjen lage et skall for et hashmap basert på linear probing. Den også
+arver fra <code>MyMap</code>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python" id="org92c357c"><span style="color: #e45649;">class</span> <span style="color: #986801;">LinearProbingMap</span>(MyMap):
+
+    &lt;&lt;linear_probing_insert&gt;&gt;
+
+
+    &lt;&lt;linear_probing_get&gt;&gt;
+
+
+    &lt;&lt;linear_probing_delete&gt;&gt;
+
+
+    &lt;&lt;linear_probing_fill_hole&gt;&gt;
+
+
+    &lt;&lt;linear_probing_iter&gt;&gt;
+
+
+    &lt;&lt;linear_probing_repr&gt;&gt;
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org6ef4f7f" class="outline-4">
+<h4 id="org6ef4f7f">Innsetting</h4>
+<div class="outline-text-4" id="text-org6ef4f7f">
+<p>
+For innsetting av et nøkkel-/verdipar \((k, v)\) er strategien som følger:
+</p>
+<ul class="org-ul">
+<li>Passe på at det er nok plass (kalle på <code>ensurecapacity</code>).</li>
+<li>Finne indeksen \(i\) hvor nøkkel-/verdiparet ideelt skal plasseres.</li>
+<li>Finne den første ledige plassen fra \(i\), og plassere \((k, v)\).</li>
+</ul>
+
+<p>
+Ledige plasser er indikert ved <code>None</code>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python" id="orgd38ec6d"><span style="color: #e45649;">def</span> <span style="color: #a626a4;">__setitem__</span>(<span style="color: #e45649;">self</span>, k, v):
+    <span style="color: #e45649;">self</span>.ensurecapacity()
+
+    <span style="color: #6a1868;">i</span> = <span style="color: #a626a4;">hash</span>(k) % <span style="color: #e45649;">self</span>.N
+
+    <span style="color: #e45649;">while</span> <span style="color: #e45649;">self</span>.A[i] != <span style="color: #b751b6;">None</span>:
+        <span style="color: #6a1868;">ki</span>, <span style="color: #6a1868;">_</span> = <span style="color: #e45649;">self</span>.A[i]
+        <span style="color: #e45649;">if</span> k == ki:
+            <span style="color: #e45649;">self</span>.A[i] = (k, v)
+            <span style="color: #e45649;">return</span>
+        <span style="color: #6a1868;">i</span> = (i + 1) % <span style="color: #e45649;">self</span>.N
+
+    <span style="color: #e45649;">self</span>.n += 1
+    <span style="color: #e45649;">self</span>.A[i] = (k, v)
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org80b210c" class="outline-4">
+<h4 id="org80b210c">Oppslag</h4>
+<div class="outline-text-4" id="text-org80b210c">
+<p>
+Oppslag følger i stor grad samme fremgangsmåte som innsetting. Vi starter
+på indeks \(i = h(k, N)\), sjekker om \(k\) ligger på plass \(i\). Hvis ikke,
+øker vi \(i\) (modulo \(N\)) så lenge vi ikke møter på et hull (representert
+ved <code>None</code>).
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python" id="orgaa54384"><span style="color: #e45649;">def</span> <span style="color: #a626a4;">__getitem__</span>(<span style="color: #e45649;">self</span>, k):
+    <span style="color: #6a1868;">i</span> = <span style="color: #a626a4;">hash</span>(k) % <span style="color: #e45649;">self</span>.N
+
+    <span style="color: #e45649;">while</span> <span style="color: #e45649;">self</span>.A[i] != <span style="color: #b751b6;">None</span>:
+        <span style="color: #6a1868;">ki</span>, <span style="color: #6a1868;">vi</span> = <span style="color: #e45649;">self</span>.A[i]
+        <span style="color: #e45649;">if</span> k == ki:
+            <span style="color: #e45649;">return</span> v
+        <span style="color: #6a1868;">i</span> = (i + 1) % <span style="color: #e45649;">self</span>.N
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org0f7ab64" class="outline-4">
+<h4 id="org0f7ab64">Sletting</h4>
+<div class="outline-text-4" id="text-org0f7ab64">
+<p>
+Igjen er strukturen mye av det samme. Vi må først finne nøkkelen \(k\),
+akkurat slik vi gjorde for oppslag. Hvis vi finner \(k\), så setter vi
+posisjonen i arrayet til <code>None</code>. Så kaller vi på <code>__fill_hole</code>, som
+defineres nedenfor.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python" id="org9f4deee"><span style="color: #e45649;">def</span> <span style="color: #a626a4;">__delitem__</span>(<span style="color: #e45649;">self</span>, k):
+    <span style="color: #6a1868;">i</span> = <span style="color: #a626a4;">hash</span>(k) % <span style="color: #e45649;">self</span>.N
+
+    <span style="color: #e45649;">while</span> <span style="color: #e45649;">self</span>.A[i] != <span style="color: #b751b6;">None</span>:
+        <span style="color: #6a1868;">ki</span>, <span style="color: #6a1868;">_</span> = <span style="color: #e45649;">self</span>.A[i]
+        <span style="color: #e45649;">if</span> k == ki:
+            <span style="color: #e45649;">self</span>.n -= 1
+            <span style="color: #e45649;">self</span>.A[i] = <span style="color: #b751b6;">None</span>
+            <span style="color: #e45649;">self</span>.__fill_hole(i)
+            <span style="color: #e45649;">return</span>
+        <span style="color: #6a1868;">i</span> = (i + 1) % <span style="color: #e45649;">self</span>.N
+</pre>
+</div>
+
+<p>
+Å «tette hullet» på plass \(i\) gjøres ved lete fra \(i + 1 \mod N\) frem til
+vi treffer et nytt hull eller finner en nøkkel som kan flyttes til plass
+\(i\). Dersom vi finner en slik nøkkel, så må vi rekursivt tette hullet som
+oppstår når vi flytter nøkkelen til plass \(i\).
+</p>
+
+<p>
+Det siste som gjenstår er å avgjøre om en nøkkel \(k\) kan flyttes til plass
+\(i\). Dette er tilfellet dersom \(k\) hasher til plassen \(i\) <i>eller en
+tidligere</i> posisjon. Anta at \(k\) ble funnet på posisjon \(i + s\), der \(s\) er
+avstanden til \(i\). Vi kan flytte \(k\) dersom \(k\) <i>ikke</i> hasher til en verdi
+mellom \(i+1\) og \(s\). Siden vi her regner med modulo er det ikke
+tilstrekkelig å sjekke om \(h(k, N) \leq i\).
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python" id="orgd929f23"><span style="color: #e45649;">def</span> <span style="color: #a626a4;">__fill_hole</span>(<span style="color: #e45649;">self</span>, i):
+    <span style="color: #6a1868;">s</span> = 1
+    <span style="color: #e45649;">while</span> <span style="color: #e45649;">self</span>.A[(i + s) % <span style="color: #e45649;">self</span>.N] != <span style="color: #b751b6;">None</span>:
+        <span style="color: #6a1868;">k</span>, <span style="color: #6a1868;">v</span> = <span style="color: #e45649;">self</span>.A[(i + s) % <span style="color: #e45649;">self</span>.N]
+        <span style="color: #6a1868;">j</span> = <span style="color: #a626a4;">hash</span>(k) % <span style="color: #e45649;">self</span>.N
+        <span style="color: #e45649;">if</span> <span style="color: #e45649;">not</span>(0 &lt; (j - i) % <span style="color: #e45649;">self</span>.N &lt;= s):
+            <span style="color: #e45649;">self</span>.A[i] = (k, v)
+            <span style="color: #e45649;">self</span>.A[(i + s) % <span style="color: #e45649;">self</span>.N] = <span style="color: #b751b6;">None</span>
+            <span style="color: #e45649;">self</span>.__fill_hole((i + s) % <span style="color: #e45649;">self</span>.N)
+            <span style="color: #e45649;">return</span>
+        <span style="color: #6a1868;">s</span> += 1
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgdc62da9" class="outline-4">
+<h4 id="orgdc62da9">Iterator</h4>
+<div class="outline-text-4" id="text-orgdc62da9">
+<p>
+Iteratoren for hashmapet kan skrives ved å gå gjennom arrayet, og gå
+gjennom hver (ikke-tomme) bøtte, og gi hvert nøkkel-/verdipar. For å få en
+iterator bruker vi <code>yield</code>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python" id="orga59df5d"><span style="color: #e45649;">def</span> <span style="color: #a626a4;">__iter__</span>(<span style="color: #e45649;">self</span>):
+    <span style="color: #e45649;">for</span> kv <span style="color: #e45649;">in</span> <span style="color: #e45649;">self</span>.A:
+        <span style="color: #e45649;">if</span> kv != <span style="color: #b751b6;">None</span>:
+            <span style="color: #e45649;">yield</span> kv
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org654ee9f" class="outline-4">
+<h4 id="org654ee9f">Representasjon</h4>
+<div class="outline-text-4" id="text-org654ee9f">
+<p>
+Til slutt er det lurt å implementere <code>__repr__</code>, som får Python til å
+printe vår implementasjon av hashmap på et lesbart format.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python" id="org1d3ce8c"><span style="color: #e45649;">def</span> <span style="color: #a626a4;">__repr__</span>(<span style="color: #e45649;">self</span>):
+    <span style="color: #6a1868;">kv_strs</span> = [f<span style="color: #50a14f;">'{k} &#8614; {v}'</span> <span style="color: #e45649;">for</span> k, v <span style="color: #e45649;">in</span> <span style="color: #a626a4;">iter</span>(<span style="color: #e45649;">self</span>)]
+    <span style="color: #e45649;">return</span> <span style="color: #50a14f;">'{'</span> + <span style="color: #50a14f;">', '</span>.join(kv_strs) + <span style="color: #50a14f;">'}'</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org683bd6c" class="outline-4">
+<h4 id="org683bd6c">Minitest</h4>
+<div class="outline-text-4" id="text-org683bd6c">
+<p>
+La oss sjekke om dette hashmapet faktisk kan holde på elementer slik vi
+forventer. Vi nøyer oss med å mappe bokstavene <code>a</code>, <code>b</code>, <code>c</code> og <code>d</code>, til
+henholdsvis <code>1</code>, <code>2</code>, <code>3</code> og <code>4</code>, og printer ut hashmapet mellom hver
+operasjon.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #6a1868;">d</span> = LinearProbingMap()
+<span style="color: #6a1868;">d</span>[<span style="color: #50a14f;">'a'</span>] = 0
+<span style="color: #e45649;">print</span>(d)
+<span style="color: #6a1868;">d</span>[<span style="color: #50a14f;">'b'</span>] = 1
+<span style="color: #e45649;">print</span>(d)
+<span style="color: #6a1868;">d</span>[<span style="color: #50a14f;">'c'</span>] = 2
+<span style="color: #e45649;">print</span>(d)
+<span style="color: #6a1868;">d</span>[<span style="color: #50a14f;">'d'</span>] = 3
+<span style="color: #e45649;">print</span>(d)
+<span style="color: #e45649;">del</span> d[<span style="color: #50a14f;">'a'</span>]
+<span style="color: #e45649;">print</span>(d)
+<span style="color: #e45649;">del</span> d[<span style="color: #50a14f;">'b'</span>]
+<span style="color: #e45649;">print</span>(d)
+<span style="color: #e45649;">del</span> d[<span style="color: #50a14f;">'c'</span>]
+<span style="color: #e45649;">print</span>(d)
+<span style="color: #e45649;">del</span> d[<span style="color: #50a14f;">'d'</span>]
+<span style="color: #e45649;">print</span>(d)
+</pre>
+</div>
+
+<pre class="example">
+{a ↦ 0}
+{a ↦ 0, b ↦ 1}
+{c ↦ 2, a ↦ 0, b ↦ 1}
+{d ↦ 3, a ↦ 0, c ↦ 2, b ↦ 1}
+{d ↦ 3, c ↦ 2, b ↦ 1}
+{c ↦ 2, d ↦ 3}
+{d ↦ 3}
+{}
+</pre>
+
+
+<p>
+Det ser fint ut!
+</p>
+
+<div class="collapsible" id="org6183e91">
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #e45649;">class</span> <span style="color: #986801;">LinearProbingMap</span>(MyMap):
+
+    <span style="color: #e45649;">def</span> <span style="color: #a626a4;">__setitem__</span>(<span style="color: #e45649;">self</span>, k, v):
+        <span style="color: #e45649;">self</span>.ensurecapacity()
+
+        <span style="color: #6a1868;">i</span> = <span style="color: #a626a4;">hash</span>(k) % <span style="color: #e45649;">self</span>.N
+
+        <span style="color: #e45649;">while</span> <span style="color: #e45649;">self</span>.A[i] != <span style="color: #b751b6;">None</span>:
+            <span style="color: #6a1868;">ki</span>, <span style="color: #6a1868;">_</span> = <span style="color: #e45649;">self</span>.A[i]
+            <span style="color: #e45649;">if</span> k == ki:
+                <span style="color: #e45649;">self</span>.A[i] = (k, v)
+                <span style="color: #e45649;">return</span>
+            <span style="color: #6a1868;">i</span> = (i + 1) % <span style="color: #e45649;">self</span>.N
+
+        <span style="color: #e45649;">self</span>.n += 1
+        <span style="color: #e45649;">self</span>.A[i] = (k, v)
+
+
+    <span style="color: #e45649;">def</span> <span style="color: #a626a4;">__getitem__</span>(<span style="color: #e45649;">self</span>, k):
+        <span style="color: #6a1868;">i</span> = <span style="color: #a626a4;">hash</span>(k) % <span style="color: #e45649;">self</span>.N
+
+        <span style="color: #e45649;">while</span> <span style="color: #e45649;">self</span>.A[i] != <span style="color: #b751b6;">None</span>:
+            <span style="color: #6a1868;">ki</span>, <span style="color: #6a1868;">vi</span> = <span style="color: #e45649;">self</span>.A[i]
+            <span style="color: #e45649;">if</span> k == ki:
+                <span style="color: #e45649;">return</span> v
+            <span style="color: #6a1868;">i</span> = (i + 1) % <span style="color: #e45649;">self</span>.N
+
+
+    <span style="color: #e45649;">def</span> <span style="color: #a626a4;">__delitem__</span>(<span style="color: #e45649;">self</span>, k):
+        <span style="color: #6a1868;">i</span> = <span style="color: #a626a4;">hash</span>(k) % <span style="color: #e45649;">self</span>.N
+
+        <span style="color: #e45649;">while</span> <span style="color: #e45649;">self</span>.A[i] != <span style="color: #b751b6;">None</span>:
+            <span style="color: #6a1868;">ki</span>, <span style="color: #6a1868;">_</span> = <span style="color: #e45649;">self</span>.A[i]
+            <span style="color: #e45649;">if</span> k == ki:
+                <span style="color: #e45649;">self</span>.n -= 1
+                <span style="color: #e45649;">self</span>.A[i] = <span style="color: #b751b6;">None</span>
+                <span style="color: #e45649;">self</span>.__fill_hole(i)
+                <span style="color: #e45649;">return</span>
+            <span style="color: #6a1868;">i</span> = (i + 1) % <span style="color: #e45649;">self</span>.N
+
+
+    <span style="color: #e45649;">def</span> <span style="color: #a626a4;">__fill_hole</span>(<span style="color: #e45649;">self</span>, i):
+        <span style="color: #6a1868;">s</span> = 1
+        <span style="color: #e45649;">while</span> <span style="color: #e45649;">self</span>.A[(i + s) % <span style="color: #e45649;">self</span>.N] != <span style="color: #b751b6;">None</span>:
+            <span style="color: #6a1868;">k</span>, <span style="color: #6a1868;">v</span> = <span style="color: #e45649;">self</span>.A[(i + s) % <span style="color: #e45649;">self</span>.N]
+            <span style="color: #6a1868;">j</span> = <span style="color: #a626a4;">hash</span>(k) % <span style="color: #e45649;">self</span>.N
+            <span style="color: #e45649;">if</span> <span style="color: #e45649;">not</span>(0 &lt; (j - i) % <span style="color: #e45649;">self</span>.N &lt;= s):
+                <span style="color: #e45649;">self</span>.A[i] = (k, v)
+                <span style="color: #e45649;">self</span>.A[(i + s) % <span style="color: #e45649;">self</span>.N] = <span style="color: #b751b6;">None</span>
+                <span style="color: #e45649;">self</span>.__fill_hole((i + s) % <span style="color: #e45649;">self</span>.N)
+                <span style="color: #e45649;">return</span>
+            <span style="color: #6a1868;">s</span> += 1
+
+
+    <span style="color: #e45649;">def</span> <span style="color: #a626a4;">__iter__</span>(<span style="color: #e45649;">self</span>):
+        <span style="color: #e45649;">for</span> kv <span style="color: #e45649;">in</span> <span style="color: #e45649;">self</span>.A:
+            <span style="color: #e45649;">if</span> kv != <span style="color: #b751b6;">None</span>:
+                <span style="color: #e45649;">yield</span> kv
+
+
+    <span style="color: #e45649;">def</span> <span style="color: #a626a4;">__repr__</span>(<span style="color: #e45649;">self</span>):
+        <span style="color: #6a1868;">kv_strs</span> = [f<span style="color: #50a14f;">'{k} &#8614; {v}'</span> <span style="color: #e45649;">for</span> k, v <span style="color: #e45649;">in</span> <span style="color: #a626a4;">iter</span>(<span style="color: #e45649;">self</span>)]
+        <span style="color: #e45649;">return</span> <span style="color: #50a14f;">'{'</span> + <span style="color: #50a14f;">', '</span>.join(kv_strs) + <span style="color: #50a14f;">'}'</span>
+</pre>
+</div>
+
+</div>
+
+<p>
+Klikk på kodeblokken ovenfor for å se hele implementasjonen av hashmap med
+linear probing.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org1cee5f9" class="outline-2">
+<h2 id="org1cee5f9">Testing</h2>
+<div class="outline-text-2" id="text-org1cee5f9">
+<blockquote>
+<p>
+Testing er ikke en del av pensum i IN2010, og denne seksjonen er mest for de
+spesielt interesserte.
+</p>
+</blockquote>
+
+<p>
+For å teste hashmapimpementasjonene, kan vi bruke et bibliotek som heter
+<a href="https://hypothesis.readthedocs.io/en/latest/">Hypothesis</a>. I stedet for å skrive mange tester for hånd, der vi prøver å
+finne på mulige grensetilfeller, kan vi bruke Hypothesis til å generere
+tester for oss. Dette kalles «property-based testing». Våre
+hashmapimpementasjoner kan testes opp mot Python's innebygde <code>dict</code> siden de
+skal støtte de samme operasjonene.
+</p>
+
+<p>
+For hashmap ligger alle utfordringene i hvordan nøklene behandles. Verdiene
+som lagres sammen med nøkkelen spiller ingen rolle for algoritmene, og derfor
+er det logikken rund nøklene som har behov for testing.
+</p>
+
+<p>
+Vi setter opp et enkelt testscenario:
+</p>
+<ul class="org-ul">
+<li>Ta en liste med nøkler som input, der nøklene er heltall.</li>
+<li>Sett inn hver nøkkel i hashmapet med verdi \(1\) (valgt vilkårlig).</li>
+<li>Slett hver hver nøkkel fra hashmapet.</li>
+</ul>
+<p>
+Vi gjør dette for en <code>SeparateChainingMap</code>, en <code>LinearProbingMap</code> og en
+<code>dict</code>. Mellom hvert steg sjekker vi at alle hashmapene inneholder de samme
+nøklene.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #e45649;">import</span> hypothesis <span style="color: #e45649;">as</span> hyp
+<span style="color: #e45649;">import</span> hypothesis.strategies <span style="color: #e45649;">as</span> st
+
+<span style="color: #986801;">@hyp.given</span>(st.lists(st.integers()))
+<span style="color: #986801;">@hyp.settings</span>(max_examples=1000)
+<span style="color: #e45649;">def</span> <span style="color: #a626a4;">test_hashmaps</span>(keys):
+    <span style="color: #6a1868;">ds</span> = SeparateChainingMap()
+    <span style="color: #6a1868;">dl</span> = LinearProbingMap()
+    <span style="color: #6a1868;">reference</span> = <span style="color: #a626a4;">dict</span>()
+
+    <span style="color: #e45649;">for</span> key <span style="color: #e45649;">in</span> keys:
+        <span style="color: #6a1868;">ds</span>[key] = 1
+        <span style="color: #6a1868;">dl</span>[key] = 1
+        <span style="color: #6a1868;">reference</span>[key] = 1
+        <span style="color: #6a1868;">ds_ks</span> = <span style="color: #a626a4;">set</span>([k <span style="color: #e45649;">for</span> k, v <span style="color: #e45649;">in</span> ds])
+        <span style="color: #6a1868;">dl_ks</span> = <span style="color: #a626a4;">set</span>([k <span style="color: #e45649;">for</span> k, v <span style="color: #e45649;">in</span> dl])
+        <span style="color: #6a1868;">reference_ks</span> = <span style="color: #a626a4;">set</span>(reference.keys())
+        <span style="color: #e45649;">assert</span>(ds_ks == dl_ks == reference_ks)
+
+    <span style="color: #e45649;">for</span> key <span style="color: #e45649;">in</span> keys:
+        <span style="color: #e45649;">del</span> ds[key]
+        <span style="color: #e45649;">del</span> dl[key]
+        <span style="color: #e45649;">if</span> key <span style="color: #e45649;">in</span> reference_ks:
+            <span style="color: #e45649;">del</span> reference[key]
+        <span style="color: #6a1868;">ds_ks</span> = <span style="color: #a626a4;">set</span>([k <span style="color: #e45649;">for</span> k, v <span style="color: #e45649;">in</span> ds])
+        <span style="color: #6a1868;">dl_ks</span> = <span style="color: #a626a4;">set</span>([k <span style="color: #e45649;">for</span> k, v <span style="color: #e45649;">in</span> dl])
+        <span style="color: #6a1868;">reference_ks</span> = <span style="color: #a626a4;">set</span>(reference.keys())
+        <span style="color: #e45649;">assert</span>(ds_ks == dl_ks == reference_ks)
+</pre>
+</div>
+
+<p>
+Etter vi har definert denne testfunksjonen (med litt Hypothesis-magi), får vi
+en randomisert testfunksjon <code>test_hashmaps</code>. Når vi kaller på denne vil den
+generere 1000 tester, som er langt flere enn vi ville klart å skrive for hånd.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python">test_hashmaps()
+</pre>
+</div>
+
+<p>
+Hvis funksjonen kjører uten å klage, så betyr det at det ikke ble funnet noe
+feil. Da kan vi være langt mer sikre på at denne implementasjonen er korrekt!
+</p>
+
+<blockquote>
+<p>
+Det er viktig å legge til at første gang koden ble testet, så ble det funnet
+et moteksempel. Hypothesis genererte listen <code>[0, 1, 4]</code> som trigget en feil i
+<code>__fill_hole</code> i linear probing. Feilen lå på siste linje, der <code>i</code> ble
+inkrementert i stedet for <code>s</code>. Slik feil er fort gjort, og ikke alltid så
+lett å finne. En ofte større utfordring er å finne en <i>liten</i> test som
+trigger feilen. Hypothesis bruker strategier for å finne et så lite testcase
+som mulig.
+</p>
+</blockquote>
+</div>
+</div>
+
+<div id="outline-container-org91b3c04" class="outline-2">
+<h2 id="org91b3c04">En uformell kjøretidsanalyse</h2>
+<div class="outline-text-2" id="text-org91b3c04">
+<p>
+Ved å gjøre en ordinær kjøretidsanalyse vil vi se på hvor mange steg
+algoritmene vil bruke under verst tenkelige omstendigheter (altså, en verste
+tilfelle analyse). Hvis vi gjør det for separate chaining og linear probing,
+så er det ganske enkelt å se at alle operasjoner har \(O(n)\) kjøretid, der \(n\)
+er antall elementer i datastrukturen. Det er tilstrekkelig å anta at alle \(n\)
+elementer hasher til samme posisjon; for separate chaining vil det bety at vi
+essesielt har implementert hashmaps som en lenket liste; for linear probing
+betyr det at vi essensielt har implementert et hashmap som et uordnet array
+(som dynamisk øker størrelsen på arrayet ved behov).
+</p>
+
+<p>
+Allikevel påstår vi at hashmaps er en <i>svært effektiv</i> implementasjon av
+mappinger (og mengder). Den eneste måten det kan stemme på er at en verste
+tilfelle analyse med store \(O\)-notasjon ikke alltid gir et fullstendig
+bilde. Det har vi også prøvd å formidle: Store \(O\)-notasjon gir <i>ofte</i> en
+god indikasjon på om en algoritme er effektiv eller ikke, men notasjonen lar
+oss også abstrahere vekk detaljer som <i>kan</i> være vesentlige.
+</p>
+
+<p>
+For å gjøre en formell analyse av datastrukturer som bruker hashing snakker
+man ofte om <i>gjennomsnittlig amortisert</i> tid. Å utføre analyser som dette er
+utenfor pensum i IN2010, men la oss prøve å forstå hva det betyr på et
+overordnet nivå.
+</p>
+
+<p>
+Det verste tilfellet for alle operasjoner kan lett fremprovoseres ved å velge
+en forferdelig dårlig hashfunksjon; det kan også fremprovoseres med en god
+hashfunksjon og helt vanvittig uflaks. Men vi har sett at vi kan lage
+hashfunksjoner som distribuerer svært godt, så la oss heller anta at vi har
+en god hashfunksjon og at nøklene vi skal lagre er tilfeldig distribuert.
+</p>
+
+<p>
+Da har vi at sjansen for at en nøkkel \(k\) hasher til \(i\) er \(\frac{1}{N}\)
+(altså er det like stor sjanse for at \(k\) hasher til \(i\) som til alle andre
+posisjoner). Sjansen for at vi har mange nøkler \(k_1, k_2, \dots, k_n\) som
+alle hasher til \(i\) blir \(\overbrace{\frac{1}{N} \cdot \frac{1}{N} \cdots
+  \frac{1}{N}}^n = (\frac{1}{N})^n\). Dette tallet blir veldig lite veldig fort,
+som er en annen måte å si at sjansen for at dette skjer er forsvinnende
+liten.
+</p>
+
+<p>
+Generelt så er sjansen for kollisjoner liten så lenge det er god plass i
+arrayet; ethvert som arrayet fylles opp, så er sjansen for kollisjon stor,
+men sjansen for at kollisjonene oppstår på de samme posisjonene er fremdeles
+liten. Med andre ord kan vi bruke statistiske metoder for å gi svært gode
+argumenter for at listene i separate chaining vil være svært korte, og for
+linear probing er avstanden mellom der en nøkkel hashes til og posisjonen den
+lagres på er svært kort (og reduseres til en konstant hvis setter en
+begrensning på load factoren). Det siste som gjenstår for å forstå hvorfor
+hashmaps er raske, er å snakke om rehashing.
+</p>
+
+<p>
+Når arrayet blir for fullt gjør vi en rehash, altså konstruerer et nytt array
+og setter inn alle elementene på nytt. Dette er jo definitivt lineær tid! Det
+er ingen måte å argumentere for at vi kan slippe unna med noe lavere enn det.
+Siden vi vil ha kall på <i>insert</i> som bruker lineær tid, vil igjen en verste
+tilfelle analyse tilsi at innsetting i hashmaps er i \(O(n)\).
+</p>
+
+<p>
+En amortisert analyse ber deg heller ta følgende perspektiv: Ja, vi har et
+lineært antall operasjoner som må gjøres hver gang arrayet blir fordoblet.
+Anta nå at det krever \(c \cdot n\) operasjoner for en rehashing, der \(c\) er en
+konstant. Men hva hvis vi heller sier at hvert av kallene som ledet opp til
+fordoblingen <i>deler</i> på resursene som fører til fordoblingen av arrayet. Det
+er ca. \(n\) kall på <i>insert</i> som ledet fordoblingen, så hva hvis hvert av de
+kallene gjorde \(c\) flere operasjoner enn de opprinnelig gjorde? Jo, da hadde
+de gjort et <i>konstant</i> antall flere operasjoner, og fra store \(O\) analyse
+kjenner vi at \(O(1 + c) = O(1)\) når \(c\) er en konstant. Altså vil hvert av
+kallene på insert fremdeles være i konstant tid!
+</p>
+
+<p>
+En viktig konsekvens av dette er at en innsetting i et hashmap vil være
+ineffektiv en sjelden gang, og det bilr sjeldnere og sjeldnere ettersom
+antall elementer vokser. For noen applikasjoner kan dette være vesentlig, for
+eksempel i et spill, der en rehash kanskje kan føre til latens.
+</p>
+
+<p>
+For å oppsummere kan vi si at alle operasjoner for hashmaps har \(O(n)\) i en
+verste tilfelle kjøretidsanalyse. Men ved å anta en god hashfunsjon får vi at
+<i>gjennomsnittlig</i> er hver operasjon i \(O(1)\), med unntak av kall som fører
+til rehashing. Hvis vi videre tenker at vi kan fordele kjøretidskompleksitet
+over alle kallene, så får vi gjennomsnittlig \(O(1)\) <i>amortisert</i>
+kjøretidskompleksitet på alle operasjoner.
+</p>
+</div>
+</div>
+<div id="footnotes">
+<h2 class="footnotes">Fotnoter: </h2>
+<div id="text-footnotes">
+
+<div class="footdef"><sup><a id="fn.1" class="footnum" href="#fnr.1">1</a></sup> <div class="footpara"><p class="footpara">
+Faktisk er en funksjon og en mapping akkurat det samme:
+</p>
+<ul class="org-ul">
+<li>en funksjon tar et input og returnerer et output;</li>
+<li>en annen måte å si det samme er at vi relaterer et input til et output;</li>
+<li>som igjen er det samme som at vi assosierer et input til et output;</li>
+<li>som igjen er det samme som at vi assosierer en nøkkel til en verdi.</li>
+</ul>
+<p class="footpara">
+Vi bruker litt ulike begreper avhengig av hva det er vi ønsker å formidle. For
+funksjoner er det vanlig at vi har en effektiv måte å <i>beregne</i> hva output skal
+være for et gitt input. For mappinger er det vanligere at vi eksplisitt lister
+opp hva som skal assosieres til hva, slik vi gjør når vi putter ting inn i et
+hashmap.
+</p></div></div>
+
+<div class="footdef"><sup><a id="fn.2" class="footnum" href="#fnr.2">2</a></sup> <div class="footpara"><p class="footpara">
+Python støtter ikke hashing av <i>muterbare</i> datastrukturer, som lister og
+ordbøker. Det er fordi hashen bestemmes av verdiene i datastrukturen, som gjør
+at de ikke kan ha en stabil hash over tid.
+</p></div></div>
+
+
+</div>
+</div></div>
+</body>
+</html>

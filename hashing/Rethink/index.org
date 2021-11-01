@@ -1,0 +1,96 @@
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="rethink.css" />
+#+OPTIONS: num:nil html-style:nil
+
+#+Title: Rethink
+#+SUBTITLE: Org mode meets professional web design
+
+* Welcome to Rethink.
+
+Rethink is a css theme targeted at org mode. Rethink was inspired by its cousin [[https://jessekelly881-imagine.surge.sh/][Imagine]] and HTML5 UP's theme [[https://html5up.net/story][Story]]
+
+Rethink is available on Github [[https://github.com/jessekelly881/Theme-Rethink][here]]. To use rethink add the following headers to your org document:
+
+#+BEGIN_SRC org
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="rethink.css" />
+#+OPTIONS: toc:nil num:nil html-style:nil
+#+END_SRC
+
+** Learn more
+
+To learn more about Rethink and what I do feel free to check out my [[https://www.jessekelly.tk][Blog]] or my [[https://www.github.com/jessekelly881][Github]]
+
+* Rethink supports...
+
+** Ordered lists
+
+1. A
+2. B
+3. C
+
+** Unordered lists
+- A
+- B
+- C
+
+** Links
+[[https://www.jessekelly.tk][jessekelly.tk]]
+
+
+** Images(Which are responsive!)
+[[https://www.snapoye.com/ArtShop/wp-content/uploads/2019/03/cari1.jpeg]]
+
+
+** Tables(Which are responsive!)
+
+|   |  N | N^2 | N^3 | N^4 | sqrt(n) | sqrt[4](N) |      Sum |  Doubled |
+|---+----+-----+-----+-----+---------+------------+----------+----------|
+| / | <> |   < |     |   > |       < |          > |          |          |
+| # |  1 |   1 |   1 |   1 |       1 |          1 |        6 |       12 |
+| # |  2 |   4 |   8 |  16 |  1.4142 |     1.1892 |  32.6034 |  65.2068 |
+| # |  3 |   9 |  27 |  81 |  1.7321 |     1.3161 | 123.0482 | 246.0964 |
+|---+----+-----+-----+-----+---------+------------+----------+----------|
+#+TBLFM: $8=vsum($2..$7)::$9=2*$8
+
+** Latex
+
+$$\int_{a}^{b} x^2 dx$$
+
+** Code
+
+#+BEGIN_SRC python :results output
+  def fact(n):
+      "Returns the factorial of a number"
+      if(n <= 1): return 1
+      else: return n*fact(n-1)
+
+  print(fact(3))
+#+END_SRC
+
+** Quotes
+
+#+BEGIN_QUOTE
+Insanity: doing the same thing over and over again and expecting different results.
+
+Albert Einstein
+#+END_QUOTE
+
+** Checkboxes
+- [X] Checked
+- [ ] Unchecked
+
+** TODO An item that needs done
+** DONE An item that is done
+** Tags                                                               :tag1:tag2:
+** Font styling
+*Bold* /italic/ _underlined_ =verbatim= ~code~ +strike-through+
+
+* Example Text
+
+** Example 1
+
+Nullam eu ante vel est convallis dignissim.  Fusce suscipit, wisi nec facilisis facilisis, est dui fermentum leo, quis tempor ligula erat quis odio.  Nunc porta vulputate tellus.  Nunc rutrum turpis sed pede.  Sed bibendum.  Aliquam posuere.  Nunc aliquet, augue nec adipiscing interdum, lacus tellus malesuada massa, quis varius mi purus non odio.  Pellentesque condimentum, magna ut suscipit hendrerit, ipsum augue ornare nulla, non luctus diam neque sit amet urna.  Curabitur vulputate vestibulum lorem.  Fusce sagittis, libero non molestie mollis, magna orci ultrices dolor, at vulputate neque nulla lacinia eros.  Sed id ligula quis est convallis tempor.  Curabitur lacinia pulvinar nibh.  Nam a sapien.
+
+
+** Example 2
+
+Pellentesque dapibus suscipit ligula.  Donec posuere augue in quam.  Etiam vel tortor sodales tellus ultricies commodo.  Suspendisse potenti.  Aenean in sem ac leo mollis blandit.  Donec neque quam, dignissim in, mollis nec, sagittis eu, wisi.  Phasellus lacus.  Etiam laoreet quam sed arcu.  Phasellus at dui in ligula mollis ultricies.  Integer placerat tristique nisl.  Praesent augue.  Fusce commodo.  Vestibulum convallis, lorem a tempus semper, dui dui euismod elit, vitae placerat urna tortor vitae lacus.  Nullam libero mauris, consequat quis, varius et, dictum id, arcu.  Mauris mollis tincidunt felis.  Aliquam feugiat tellus ut neque.  Nulla facilisis, risus a rhoncus fermentum, tellus tellus lacinia purus, et dictum nunc justo sit amet elit.
