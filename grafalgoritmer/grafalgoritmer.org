@@ -11,9 +11,7 @@
 
 I dette dokumentet skal vi gå gjennom noen sentrale grafalgoritmer for IN2010.
 Det kan brukes som et løsningsforslag for det som alltid er en god ukesoppgave:
-/implementer algoritmene som gjennomgås/. For både Dijkstra og Prims
-algoritmer vil presentasjonen være litt annerledes enn den som er gitt i
-forelesningsvideoene.
+/implementer algoritmene som gjennomgås/.
 
 Vi tar utgangspunkt i grafen som ble vist i forelesningen som ser slik ut:
 
