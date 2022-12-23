@@ -7,12 +7,47 @@
       @import url("https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300i,400,400i");
       @import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,300;0,400;1,300;1,400&display=swap');
 
-      body {
+      * {
           background: #101729;
           color: #fafafa;
           font-family: "Source Sans Pro", Helvetica, sans-serif;
           font-weight: 300;
       }
+
+      button {
+          text-align: center;
+          font-size: 100%;
+          cursor: pointer;
+      }
+
+      .btn {
+          font-size: 2em;
+          border: none;
+          outline: none;
+          background: none;
+          margin-left: 2em;
+          margin-right: 2em;
+          border-bottom: 1px solid transparent;
+          -webkit-transition: all 0.3s;
+          -moz-transition: all 0.3s;
+          transition: all 0.3s;
+      }
+
+      @media(hover: hover) and (pointer: fine) {
+          .btn:hover {
+              border-bottom: 1px solid gray;
+          }
+      }
+
+      .toggled {
+          opacity: 100%;
+      }
+
+      .untoggled {
+          opacity: 75%;
+      }
+
+
     </style>
   </head>
   <body>
