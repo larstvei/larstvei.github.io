@@ -583,12 +583,12 @@ måtte vi ha listet alle nodene også.
 
    [[./prim_minimal_spanningtree.svg]]
 
-* \(2\)-sammenhengenhet
+* 2-sammenhengende grafer
 
   Grafen som vi jobber med er /sammenhengende/. Det finnes altså en sti mellom
   alle par av noder i $G$. I mange anvendelser så ønsker man ikke bare at
   grafen skal være sammenhengende, men også at den skal være
-  /\(2\)-sammenhengende/ (også kalt /bikonnektiv/). Det betyr at hvis en hvilken
+  /2-sammenhengende/ (også kalt /bikonnektiv/). Det betyr at hvis en hvilken
   som helst node $v \in V$ fjernes fra grafen, så vil grafen /fremdeles/ være
   sammenhengende. Mer generelt sier vi at en graf er \(k\)-sammenhengende, så
   hvis grafen forblir sammenhengende hvis man fjerner færre enn $k$ noder.
@@ -597,16 +597,16 @@ måtte vi ha listet alle nodene også.
   eksempel kan du se for deg en graf som representerer Ruter sitt
   kollektivnett, der noder representerer holdeplasser, og kanter representerer
   at det går en buss, trikk eller bane mellom holdeplassene. Dersom denne
-  grafen er \(2\)-sammenhengende, så betyr det at dersom det er full stans ved en
+  grafen er 2-sammenhengende, så betyr det at dersom det er full stans ved en
   holdeplass, så vil reisende fremdeles kunne komme frem til sitt stoppested
   gjennom en annen rute.
 
-** Er $G$ er \(2\)-sammenhengende?
+** Er $G$ er 2-sammenhengende?
 
-   La oss sjekke om $G$ er \(2\)-sammenhengende ved å følge definisjonen veldig
+   La oss sjekke om $G$ er 2-sammenhengende ved å følge definisjonen veldig
    direkte. Med andre ord prøver vi å fjerne hver node $v \in V$ fra $G$ og
    sjekke om den resulterende grafen er sammenhengende. Siden grafen er liten,
-   så er det lurt å sjekke om den er \(2\)-sammenhengende «for hånd» før du går
+   så er det lurt å sjekke om den er 2-sammenhengende «for hånd» før du går
    videre.
 
    Først trenger vi en hjelpeprosedyre for å fjerne en node. Merk at vi vil
@@ -648,7 +648,7 @@ måtte vi ha listet alle nodene også.
        return True
    #+end_src
 
-   Så, er $G$ \(2\)-sammenhengende?
+   Så, er $G$ 2-sammenhengende?
 
    #+begin_src python :exports both
    isbiconnected_naive(G)
@@ -657,8 +657,8 @@ måtte vi ha listet alle nodene også.
    #+RESULTS:
    : True
 
-   Ja, $G$ er \(2\)-sammenhengende. Men er $G$ \(3\)-sammenhengende? Prosedyren
-   vår kan kun sjekke om grafen er \(2\)-sammenhengende, men vi kan sjekke
+   Ja, $G$ er 2-sammenhengende. Men er $G$ \(3\)-sammenhengende? Prosedyren
+   vår kan kun sjekke om grafen er 2-sammenhengende, men vi kan sjekke
    dette ved hjelp av =removenode= og =isbiconnected_naive=.
 
    #+begin_src python :exports both
@@ -669,7 +669,7 @@ måtte vi ha listet alle nodene også.
    : False
 
    Ved å først fjerne en velvalgt node =C=, så kan vi se at grafen ikke lenger er
-   \(2\)-sammenhengende, som vil si at grafen $G$ er \(2\)-sammenhengende, men
+   2-sammenhengende, som vil si at grafen $G$ er 2-sammenhengende, men
    ikke \(3\)-sammenhengende.
 
    For hver node $v \in V$, bygger =isbiconnected_naive= en ny graf $G'$ med $v$
@@ -678,14 +678,14 @@ måtte vi ha listet alle nodene også.
    essensielt kopieres. Dette gjøres for /hver/ node $v \in V$, som gir oss
    $O(|V|\cdot(|V| + |E|))$ i kjøretid.
 
-** Separasjonsnoder og bikonnektivitet
+** Separasjonsnoder og 2-sammenhengenhet
 
    Dette problemet kan løses mye mer effektivt enn =isbiconnected_naive=. Når en
    algoritme følger definisjonen så direkte, pleier vi å si at algoritmen er
    /brute force/. Nå skal vi se en algoritme som er i $O(|V| + |E|)$, altså
    lineær tid med hensyn til størrelsen på grafen. Den gjør et dybde-først søk,
    og lagrer litt ekstra informasjon på veien som lar oss avgjøre hvorvidt
-   grafen er \(2\)-sammenhengende eller ikke. Algoritmen går ut på å
+   grafen er 2-sammenhengende eller ikke. Algoritmen går ut på å
    identifisere det som kalles /separasjonsnoder/.
 
    En separasjonsnode er intuitivt en node som holder grafen sammenhengende.
@@ -766,7 +766,7 @@ måtte vi ha listet alle nodene også.
      for disse i prosedyren som kalles.
 
    Vi kan kalle på prosedyren med $G$ som argument. Siden $G$ er
-   \(2\)-sammenhengende bør vi heller ikke få noen separasjonsnoder.
+   2-sammenhengende bør vi heller ikke få noen separasjonsnoder.
 
    #+begin_src python :exports both
    separationnodes(G)
@@ -787,7 +787,7 @@ måtte vi ha listet alle nodene også.
 
    Med en algoritme for å finne separasjonsnoder i $O(|V| + |E|)$ på plass er
    det enkelt å skrive en prosedyre som sjekker om en graf er
-   \(2\)-sammenhengende med samme kjøretidskompleksitet.
+   2-sammenhengende med samme kjøretidskompleksitet.
 
    #+begin_src python :results none
    def isbiconnected(G):

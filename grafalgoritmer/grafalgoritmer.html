@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="nb" xml:lang="nb">
 <head>
-<!-- 2023-09-22 Fri 16:38 -->
+<!-- 2023-09-22 Fri 18:38 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Utvalgte grafalgoritmer</title>
@@ -38,7 +38,7 @@ La oss ta utgangspunkt i følgende graf.
 </p>
 
 
-<div id="orga4c5986" class="figure">
+<div id="orgfb6f374" class="figure">
 <p><img src="./forelesningsgraf.svg" alt="forelesningsgraf.svg" class="org-svg" width="400" />
 </p>
 </div>
@@ -48,7 +48,7 @@ Den er urettet og vektet. Den kan skrives ned ved å liste alle kantene sammen
 med vektene.
 </p>
 
-<pre class="example" id="org440749a">
+<pre class="example" id="org753169d">
 A B 13
 A C 6
 B C 7
@@ -77,9 +77,9 @@ kant i eksempelgrafen. Dersom vi hadde hatt noder som ikke hadde noen naboer
 måtte vi ha listet alle nodene også.
 </p>
 
-<div id="outline-container-org9d88f5d" class="outline-2">
-<h2 id="org9d88f5d">Bygg grafen</h2>
-<div class="outline-text-2" id="text-org9d88f5d">
+<div id="outline-container-org1a9d670" class="outline-2">
+<h2 id="org1a9d670">Bygg grafen</h2>
+<div class="outline-text-2" id="text-org1a9d670">
 <p>
 Vi kan skrive en prosedyre som leser linjene og returnerer en graf \(G = (V,
   E)\), der \(w\) er en vektfunksjon fra \(V \times V \to \mathbb{N}\).
@@ -134,9 +134,9 @@ variabel <code>lines</code>.
 </div>
 </div>
 
-<div id="outline-container-org8ee2ae6" class="outline-3">
-<h3 id="org8ee2ae6">Tegn grafen</h3>
-<div class="outline-text-3" id="text-org8ee2ae6">
+<div id="outline-container-orgc642242" class="outline-3">
+<h3 id="orgc642242">Tegn grafen</h3>
+<div class="outline-text-3" id="text-orgc642242">
 <p>
 Nå som vi har en måte å bygge grafen, kan det være kjekt å ha en måte å vise
 grafen. Den enkleste måten jeg vet om er å bruke <a href="https://pypi.org/project/graphviz/">Python sitt bibliotek</a> for
@@ -168,7 +168,7 @@ drawgraph(G)
 </div>
 
 
-<div id="org6d6dfe0" class="figure">
+<div id="org9056fe3" class="figure">
 <p><img src="./graph.svg" alt="graph.svg" class="org-svg" />
 </p>
 </div>
@@ -181,9 +181,9 @@ Merk at den grafen vi ser her er den samme grafen som den på toppen av siden
 </div>
 </div>
 
-<div id="outline-container-orgc8277b5" class="outline-2">
-<h2 id="orgc8277b5">Traverser grafen</h2>
-<div class="outline-text-2" id="text-orgc8277b5">
+<div id="outline-container-org6002ca1" class="outline-2">
+<h2 id="org6002ca1">Traverser grafen</h2>
+<div class="outline-text-2" id="text-org6002ca1">
 <p>
 Nå som vi har representert grafen, så kan vi traversere den. Det vil si at vi
 systematisk går gjennom alle nodene i grafen.
@@ -220,9 +220,9 @@ anvender en <i>stack</i> og et bredde-først søk anvender en <i>kø</i>.
 </p>
 </div>
 
-<div id="outline-container-org576379f" class="outline-3">
-<h3 id="org576379f">Dybde-først søk</h3>
-<div class="outline-text-3" id="text-org576379f">
+<div id="outline-container-orgfb35b36" class="outline-3">
+<h3 id="orgfb35b36">Dybde-først søk</h3>
+<div class="outline-text-3" id="text-orgfb35b36">
 <p>
 DFS fra en gitt node \(s\) kan implementeres rekursivt på følgende måte:
 </p>
@@ -373,9 +373,9 @@ egentlig ut en stack med en annen!
 </div>
 </div>
 
-<div id="outline-container-org404ff84" class="outline-3">
-<h3 id="org404ff84">Bredde-først søk</h3>
-<div class="outline-text-3" id="text-org404ff84">
+<div id="outline-container-org2d70228" class="outline-3">
+<h3 id="org2d70228">Bredde-først søk</h3>
+<div class="outline-text-3" id="text-org2d70228">
 <p>
 Ved å bruke en kø (altså en liste med «first-in-first-out» snarere enn en
 «last-in-first-out»), i stedet for en stack, så får vi et bredde-først søk.
@@ -462,9 +462,9 @@ begynnelsen og tatt ut på slutten.
 </div>
 </div>
 
-<div id="outline-container-org0105b94" class="outline-2">
-<h2 id="org0105b94">Korteste stier</h2>
-<div class="outline-text-2" id="text-org0105b94">
+<div id="outline-container-org447a7aa" class="outline-2">
+<h2 id="org447a7aa">Korteste stier</h2>
+<div class="outline-text-2" id="text-org447a7aa">
 <p>
 Når vi snakker om <i>korteste stier</i> er det som ofte snakk om vektede grafer.
 Men la oss for et øyeblikk tenke på hva det betyr for uvektede grafer. I
@@ -476,9 +476,9 @@ gjorde ovenfor.
 </p>
 </div>
 
-<div id="outline-container-orgaa02508" class="outline-3">
-<h3 id="orgaa02508">Bredde-først søk (igjen)</h3>
-<div class="outline-text-3" id="text-orgaa02508">
+<div id="outline-container-org2922127" class="outline-3">
+<h3 id="org2922127">Bredde-først søk (igjen)</h3>
+<div class="outline-text-3" id="text-org2922127">
 <p>
 Det som mangler fra det forrige bredde-først søket er en måte å hente ut de
 korteste stiene; det eneste vi «sparer på» under søket er rekkefølgen noder
@@ -526,7 +526,7 @@ draw_parents(bfs_shortest_paths_from(G, <span style="color: #90A4AE;">'A'</span>
 </div>
 
 
-<div id="org96cfeb9" class="figure">
+<div id="orgc4e5c3c" class="figure">
 <p><img src="./bfs_spanningtree.svg" alt="bfs_spanningtree.svg" class="org-svg" />
 </p>
 </div>
@@ -738,9 +738,9 @@ tabellen litt enklere å lese.
 </div>
 </div>
 
-<div id="outline-container-org5960597" class="outline-3">
-<h3 id="org5960597">Korteste stier for vektede grafer (Dijkstra)</h3>
-<div class="outline-text-3" id="text-org5960597">
+<div id="outline-container-orgd591ece" class="outline-3">
+<h3 id="orgd591ece">Korteste stier for vektede grafer (Dijkstra)</h3>
+<div class="outline-text-3" id="text-orgd591ece">
 <p>
 La oss returnere til det mer interessante spørsmålet der vi har vekter på
 kantene. For en graf \(G = (V, E)\) med vektfunksjon \(w\), er den korteste
@@ -773,7 +773,7 @@ beskrives slik, der <code>queue</code> referer til prioritetskøen og <code>dist
 avstandsmatrisen \(D\):
 </p>
 
-<pre class="example" id="org7f992c7">
+<pre class="example" id="org0328f2a">
 c &lt;- dist[u] + w(u, v)
 if c &lt; dist[v]:
   dist[v] &lt;- c
@@ -969,7 +969,7 @@ draw_parents_weighted(G, shortest_paths_from(G, <span style="color: #90A4AE;">'A
 </div>
 
 
-<div id="orgfcd511f" class="figure">
+<div id="org7b0ada6" class="figure">
 <p><img src="./dijkstra_spanningtree.svg" alt="dijkstra_spanningtree.svg" class="org-svg" />
 </p>
 </div>
@@ -977,9 +977,9 @@ draw_parents_weighted(G, shortest_paths_from(G, <span style="color: #90A4AE;">'A
 </div>
 </div>
 
-<div id="outline-container-orgc19e34e" class="outline-2">
-<h2 id="orgc19e34e">Minimale spenntrær</h2>
-<div class="outline-text-2" id="text-orgc19e34e">
+<div id="outline-container-org4db7bff" class="outline-2">
+<h2 id="org4db7bff">Minimale spenntrær</h2>
+<div class="outline-text-2" id="text-org4db7bff">
 <p>
 Vi har nå såvidt vært innom spenntrær. Ordet er veldig beskrivende: vi ønsker
 et tre som spenner en graf \(G = (V, E)\), altså at et tre som kobler alle
@@ -991,9 +991,9 @@ fungerer like godt på rettede grafer) som vi antar er sammenhengende.
 </p>
 </div>
 
-<div id="outline-container-org863e54a" class="outline-3">
-<h3 id="org863e54a">Prims algoritme</h3>
-<div class="outline-text-3" id="text-org863e54a">
+<div id="outline-container-org6e38e61" class="outline-3">
+<h3 id="org6e38e61">Prims algoritme</h3>
+<div class="outline-text-3" id="text-org6e38e61">
 <p>
 På forelesning dekker vi tre algoritmer for minimale spenntrær. Her kommer
 vi kun til å se på Prims algoritme. Den har store likhetstrekk til Dijkstra.
@@ -1045,7 +1045,7 @@ treet med lavest total vekt. Dette er et eksempel på en <i>grådig</i> algoritm
 </div>
 
 
-<div id="org1f4959d" class="figure">
+<div id="orgd55da30" class="figure">
 <p><img src="./prim_minimal_spanningtree.svg" alt="prim_minimal_spanningtree.svg" class="org-svg" />
 </p>
 </div>
@@ -1053,14 +1053,14 @@ treet med lavest total vekt. Dette er et eksempel på en <i>grådig</i> algoritm
 </div>
 </div>
 
-<div id="outline-container-orgf7a684b" class="outline-2">
-<h2 id="orgf7a684b">\(2\)-sammenhengenhet</h2>
-<div class="outline-text-2" id="text-orgf7a684b">
+<div id="outline-container-org1969b5a" class="outline-2">
+<h2 id="org1969b5a">2-sammenhengende grafer</h2>
+<div class="outline-text-2" id="text-org1969b5a">
 <p>
 Grafen som vi jobber med er <i>sammenhengende</i>. Det finnes altså en sti mellom
 alle par av noder i \(G\). I mange anvendelser så ønsker man ikke bare at
 grafen skal være sammenhengende, men også at den skal være
-<i>\(2\)-sammenhengende</i> (også kalt <i>bikonnektiv</i>). Det betyr at hvis en hvilken
+<i>2-sammenhengende</i> (også kalt <i>bikonnektiv</i>). Det betyr at hvis en hvilken
 som helst node \(v \in V\) fjernes fra grafen, så vil grafen <i>fremdeles</i> være
 sammenhengende. Mer generelt sier vi at en graf er \(k\)-sammenhengende, så
 hvis grafen forblir sammenhengende hvis man fjerner færre enn \(k\) noder.
@@ -1071,20 +1071,20 @@ Dette er et nyttig begrep i anvendelser der det er et ønske om redundans. For
 eksempel kan du se for deg en graf som representerer Ruter sitt
 kollektivnett, der noder representerer holdeplasser, og kanter representerer
 at det går en buss, trikk eller bane mellom holdeplassene. Dersom denne
-grafen er \(2\)-sammenhengende, så betyr det at dersom det er full stans ved en
+grafen er 2-sammenhengende, så betyr det at dersom det er full stans ved en
 holdeplass, så vil reisende fremdeles kunne komme frem til sitt stoppested
 gjennom en annen rute.
 </p>
 </div>
 
-<div id="outline-container-org5b9ae17" class="outline-3">
-<h3 id="org5b9ae17">Er \(G\) er \(2\)-sammenhengende?</h3>
-<div class="outline-text-3" id="text-org5b9ae17">
+<div id="outline-container-orgfbbace2" class="outline-3">
+<h3 id="orgfbbace2">Er \(G\) er 2-sammenhengende?</h3>
+<div class="outline-text-3" id="text-orgfbbace2">
 <p>
-La oss sjekke om \(G\) er \(2\)-sammenhengende ved å følge definisjonen veldig
+La oss sjekke om \(G\) er 2-sammenhengende ved å følge definisjonen veldig
 direkte. Med andre ord prøver vi å fjerne hver node \(v \in V\) fra \(G\) og
 sjekke om den resulterende grafen er sammenhengende. Siden grafen er liten,
-så er det lurt å sjekke om den er \(2\)-sammenhengende «for hånd» før du går
+så er det lurt å sjekke om den er 2-sammenhengende «for hånd» før du går
 videre.
 </p>
 
@@ -1134,7 +1134,7 @@ hvilken som helst node \(v \in V\).
 </div>
 
 <p>
-Så, er \(G\) \(2\)-sammenhengende?
+Så, er \(G\) 2-sammenhengende?
 </p>
 
 <div class="org-src-container">
@@ -1148,8 +1148,8 @@ True
 
 
 <p>
-Ja, \(G\) er \(2\)-sammenhengende. Men er \(G\) \(3\)-sammenhengende? Prosedyren
-vår kan kun sjekke om grafen er \(2\)-sammenhengende, men vi kan sjekke
+Ja, \(G\) er 2-sammenhengende. Men er \(G\) \(3\)-sammenhengende? Prosedyren
+vår kan kun sjekke om grafen er 2-sammenhengende, men vi kan sjekke
 dette ved hjelp av <code>removenode</code> og <code>isbiconnected_naive</code>.
 </p>
 
@@ -1165,7 +1165,7 @@ False
 
 <p>
 Ved å først fjerne en velvalgt node <code>C</code>, så kan vi se at grafen ikke lenger er
-\(2\)-sammenhengende, som vil si at grafen \(G\) er \(2\)-sammenhengende, men
+2-sammenhengende, som vil si at grafen \(G\) er 2-sammenhengende, men
 ikke \(3\)-sammenhengende.
 </p>
 
@@ -1179,16 +1179,16 @@ essensielt kopieres. Dette gjøres for <i>hver</i> node \(v \in V\), som gir oss
 </div>
 </div>
 
-<div id="outline-container-org4aafaf9" class="outline-3">
-<h3 id="org4aafaf9">Separasjonsnoder og bikonnektivitet</h3>
-<div class="outline-text-3" id="text-org4aafaf9">
+<div id="outline-container-orgdd264e3" class="outline-3">
+<h3 id="orgdd264e3">Separasjonsnoder og 2-sammenhengenhet</h3>
+<div class="outline-text-3" id="text-orgdd264e3">
 <p>
 Dette problemet kan løses mye mer effektivt enn <code>isbiconnected_naive</code>. Når en
 algoritme følger definisjonen så direkte, pleier vi å si at algoritmen er
 <i>brute force</i>. Nå skal vi se en algoritme som er i \(O(|V| + |E|)\), altså
 lineær tid med hensyn til størrelsen på grafen. Den gjør et dybde-først søk,
 og lagrer litt ekstra informasjon på veien som lar oss avgjøre hvorvidt
-grafen er \(2\)-sammenhengende eller ikke. Algoritmen går ut på å
+grafen er 2-sammenhengende eller ikke. Algoritmen går ut på å
 identifisere det som kalles <i>separasjonsnoder</i>.
 </p>
 
@@ -1288,7 +1288,7 @@ for disse i prosedyren som kalles.</li>
 
 <p>
 Vi kan kalle på prosedyren med \(G\) som argument. Siden \(G\) er
-\(2\)-sammenhengende bør vi heller ikke få noen separasjonsnoder.
+2-sammenhengende bør vi heller ikke få noen separasjonsnoder.
 </p>
 
 <div class="org-src-container">
@@ -1336,7 +1336,7 @@ noder blir da separasjonsnoder?
 <p>
 Med en algoritme for å finne separasjonsnoder i \(O(|V| + |E|)\) på plass er
 det enkelt å skrive en prosedyre som sjekker om en graf er
-\(2\)-sammenhengende med samme kjøretidskompleksitet.
+2-sammenhengende med samme kjøretidskompleksitet.
 </p>
 
 <div class="org-src-container">
@@ -1372,11 +1372,11 @@ False
 </div>
 </div>
 
-<div id="outline-container-org202d9eb" class="outline-2">
-<h2 id="org202d9eb">Sterkt sammenhengende komponenter</h2>
-<div class="outline-text-2" id="text-org202d9eb">
+<div id="outline-container-org2875349" class="outline-2">
+<h2 id="org2875349">Sterkt sammenhengende komponenter</h2>
+<div class="outline-text-2" id="text-org2875349">
 
-<div id="orge040bac" class="figure">
+<div id="org13bee03" class="figure">
 <p><img src="./forelesningsgraf2.svg" alt="forelesningsgraf2.svg" class="org-svg" width="400" />
 </p>
 </div>
@@ -1401,7 +1401,7 @@ Grafen vi ser på bildet ovenfor er en rettet graf som består av tre sterkt
 sammenhengende komponenter. Grafen kan skrives ned slik:
 </p>
 
-<pre class="example" id="org4c41f1e">
+<pre class="example" id="org3cc8c0c">
 A B
 B C
 B E
@@ -1470,7 +1470,7 @@ drawdigraph(G, <span style="color: #90A4AE;">'digraph'</span>)
 </div>
 
 
-<div id="orgbc768a1" class="figure">
+<div id="orge463402" class="figure">
 <p><img src="./digraph.svg" alt="digraph.svg" class="org-svg" />
 </p>
 </div>
@@ -1502,7 +1502,7 @@ La oss sjekke om resultatet ser rimelig ut ved å tegne den.
 </div>
 
 
-<div id="org7b9707b" class="figure">
+<div id="org9a9cc65" class="figure">
 <p><img src="./digraph_r.svg" alt="digraph_r.svg" class="org-svg" />
 </p>
 </div>
@@ -1513,9 +1513,9 @@ sammenhengende komponentene er de samme.
 </p>
 </div>
 
-<div id="outline-container-org3ae6b45" class="outline-3">
-<h3 id="org3ae6b45">DFS og topologisk sortering</h3>
-<div class="outline-text-3" id="text-org3ae6b45">
+<div id="outline-container-org963856e" class="outline-3">
+<h3 id="org963856e">DFS og topologisk sortering</h3>
+<div class="outline-text-3" id="text-org963856e">
 <p>
 Vi har allerede sett en algoritme for topologisk sortering. Men nå som vi er
 nærmere kjent med dybde-først søk skal vi se at vi kan topologisk sortere
@@ -1552,9 +1552,9 @@ til leseren.
 </div>
 </div>
 
-<div id="outline-container-org60a466c" class="outline-3">
-<h3 id="org60a466c">Kosarajus algoritme</h3>
-<div class="outline-text-3" id="text-org60a466c">
+<div id="outline-container-org98681f9" class="outline-3">
+<h3 id="org98681f9">Kosarajus algoritme</h3>
+<div class="outline-text-3" id="text-org98681f9">
 <p>
 Algoritmen vi skal se på for sterkt sammenhengende komponenter er utrolig
 elegant, og bygger et par viktige innsikter. Den første har vi allerede
