@@ -6,8 +6,6 @@ function makeCopyButton(block) {
     const hovertext = document.createElement('span');
     button.className = 'copy-code-button';
     button.type = 'button';
-    
-    // button.innerText = 'Copy';
 
     button.prepend(hovertext);
     hovertext.innerText = 'Copied!';
@@ -33,7 +31,7 @@ function makeCopyButton(block) {
 function fancyPythonBlocks() {
     blocksToBlur = document.getElementsByClassName('src-python');
     for (var i = 0; i < blocksToBlur.length; i++) {
-        const block = blocksToBlur[i]
+        const block = blocksToBlur[i];
         block.setAttribute("style", "cursor: pointer;");
         block.classList.toggle("blur");
 
@@ -44,6 +42,14 @@ function fancyPythonBlocks() {
         });
 
         block.prepend(button);
+    }
+}
+
+function unblurAll() {
+    blocksToUnblur = document.getElementsByClassName('src-python');
+    for (var i = 0; i < blocksToBlur.length; i++) {
+        const block = blocksToBlur[i];
+        block.classList.remove("blur");
     }
 }
 

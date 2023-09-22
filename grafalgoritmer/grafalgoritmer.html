@@ -3,12 +3,12 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="nb" xml:lang="nb">
 <head>
-<!-- 2021-11-01 Mon 21:38 -->
+<!-- 2023-09-22 Fri 16:38 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Utvalgte grafalgoritmer</title>
-<meta name="generator" content="Org mode" />
 <meta name="author" content="Lars Tveito" />
+<meta name="generator" content="Org Mode" />
 <script type="text/javascript" src="js/script.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.18/dist/katex.min.css" integrity="sha384-zTROYFVGOfTw7JV7KUu8udsvW2fx4lWOsCEDqhBreBwlHI4ioVRtmIvEThzJHGET" crossorigin="anonymous">
 <!-- The loading of KaTeX is deferred to speed up page rendering -->
@@ -23,31 +23,32 @@
 <div id="preamble" class="status">
 <h1 class="title">Utvalgte grafalgoritmer</h1>
                                                   <p class="author">Lars Tveito</p>
-                                                  <p class="date">Høst 2022</p>
+                                                  <p class="date">Høst 2023</p>
 </div>
-<div id="content">
+<div id="content" class="content">
 <p>
-I dette dokumentet skal vi gå gjennom noen sentrale grafalgoritmer for IN2010.
-Det kan brukes som et løsningsforslag for det som alltid er en god ukesoppgave:
-<i>implementer algoritmene som gjennomgås</i>.
+Dette dokumentet inneholder en gjennomgang av noen sentrale grafalgoritmer, og
+hvordan de kan implementeres i Python. Det kan brukes som et løsningsforslag
+for det som alltid er en god ukesoppgave: <i>implementer algoritmene som
+gjennomgås</i>.
 </p>
 
 <p>
-Vi tar utgangspunkt i grafen som ble vist i forelesningen som ser slik ut:
+La oss ta utgangspunkt i følgende graf.
 </p>
 
 
-<div id="org2c849a9" class="figure">
-<p><object type="image/svg+xml" data="./forelesningsgraf.svg" class="org-svg" width="400">
-Sorry, your browser does not support SVG.</object>
+<div id="orga4c5986" class="figure">
+<p><img src="./forelesningsgraf.svg" alt="forelesningsgraf.svg" class="org-svg" width="400" />
 </p>
 </div>
 
 <p>
-Den kan skrives ned ved å liste alle kantene sammen med vektene:
+Den er urettet og vektet. Den kan skrives ned ved å liste alle kantene sammen
+med vektene.
 </p>
 
-<pre class="example" id="org40e82c0">
+<pre class="example" id="org440749a">
 A B 13
 A C 6
 B C 7
@@ -76,37 +77,45 @@ kant i eksempelgrafen. Dersom vi hadde hatt noder som ikke hadde noen naboer
 måtte vi ha listet alle nodene også.
 </p>
 
-<div id="outline-container-orge1b680c" class="outline-2">
-<h2 id="orge1b680c">Bygg grafen</h2>
-<div class="outline-text-2" id="text-orge1b680c">
+<div id="outline-container-org9d88f5d" class="outline-2">
+<h2 id="org9d88f5d">Bygg grafen</h2>
+<div class="outline-text-2" id="text-org9d88f5d">
 <p>
 Vi kan skrive en prosedyre som leser linjene og returnerer en graf \(G = (V,
-  E)\), der \(w\) er en vektfunksjon fra \(V \times V \to \mathbb{N}\). Merk at
-kodeblokkene er skjult, men dukker opp når du trykker på dem; det er ment som
-en oppfordring til å prøve å løse problemet selv først!
+  E)\), der \(w\) er en vektfunksjon fra \(V \times V \to \mathbb{N}\).
 </p>
 
+<blockquote>
+<p>
+Kodeblokkene er skjult, men vises når du trykker på dem; det er ment som en
+oppfordring til å prøve å løse problemet selv først!
+</p>
+
+Trykk <a style="cursor: pointer;" onClick="unblurAll()">her</a> dersom du vil
+vise alle kodeblokkene.
+</blockquote>
+
 <div class="org-src-container">
-<pre class="src src-python"><span style="color: #e45649;">from</span> collections <span style="color: #e45649;">import</span> defaultdict
+<pre class="src src-python"><span style="color: #673AB7;">from</span> collections <span style="color: #673AB7;">import</span> defaultdict
 
-<span style="color: #e45649;">def</span> <span style="color: #a626a4;">buildgraph</span>(lines):
-    <span style="color: #6a1868;">V</span> = <span style="color: #a626a4;">set</span>()
-    <span style="color: #6a1868;">E</span> = defaultdict(<span style="color: #a626a4;">set</span>)
-    <span style="color: #6a1868;">w</span> = <span style="color: #a626a4;">dict</span>()
+<span style="color: #673AB7;">def</span> <span style="color: #263238; font-weight: bold;">buildgraph</span>(lines):
+    <span style="color: #263238; font-weight: bold;">V</span> = <span style="color: #673AB7;">set</span>()
+    <span style="color: #263238; font-weight: bold;">E</span> = defaultdict(<span style="color: #673AB7;">set</span>)
+    <span style="color: #263238; font-weight: bold;">w</span> = <span style="color: #673AB7;">dict</span>()
 
-    <span style="color: #e45649;">for</span> line <span style="color: #e45649;">in</span> lines.splitlines():
-        <span style="color: #6a1868;">v</span>, <span style="color: #6a1868;">u</span>, <span style="color: #6a1868;">weight</span> = line.strip().split()
+    <span style="color: #673AB7;">for</span> line <span style="color: #673AB7;">in</span> lines.splitlines():
+        <span style="color: #263238; font-weight: bold;">u</span>, <span style="color: #263238; font-weight: bold;">v</span>, <span style="color: #263238; font-weight: bold;">weight</span> = line.strip().split()
 
-        V.add(v)
         V.add(u)
+        V.add(v)
 
-        E[v].add(u)
         E[u].add(v)
+        E[v].add(u)
 
-        <span style="color: #6a1868;">w</span>[(v, u)] = <span style="color: #a626a4;">int</span>(weight)
-        <span style="color: #6a1868;">w</span>[(u, v)] = <span style="color: #a626a4;">int</span>(weight)
+        <span style="color: #263238; font-weight: bold;">w</span>[(u, v)] = <span style="color: #673AB7;">int</span>(weight)
+        <span style="color: #263238; font-weight: bold;">w</span>[(v, u)] = <span style="color: #673AB7;">int</span>(weight)
 
-    <span style="color: #e45649;">return</span> V, E, w
+    <span style="color: #673AB7;">return</span> V, E, w
 </pre>
 </div>
 
@@ -120,49 +129,47 @@ variabel <code>lines</code>.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python"><span style="color: #6a1868;">G</span> = buildgraph(lines)
+<pre class="src src-python"><span style="color: #263238; font-weight: bold;">G</span> = buildgraph(lines)
 </pre>
 </div>
 </div>
 
-<div id="outline-container-orgb82f37e" class="outline-3">
-<h3 id="orgb82f37e">Tegn grafen</h3>
-<div class="outline-text-3" id="text-orgb82f37e">
+<div id="outline-container-org8ee2ae6" class="outline-3">
+<h3 id="org8ee2ae6">Tegn grafen</h3>
+<div class="outline-text-3" id="text-org8ee2ae6">
 <p>
 Nå som vi har en måte å bygge grafen, kan det være kjekt å ha en måte å vise
 grafen. Den enkleste måten jeg vet om er å bruke <a href="https://pypi.org/project/graphviz/">Python sitt bibliotek</a> for
-<a href="https://www.graphviz.org/">Graphviz</a>. Dette er ikke viktig stoff for IN2010 (som betyr det ikke er
-relevant i en eksamens-sammenheng), men verktøy som dette gjør det enklere å
-oppdage feil i egen kode.
+<a href="https://www.graphviz.org/">Graphviz</a>. Dette er ikke viktig stoff for IN2010, men verktøy som dette gjør
+det enklere å oppdage feil i egen kode.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python"><span style="color: #e45649;">import</span> graphviz
+<pre class="src src-python"><span style="color: #673AB7;">import</span> graphviz
 
-<span style="color: #e45649;">def</span> <span style="color: #a626a4;">drawgraph</span>(G):
-    <span style="color: #6a1868;">V</span>, <span style="color: #6a1868;">E</span>, <span style="color: #6a1868;">w</span> = G
-    <span style="color: #6a1868;">dot</span> = graphviz.Graph()
-    <span style="color: #6a1868;">seen_edges</span> = <span style="color: #a626a4;">set</span>()
+<span style="color: #673AB7;">def</span> <span style="color: #263238; font-weight: bold;">drawgraph</span>(G):
+    <span style="color: #263238; font-weight: bold;">V</span>, <span style="color: #263238; font-weight: bold;">E</span>, <span style="color: #263238; font-weight: bold;">w</span> = G
+    <span style="color: #263238; font-weight: bold;">dot</span> = graphviz.Graph()
+    <span style="color: #263238; font-weight: bold;">seen_edges</span> = <span style="color: #673AB7;">set</span>()
 
-    <span style="color: #e45649;">for</span> v <span style="color: #e45649;">in</span> V:
-        dot.node(v)
+    <span style="color: #673AB7;">for</span> u <span style="color: #673AB7;">in</span> V:
+        dot.node(u)
 
-        <span style="color: #e45649;">for</span> u <span style="color: #e45649;">in</span> E[v]:
-            <span style="color: #e45649;">if</span> (u, v) <span style="color: #e45649;">in</span> seen_edges:
-                <span style="color: #e45649;">continue</span>
-            seen_edges.add((v, u))
-            dot.edge(v, u, label=<span style="color: #a626a4;">str</span>(w[(v, u)]))
+        <span style="color: #673AB7;">for</span> v <span style="color: #673AB7;">in</span> E[u]:
+            <span style="color: #673AB7;">if</span> (v, u) <span style="color: #673AB7;">in</span> seen_edges:
+                <span style="color: #673AB7;">continue</span>
+            seen_edges.add((u, v))
+            dot.edge(u, v, label=<span style="color: #673AB7;">str</span>(w[(u, v)]))
 
-    dot.render(<span style="color: #50a14f;">'graph'</span>, <span style="color: #a626a4;">format</span>=<span style="color: #50a14f;">'svg'</span>)
+    dot.render(<span style="color: #90A4AE;">'graph'</span>, <span style="color: #673AB7;">format</span>=<span style="color: #90A4AE;">'svg'</span>)
 
 drawgraph(G)
 </pre>
 </div>
 
 
-<div id="orgde3110e" class="figure">
-<p><object type="image/svg+xml" data="./graph.svg" class="org-svg">
-Sorry, your browser does not support SVG.</object>
+<div id="org6d6dfe0" class="figure">
+<p><img src="./graph.svg" alt="graph.svg" class="org-svg" />
 </p>
 </div>
 
@@ -174,9 +181,9 @@ Merk at den grafen vi ser her er den samme grafen som den på toppen av siden
 </div>
 </div>
 
-<div id="outline-container-orgef7231c" class="outline-2">
-<h2 id="orgef7231c">Traverser grafen</h2>
-<div class="outline-text-2" id="text-orgef7231c">
+<div id="outline-container-orgc8277b5" class="outline-2">
+<h2 id="orgc8277b5">Traverser grafen</h2>
+<div class="outline-text-2" id="text-orgc8277b5">
 <p>
 Nå som vi har representert grafen, så kan vi traversere den. Det vil si at vi
 systematisk går gjennom alle nodene i grafen.
@@ -185,20 +192,20 @@ systematisk går gjennom alle nodene i grafen.
 <p>
 Grafen vi jobber med er <i>sammenhengende</i>. Det betyr at det finnes en sti
 mellom alle par av noder i \(V\). Når en graf er sammenhengende, så er det
-tilstrekkelig å starte med en vilkårlig node \(v \in V\), og besøke \(v\) sine
+tilstrekkelig å starte med en vilkårlig node \(u \in V\), og besøke \(u\) sine
 naboer, og deres naboer sine naboer, og så videre, og da vil vi til slutt ha
 besøkt alle noder i \(V\).
 </p>
 
 <p>
 Det finnes to svært naturlige måter å utføre en slik traversering. Begge går
-ut på å starte i en node, notere ned den sine naboer, besøke alle dem, og
-notere ned deres naboer også, og fortsette slik. I tillegg må vi holde styr
-på hvilke noder som er besøkt, slik at vi ikke besøker noder flere ganger, og
-dermed risikere at traverseringen aldri terminerer. Distinksjonen mellom de
-to naturlige måtene å traversere grafen på er i <i>valg av datastruktur</i> når vi
-skal notere ned hvilke noder som er i «besøkslista». De enkleste (og dermed
-mest naturlige) er enten å:
+ut på å starte i en node, notere ned nodens naboer, besøke dem, notere ned
+deres naboer også, og fortsette slik. I tillegg må vi holde styr på hvilke
+noder som er besøkt, slik at vi ikke besøker noder flere ganger, og dermed
+risikere at traverseringen aldri terminerer. Distinksjonen mellom de to
+naturlige måtene å traversere grafen på er i <i>valg av datastruktur</i> når vi skal
+notere ned hvilke noder som er i «besøkslista». De enkleste (og dermed mest
+naturlige) er enten å:
 </p>
 <ul class="org-ul">
 <li>gå så dypt som mulig inn i grafen som mulig, det vil si at du følger
@@ -206,116 +213,40 @@ mest naturlige) er enten å:
 <li>besøke alle direkte naboer før du besøker naboer sine naboer.</li>
 </ul>
 <p>
-Den første strategien kalles <i>dybde-først søk</i> (DFS) (eng: <i>depth-first
-search</i>), og den andre kalles <i>bredde først søk</i> (BFS) (eng: <i>breath-first
-search</i>). Konkret er det eneste som skiller de to strategiene at et
-dybde-først søk anvender en stack og et bredde-først søk anvender en kø.
+Den første strategien kalles <i>dybde-først søk</i> (DFS) (eng: <i>depth-first search</i>),
+og den andre kalles <i>bredde først søk</i> (BFS) (eng: <i>breath-first search</i>). Det
+mest vesentlige skillet mellom de to strategiene at et dybde-først søk
+anvender en <i>stack</i> og et bredde-først søk anvender en <i>kø</i>.
 </p>
 </div>
 
-<div id="outline-container-org5a3f49b" class="outline-3">
-<h3 id="org5a3f49b">Dybde-først søk</h3>
-<div class="outline-text-3" id="text-org5a3f49b">
+<div id="outline-container-org576379f" class="outline-3">
+<h3 id="org576379f">Dybde-først søk</h3>
+<div class="outline-text-3" id="text-org576379f">
 <p>
 DFS fra en gitt node \(s\) kan implementeres rekursivt på følgende måte:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python"><span style="color: #e45649;">def</span> <span style="color: #a626a4;">dfs_rec</span>(G, s, visited, result):
-    <span style="color: #6a1868;">_</span>, <span style="color: #6a1868;">E</span>, <span style="color: #6a1868;">_</span> = G
+<pre class="src src-python"><span style="color: #673AB7;">def</span> <span style="color: #263238; font-weight: bold;">dfs_rec</span>(G, s, visited, result):
+    <span style="color: #263238; font-weight: bold;">_</span>, <span style="color: #263238; font-weight: bold;">E</span>, <span style="color: #263238; font-weight: bold;">_</span> = G
     result.append(s)
     visited.add(s)
-    <span style="color: #e45649;">for</span> v <span style="color: #e45649;">in</span> E[s]:
-        <span style="color: #e45649;">if</span> v <span style="color: #e45649;">not</span> <span style="color: #e45649;">in</span> visited:
+    <span style="color: #673AB7;">for</span> v <span style="color: #673AB7;">in</span> E[s]:
+        <span style="color: #673AB7;">if</span> v <span style="color: #673AB7;">not</span> <span style="color: #673AB7;">in</span> visited:
             dfs_rec(G, v, visited, result)
-    <span style="color: #e45649;">return</span> result
+    <span style="color: #673AB7;">return</span> result
 </pre>
 </div>
 
 <p>
-Merk at vi her gir med to ekstra argumenter for å holde styr på hvilke noder
-som er besøkt, og resultatlisten. Nå kan vi for eksempel kalle på <code>dfs_rec</code>
-fra noden \(A\):
+Merk at vi her gir med to ekstra argumenter; et for å holde styr på hvilke
+noder som er besøkt; og et for å lagre rekkefølgen nodene blir besøkt i. Nå
+kan vi for eksempel kalle på <code>dfs_rec</code> fra noden \(A\):
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python">dfs_rec(G, <span style="color: #50a14f;">'A'</span>, <span style="color: #a626a4;">set</span>(), [])
-</pre>
-</div>
-
-<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
-
-
-<colgroup>
-<col  class="org-left" />
-
-<col  class="org-left" />
-
-<col  class="org-left" />
-
-<col  class="org-left" />
-
-<col  class="org-left" />
-
-<col  class="org-left" />
-
-<col  class="org-left" />
-
-<col  class="org-left" />
-
-<col  class="org-left" />
-
-<col  class="org-left" />
-
-<col  class="org-left" />
-
-<col  class="org-left" />
-</colgroup>
-<tbody>
-<tr>
-<td class="org-left">A</td>
-<td class="org-left">B</td>
-<td class="org-left">C</td>
-<td class="org-left">H</td>
-<td class="org-left">J</td>
-<td class="org-left">L</td>
-<td class="org-left">K</td>
-<td class="org-left">I</td>
-<td class="org-left">G</td>
-<td class="org-left">E</td>
-<td class="org-left">F</td>
-<td class="org-left">D</td>
-</tr>
-</tbody>
-</table>
-
-<p>
-Vi kan også gjøre et DFS-søk ved å bruke en stack. Merk at rekursive kall
-legges på det som kalles en «<a href="https://www.wikiwand.com/en/Call_stack">call stack</a>»; altså bytter vi egentlig bare ut
-en stack med en annen!
-</p>
-
-<div class="org-src-container">
-<pre class="src src-python"><span style="color: #e45649;">def</span> <span style="color: #a626a4;">dfs</span>(G, s):
-    <span style="color: #6a1868;">_</span>, <span style="color: #6a1868;">E</span>, <span style="color: #6a1868;">_</span> = G
-    <span style="color: #6a1868;">visited</span> = <span style="color: #a626a4;">set</span>()
-    <span style="color: #6a1868;">stack</span> = [s]
-    <span style="color: #6a1868;">result</span> = []
-
-    <span style="color: #e45649;">while</span> stack:
-        <span style="color: #6a1868;">v</span> = stack.pop()
-        <span style="color: #e45649;">if</span> v <span style="color: #e45649;">in</span> visited:
-            <span style="color: #e45649;">continue</span>
-        result.append(v)
-        visited.add(v)
-        <span style="color: #e45649;">for</span> u <span style="color: #e45649;">in</span> E[v]:
-            stack.append(u)
-    <span style="color: #e45649;">return</span> result
-</pre>
-</div>
-
-<div class="org-src-container">
-<pre class="src src-python">dfs(G, <span style="color: #50a14f;">'A'</span>)
+<pre class="src src-python">dfs_rec(G, <span style="color: #90A4AE;">'A'</span>, <span style="color: #673AB7;">set</span>(), [])
 </pre>
 </div>
 
@@ -352,62 +283,121 @@ en stack med en annen!
 <td class="org-left">A</td>
 <td class="org-left">C</td>
 <td class="org-left">E</td>
+<td class="org-left">J</td>
+<td class="org-left">G</td>
+<td class="org-left">H</td>
+<td class="org-left">K</td>
+<td class="org-left">L</td>
+<td class="org-left">I</td>
 <td class="org-left">D</td>
 <td class="org-left">B</td>
 <td class="org-left">F</td>
-<td class="org-left">J</td>
-<td class="org-left">K</td>
-<td class="org-left">G</td>
-<td class="org-left">H</td>
-<td class="org-left">I</td>
-<td class="org-left">L</td>
 </tr>
 </tbody>
 </table>
 
-<blockquote>
 <p>
-Korreksjon: I en tidligere versjon la vi noder til i <code>visited</code> samtidig som
-de ble lagt på stacken. På den måten kunne vi unngå å legge samme node på
-stacken flere ganger. Samtidig gjorde det at vi fikk en rekkefølge som ikke
-helt samsvarte med det vi forventer fra et dybde-først søk.
+Vi kan også gjøre et DFS-søk ved å bruke en eksplisitt stack. Merk at
+rekursive kall legges på det som kalles en «<a href="https://www.wikiwand.com/en/Call_stack">call stack</a>»; altså bytter vi
+egentlig ut en stack med en annen!
 </p>
 
-<p>
-I den oppdaterte versjonen kan samme node bli lagt på stacken flere ganger,
-men kun bli besøkt én gang. Algoritmen har fremdeles \(O(|V| + |E|)\) i
-kjøretidskompleksitet. Dette er fordi antallet ganger en node kan legges på
-stacken er begrenset av hvor mange naboer den har.
-</p>
-</blockquote>
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #673AB7;">def</span> <span style="color: #263238; font-weight: bold;">dfs</span>(G, s):
+    <span style="color: #263238; font-weight: bold;">_</span>, <span style="color: #263238; font-weight: bold;">E</span>, <span style="color: #263238; font-weight: bold;">_</span> = G
+    <span style="color: #263238; font-weight: bold;">visited</span> = <span style="color: #673AB7;">set</span>()
+    <span style="color: #263238; font-weight: bold;">stack</span> = [s]
+    <span style="color: #263238; font-weight: bold;">result</span> = []
+
+    <span style="color: #673AB7;">while</span> stack:
+        <span style="color: #263238; font-weight: bold;">u</span> = stack.pop()
+        <span style="color: #673AB7;">if</span> u <span style="color: #673AB7;">not</span> <span style="color: #673AB7;">in</span> visited:
+            result.append(u)
+            visited.add(u)
+            <span style="color: #673AB7;">for</span> v <span style="color: #673AB7;">in</span> E[u]:
+                stack.append(v)
+    <span style="color: #673AB7;">return</span> result
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-python">dfs(G, <span style="color: #90A4AE;">'A'</span>)
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left">A</td>
+<td class="org-left">B</td>
+<td class="org-left">D</td>
+<td class="org-left">F</td>
+<td class="org-left">E</td>
+<td class="org-left">C</td>
+<td class="org-left">H</td>
+<td class="org-left">J</td>
+<td class="org-left">K</td>
+<td class="org-left">I</td>
+<td class="org-left">G</td>
+<td class="org-left">L</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 
-<div id="outline-container-orgd3558e4" class="outline-3">
-<h3 id="orgd3558e4">Bredde-først søk</h3>
-<div class="outline-text-3" id="text-orgd3558e4">
+<div id="outline-container-org404ff84" class="outline-3">
+<h3 id="org404ff84">Bredde-først søk</h3>
+<div class="outline-text-3" id="text-org404ff84">
 <p>
 Ved å bruke en kø (altså en liste med «first-in-first-out» snarere enn en
 «last-in-first-out»), i stedet for en stack, så får vi et bredde-først søk.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python"><span style="color: #e45649;">from</span> collections <span style="color: #e45649;">import</span> deque
+<pre class="src src-python"><span style="color: #673AB7;">from</span> collections <span style="color: #673AB7;">import</span> deque
 
-<span style="color: #e45649;">def</span> <span style="color: #a626a4;">bfs</span>(G, s):
-    <span style="color: #6a1868;">_</span>, <span style="color: #6a1868;">E</span>, <span style="color: #6a1868;">_</span> = G
-    <span style="color: #6a1868;">visited</span> = <span style="color: #a626a4;">set</span>([s])
-    <span style="color: #6a1868;">queue</span> = deque([s])
-    <span style="color: #6a1868;">result</span> = []
+<span style="color: #673AB7;">def</span> <span style="color: #263238; font-weight: bold;">bfs</span>(G, s):
+    <span style="color: #263238; font-weight: bold;">_</span>, <span style="color: #263238; font-weight: bold;">E</span>, <span style="color: #263238; font-weight: bold;">_</span> = G
+    <span style="color: #263238; font-weight: bold;">visited</span> = <span style="color: #673AB7;">set</span>([s])
+    <span style="color: #263238; font-weight: bold;">queue</span> = deque([s])
+    <span style="color: #263238; font-weight: bold;">result</span> = []
 
-    <span style="color: #e45649;">while</span> queue:
-        <span style="color: #6a1868;">v</span> = deque.popleft(queue)
-        result.append(v)
-        <span style="color: #e45649;">for</span> u <span style="color: #e45649;">in</span> E[v]:
-            <span style="color: #e45649;">if</span> u <span style="color: #e45649;">not</span> <span style="color: #e45649;">in</span> visited:
-                visited.add(u)
-                queue.append(u)
-    <span style="color: #e45649;">return</span> result
+    <span style="color: #673AB7;">while</span> queue:
+        <span style="color: #263238; font-weight: bold;">u</span> = queue.popleft()
+        result.append(u)
+        <span style="color: #673AB7;">for</span> v <span style="color: #673AB7;">in</span> E[u]:
+            <span style="color: #673AB7;">if</span> v <span style="color: #673AB7;">not</span> <span style="color: #673AB7;">in</span> visited:
+                visited.add(v)
+                queue.append(v)
+    <span style="color: #673AB7;">return</span> result
 </pre>
 </div>
 
@@ -419,7 +409,7 @@ begynnelsen og tatt ut på slutten.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python">bfs(G, <span style="color: #50a14f;">'A'</span>)
+<pre class="src src-python">bfs(G, <span style="color: #90A4AE;">'A'</span>)
 </pre>
 </div>
 
@@ -454,13 +444,13 @@ begynnelsen og tatt ut på slutten.
 <tbody>
 <tr>
 <td class="org-left">A</td>
-<td class="org-left">B</td>
 <td class="org-left">C</td>
+<td class="org-left">B</td>
+<td class="org-left">E</td>
 <td class="org-left">D</td>
 <td class="org-left">H</td>
-<td class="org-left">E</td>
-<td class="org-left">F</td>
 <td class="org-left">J</td>
+<td class="org-left">F</td>
 <td class="org-left">G</td>
 <td class="org-left">L</td>
 <td class="org-left">K</td>
@@ -472,9 +462,9 @@ begynnelsen og tatt ut på slutten.
 </div>
 </div>
 
-<div id="outline-container-org214be1e" class="outline-2">
-<h2 id="org214be1e">Korteste stier</h2>
-<div class="outline-text-2" id="text-org214be1e">
+<div id="outline-container-org0105b94" class="outline-2">
+<h2 id="org0105b94">Korteste stier</h2>
+<div class="outline-text-2" id="text-org0105b94">
 <p>
 Når vi snakker om <i>korteste stier</i> er det som ofte snakk om vektede grafer.
 Men la oss for et øyeblikk tenke på hva det betyr for uvektede grafer. I
@@ -486,9 +476,9 @@ gjorde ovenfor.
 </p>
 </div>
 
-<div id="outline-container-orgdd4b3ff" class="outline-3">
-<h3 id="orgdd4b3ff">Bredde-først søk (igjen)</h3>
-<div class="outline-text-3" id="text-orgdd4b3ff">
+<div id="outline-container-orgaa02508" class="outline-3">
+<h3 id="orgaa02508">Bredde-først søk (igjen)</h3>
+<div class="outline-text-3" id="text-orgaa02508">
 <p>
 Det som mangler fra det forrige bredde-først søket er en måte å hente ut de
 korteste stiene; det eneste vi «sparer på» under søket er rekkefølgen noder
@@ -497,25 +487,25 @@ køen, også lagre hvilken node som la den på køen. Det kan gjøres slik:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python"><span style="color: #e45649;">def</span> <span style="color: #a626a4;">bfs_shortest_paths_from</span>(G, s):
-    <span style="color: #6a1868;">_</span>, <span style="color: #6a1868;">E</span>, <span style="color: #6a1868;">_</span> = G
-    <span style="color: #6a1868;">parents</span> = {s : <span style="color: #b751b6;">None</span>}
-    <span style="color: #6a1868;">queue</span> = deque([s])
+<pre class="src src-python"><span style="color: #673AB7;">def</span> <span style="color: #263238; font-weight: bold;">bfs_shortest_paths_from</span>(G, s):
+    <span style="color: #263238; font-weight: bold;">_</span>, <span style="color: #263238; font-weight: bold;">E</span>, <span style="color: #263238; font-weight: bold;">_</span> = G
+    <span style="color: #263238; font-weight: bold;">parents</span> = {s : <span style="color: #673AB7;">None</span>}
+    <span style="color: #263238; font-weight: bold;">queue</span> = deque([s])
 
-    <span style="color: #e45649;">while</span> queue:
-        <span style="color: #6a1868;">v</span> = deque.popleft(queue)
-        <span style="color: #e45649;">for</span> u <span style="color: #e45649;">in</span> E[v]:
-            <span style="color: #e45649;">if</span> u <span style="color: #e45649;">not</span> <span style="color: #e45649;">in</span> parents:
-                <span style="color: #6a1868;">parents</span>[u] = v
-                queue.append(u)
-    <span style="color: #e45649;">return</span> parents
+    <span style="color: #673AB7;">while</span> queue:
+        <span style="color: #263238; font-weight: bold;">u</span> = queue.popleft()
+        <span style="color: #673AB7;">for</span> v <span style="color: #673AB7;">in</span> E[u]:
+            <span style="color: #673AB7;">if</span> v <span style="color: #673AB7;">not</span> <span style="color: #673AB7;">in</span> parents:
+                <span style="color: #263238; font-weight: bold;">parents</span>[v] = u
+                queue.append(v)
+    <span style="color: #673AB7;">return</span> parents
 </pre>
 </div>
 
 <p>
-Her har vi kun byttet ut <code>visited</code> med <code>parents</code>, der <code>parents</code> er en
-dictionary som mapper hver node \(u\) til node \(v\) som la den på køen. Vi kan
-avgjøre om en node er besøkt før ved å sjekke om noden har en forelder.
+Her har vi kun byttet ut <code>visited</code> med <code>parents</code>, der <code>parents</code> er en ordbok som
+assosierer hver node \(u\) til noden \(v\) som la \(u\) på køen. Vi kan avgjøre om
+en node er besøkt før ved å sjekke om noden har en forelder.
 </p>
 
 <p>
@@ -524,48 +514,47 @@ ved å tegne treet (igjen med bruk av graphviz).
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python"><span style="color: #e45649;">def</span> <span style="color: #a626a4;">draw_parents</span>(parents):
-    <span style="color: #6a1868;">dot</span> = graphviz.Graph()
-    <span style="color: #e45649;">for</span> v <span style="color: #e45649;">in</span> parents:
-        <span style="color: #6a1868;">u</span> = parents[v]
-        <span style="color: #e45649;">if</span> u: dot.edge(v, u)
-    dot.render(<span style="color: #50a14f;">'bfs_spanningtree'</span>, <span style="color: #a626a4;">format</span>=<span style="color: #50a14f;">'svg'</span>)
+<pre class="src src-python"><span style="color: #673AB7;">def</span> <span style="color: #263238; font-weight: bold;">draw_parents</span>(parents):
+    <span style="color: #263238; font-weight: bold;">dot</span> = graphviz.Graph()
+    <span style="color: #673AB7;">for</span> u <span style="color: #673AB7;">in</span> parents:
+        <span style="color: #263238; font-weight: bold;">v</span> = parents[u]
+        <span style="color: #673AB7;">if</span> v: dot.edge(v, u)
+    dot.render(<span style="color: #90A4AE;">'bfs_spanningtree'</span>, <span style="color: #673AB7;">format</span>=<span style="color: #90A4AE;">'svg'</span>)
 
-draw_parents(bfs_shortest_paths_from(G, <span style="color: #50a14f;">'A'</span>))
+draw_parents(bfs_shortest_paths_from(G, <span style="color: #90A4AE;">'A'</span>))
 </pre>
 </div>
 
 
-<div id="org978c379" class="figure">
-<p><object type="image/svg+xml" data="./bfs_spanningtree.svg" class="org-svg">
-Sorry, your browser does not support SVG.</object>
+<div id="org96cfeb9" class="figure">
+<p><img src="./bfs_spanningtree.svg" alt="bfs_spanningtree.svg" class="org-svg" />
 </p>
 </div>
 
 <p>
 Fra dette treet kan man lese ut den korteste stien fra \(A\) til alle andre
 noder. For å finne den korteste stien mellom to noder \(s\) og \(t\) er det
-tilstrekkelig å kalle på <code>bfs_shortest_paths_from(G, s)</code>, og følge <code>parents</code>
-fra \(t\) til roten av treet som er \(s\) (akkurat som kattunge-oppgaven fra
-Oblig 1!). Et slikt tre, som inneholder de samme nodene som en graf \(G\)
-kalles et spenntre for \(G\). Merk at dersom grafen ikke er sammenhengende, så
-vil det ikke nødvendigvis finnes en sti fra \(s\) til \(t\), hvor vi her for
-enkelhets skyld returnerer en tom liste.
+tilstrekkelig å kalle på <code>bfs_shortest_paths_from(G, s)</code>, og følge <code>parents</code> fra
+\(t\) til roten av treet som er \(s\). Et slikt tre, som inneholder de samme
+nodene som en graf \(G\) kalles et spenntre for \(G\). Merk at dersom grafen
+ikke er sammenhengende, så vil det ikke nødvendigvis finnes en sti fra \(s\)
+til \(t\), hvor vi her for enkelhets skyld returnerer en tom liste.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python"><span style="color: #e45649;">def</span> <span style="color: #a626a4;">bfs_shortest_path_between</span>(G, s, t):
-    <span style="color: #6a1868;">parents</span> = bfs_shortest_paths_from(G, s)
-    <span style="color: #6a1868;">v</span> = t
-    <span style="color: #6a1868;">path</span> = []
+<pre class="src src-python"><span style="color: #673AB7;">def</span> <span style="color: #263238; font-weight: bold;">bfs_shortest_path_between</span>(G, s, t):
+    <span style="color: #263238; font-weight: bold;">parents</span> = bfs_shortest_paths_from(G, s)
+    <span style="color: #263238; font-weight: bold;">v</span> = t
+    <span style="color: #263238; font-weight: bold;">path</span> = []
 
-    <span style="color: #e45649;">if</span> t <span style="color: #e45649;">not</span> <span style="color: #e45649;">in</span> parents:
-        <span style="color: #e45649;">return</span> path
+    <span style="color: #673AB7;">if</span> t <span style="color: #673AB7;">not</span> <span style="color: #673AB7;">in</span> parents:
+        <span style="color: #673AB7;">return</span> path
 
-    <span style="color: #e45649;">while</span> v:
+    <span style="color: #673AB7;">while</span> v:
         path.append(v)
-        <span style="color: #6a1868;">v</span> = parents[v]
-    <span style="color: #e45649;">return</span> path[::-1]
+        <span style="color: #263238; font-weight: bold;">v</span> = parents[v]
+
+    <span style="color: #673AB7;">return</span> path[::-1]
 </pre>
 </div>
 
@@ -576,7 +565,7 @@ og \(G\).
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python">bfs_shortest_path_between(G, <span style="color: #50a14f;">'A'</span>, <span style="color: #50a14f;">'G'</span>)
+<pre class="src src-python">bfs_shortest_path_between(G, <span style="color: #90A4AE;">'A'</span>, <span style="color: #90A4AE;">'G'</span>)
 </pre>
 </div>
 
@@ -607,18 +596,18 @@ Vi kan også finne korteste veien fra en node til alle andre noder.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python"><span style="color: #e45649;">def</span> <span style="color: #a626a4;">bfs_all_shortest_paths</span>(G, s):
-    <span style="color: #6a1868;">V</span>, <span style="color: #6a1868;">_</span>, <span style="color: #6a1868;">_</span> = G
-    <span style="color: #6a1868;">parents</span> = bfs_shortest_paths_from(G, s)
-    <span style="color: #6a1868;">paths</span> = []
+<pre class="src src-python"><span style="color: #673AB7;">def</span> <span style="color: #263238; font-weight: bold;">bfs_all_shortest_paths</span>(G, s):
+    <span style="color: #263238; font-weight: bold;">V</span>, <span style="color: #263238; font-weight: bold;">_</span>, <span style="color: #263238; font-weight: bold;">_</span> = G
+    <span style="color: #263238; font-weight: bold;">parents</span> = bfs_shortest_paths_from(G, s)
+    <span style="color: #263238; font-weight: bold;">paths</span> = []
 
-    <span style="color: #e45649;">for</span> v <span style="color: #e45649;">in</span> V:
-        <span style="color: #6a1868;">path</span> = []
-        <span style="color: #e45649;">while</span> v:
+    <span style="color: #673AB7;">for</span> v <span style="color: #673AB7;">in</span> V:
+        <span style="color: #263238; font-weight: bold;">path</span> = []
+        <span style="color: #673AB7;">while</span> v:
             path.append(v)
-            <span style="color: #6a1868;">v</span> = parents[v]
+            <span style="color: #263238; font-weight: bold;">v</span> = parents[v]
         paths.append(path[::-1])
-    <span style="color: #e45649;">return</span> paths
+    <span style="color: #673AB7;">return</span> paths
 </pre>
 </div>
 
@@ -630,7 +619,7 @@ tabellen litt enklere å lese.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python"><span style="color: #a626a4;">sorted</span>(bfs_all_shortest_paths(G, <span style="color: #50a14f;">'A'</span>))
+<pre class="src src-python"><span style="color: #673AB7;">sorted</span>(bfs_all_shortest_paths(G, <span style="color: #90A4AE;">'A'</span>))
 </pre>
 </div>
 
@@ -667,24 +656,16 @@ tabellen litt enklere å lese.
 
 <tr>
 <td class="org-left">A</td>
-<td class="org-left">B</td>
-<td class="org-left">D</td>
+<td class="org-left">C</td>
 <td class="org-left">&#xa0;</td>
 <td class="org-left">&#xa0;</td>
-</tr>
-
-<tr>
-<td class="org-left">A</td>
-<td class="org-left">B</td>
-<td class="org-left">D</td>
-<td class="org-left">F</td>
 <td class="org-left">&#xa0;</td>
 </tr>
 
 <tr>
 <td class="org-left">A</td>
 <td class="org-left">C</td>
-<td class="org-left">&#xa0;</td>
+<td class="org-left">D</td>
 <td class="org-left">&#xa0;</td>
 <td class="org-left">&#xa0;</td>
 </tr>
@@ -695,6 +676,38 @@ tabellen litt enklere å lese.
 <td class="org-left">E</td>
 <td class="org-left">&#xa0;</td>
 <td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">A</td>
+<td class="org-left">C</td>
+<td class="org-left">E</td>
+<td class="org-left">F</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">A</td>
+<td class="org-left">C</td>
+<td class="org-left">E</td>
+<td class="org-left">J</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">A</td>
+<td class="org-left">C</td>
+<td class="org-left">E</td>
+<td class="org-left">J</td>
+<td class="org-left">K</td>
+</tr>
+
+<tr>
+<td class="org-left">A</td>
+<td class="org-left">C</td>
+<td class="org-left">E</td>
+<td class="org-left">J</td>
+<td class="org-left">L</td>
 </tr>
 
 <tr>
@@ -720,45 +733,21 @@ tabellen litt enklere å lese.
 <td class="org-left">G</td>
 <td class="org-left">I</td>
 </tr>
-
-<tr>
-<td class="org-left">A</td>
-<td class="org-left">C</td>
-<td class="org-left">H</td>
-<td class="org-left">J</td>
-<td class="org-left">&#xa0;</td>
-</tr>
-
-<tr>
-<td class="org-left">A</td>
-<td class="org-left">C</td>
-<td class="org-left">H</td>
-<td class="org-left">J</td>
-<td class="org-left">K</td>
-</tr>
-
-<tr>
-<td class="org-left">A</td>
-<td class="org-left">C</td>
-<td class="org-left">H</td>
-<td class="org-left">J</td>
-<td class="org-left">L</td>
-</tr>
 </tbody>
 </table>
 </div>
 </div>
 
-<div id="outline-container-org350bbb7" class="outline-3">
-<h3 id="org350bbb7">Korteste stier for vektede grafer (Dijkstra)</h3>
-<div class="outline-text-3" id="text-org350bbb7">
+<div id="outline-container-org5960597" class="outline-3">
+<h3 id="org5960597">Korteste stier for vektede grafer (Dijkstra)</h3>
+<div class="outline-text-3" id="text-org5960597">
 <p>
 La oss returnere til det mer interessante spørsmålet der vi har vekter på
 kantene. For en graf \(G = (V, E)\) med vektfunksjon \(w\), er den korteste
-stien mellom \(s \in V\) og \(t \in V\) den stien \(v_1, v_2, \dots, v_n\) slik at
-\(v_1 = s\) og \(v_n = t\) som minimerer \(\sum_{i=1}^{n-1}w(v_i, v_{i+1})\). Det
-vil si at den totale vekten (eller kostnadden) av en sti er gitt av summene
-av vektene til kantene som utgjør stien.
+stien mellom \(s \in V\) og \(t \in V\) er den stien \(v_1, v_2, \dots, v_n\) slik at \(v_1 =
+   s\) og \(v_n = t\) som minimerer \(\sum_{i=1}^{n-1}w(v_i, v_{i+1})\). Det vil si at den totale
+vekten (eller kostnadden) av en sti er gitt av summene av vektene til
+kantene som utgjør stien.
 </p>
 
 <p>
@@ -774,48 +763,52 @@ langt. Dersom \(v\) ikke er oppdaget enda har den avstand \(\infty\).
 
 <p>
 En utfordring med å implementere Dijkstra er et steg som kalles <i>edge
-relaxation</i>. Hvis vi er ved en node \(v \in V\) som har en kant til en node \(u
-   \in V\) med vekt \(w(v, u)\), så er spørsmålet om vi har funnet en kortere vei
-til \(u\) enn den som er funnet så langt. Den korteste veien til en node så
-langt er gitt av \(D\), som vil si at det har kostet \(D[v]\) å komme til \(v\),
-og det vil koste \(D[v] + w(v, u)\) å komme til \(u\) via \(v\). Dersom \(D[v] +
-   w(v, u)\) er mindre enn \(D[u]\), så må vi erstatte prioriteten til \(u\). Steget
-kan beskrives slik, der <code>Q</code> referer til prioritetskøen:
+relaxation</i>. Hvis vi er ved en node \(u \in V\) som har en kant til en node \(v \in
+   V\) med vekt \(w(u, v)\), så er spørsmålet om vi har funnet en kortere vei til
+\(v\) enn den som er funnet så langt. Den korteste veien til en node så langt
+er gitt av \(D\), som vil si at det har kostet \(D[u]\) å komme til \(u\), og det
+vil koste \(D[u] + w(u, v)\) å komme til \(v\) via \(u\). Dersom \(D[u] + w(u, v)\)
+er mindre enn \(D[v]\), så må prioriteten til \(v\) erstattes. Steget kan
+beskrives slik, der <code>queue</code> referer til prioritetskøen og <code>dist</code> refererer til
+avstandsmatrisen \(D\):
 </p>
 
-<pre class="example" id="org2362097">
-if D[v] + w((v, u)) &lt; D[u]:
-    D[u] = D[v] + w((v, u))
-    change value of u in Q to D[u]
+<pre class="example" id="org7f992c7">
+c &lt;- dist[u] + w(u, v)
+if c &lt; dist[v]:
+  dist[v] &lt;- c
+  DecreasePriority(queue, v, c)
 </pre>
 
 <p>
 Vanskeligheten med dette er at prioritetskøene vi har sett så langt (der
 binære heaps er den mest effektive) ikke har noen måte å oppdatere
-prioriteten for en gitt node. <sup><a id="fnr.1" class="footref" href="#fn.1">1</a></sup> I Python har vi ikke tilgang på en
+prioriteten for en gitt node.<sup><a id="fnr.1" class="footref" href="#fn.1" role="doc-backlink">1</a></sup> I Python har vi ikke tilgang på en
 prioritetskø som støtter å endre prioriteten til et element på logaritmisk
 tid, så derfor vil bruke en litt annen strategi, som ligger litt tettere opp
 mot bredde-først søk.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python"><span style="color: #e45649;">from</span> heapq <span style="color: #e45649;">import</span> heappush, heappop
+<pre class="src src-python"><span style="color: #673AB7;">from</span> heapq <span style="color: #673AB7;">import</span> heappush, heappop
 
-<span style="color: #e45649;">def</span> <span style="color: #a626a4;">dijkstra</span>(G, s):
-    <span style="color: #6a1868;">V</span>, <span style="color: #6a1868;">E</span>, <span style="color: #6a1868;">w</span> = G
-    <span style="color: #6a1868;">Q</span> = [(0, s)]
-    <span style="color: #6a1868;">D</span> = defaultdict(<span style="color: #e45649;">lambda</span>: <span style="color: #a626a4;">float</span>(<span style="color: #50a14f;">'inf'</span>))
-    <span style="color: #6a1868;">D</span>[s] = 0
+<span style="color: #673AB7;">def</span> <span style="color: #263238; font-weight: bold;">dijkstra</span>(G, s):
+    <span style="color: #263238; font-weight: bold;">V</span>, <span style="color: #263238; font-weight: bold;">E</span>, <span style="color: #263238; font-weight: bold;">w</span> = G
+    <span style="color: #263238; font-weight: bold;">queue</span> = [(0, s)]
+    <span style="color: #263238; font-weight: bold;">dist</span> = defaultdict(<span style="color: #673AB7;">lambda</span>: <span style="color: #673AB7;">float</span>(<span style="color: #90A4AE;">'inf'</span>))
+    <span style="color: #263238; font-weight: bold;">dist</span>[s] = 0
 
-    <span style="color: #e45649;">while</span> Q:
-        <span style="color: #6a1868;">cost</span>, <span style="color: #6a1868;">v</span> = heappop(Q)
-        <span style="color: #e45649;">for</span> u <span style="color: #e45649;">in</span> E[v]:
-            <span style="color: #6a1868;">c</span> = cost + w[(v, u)]
-            <span style="color: #e45649;">if</span> c &lt; D[u]:
-                <span style="color: #6a1868;">D</span>[u] = c
-                heappush(Q, (c, u))
+    <span style="color: #673AB7;">while</span> queue:
+        <span style="color: #263238; font-weight: bold;">cost</span>, <span style="color: #263238; font-weight: bold;">u</span> = heappop(queue)
+        <span style="color: #673AB7;">if</span> cost != dist[u]:
+            <span style="color: #673AB7;">continue</span>
+        <span style="color: #673AB7;">for</span> v <span style="color: #673AB7;">in</span> E[u]:
+            <span style="color: #263238; font-weight: bold;">c</span> = cost + w[(u, v)]
+            <span style="color: #673AB7;">if</span> c &lt; dist[v]:
+                <span style="color: #263238; font-weight: bold;">dist</span>[v] = c
+                heappush(queue, (c, v))
 
-    <span style="color: #e45649;">return</span> D
+    <span style="color: #673AB7;">return</span> dist
 </pre>
 </div>
 
@@ -828,21 +821,12 @@ representert i Python, og setter avstanden til \(s\) lik \(0\).
 </p>
 
 <p>
-Vi traverserer så grafen ved å ta ut noder fra prioritetskøen. For hver node
-\(v\) vi tar av prioritetskøen har vi en assosiert kostnad. Når en node \(v\) er
-tatt av køen, går vi gjennom hver kant fra \(v\) til en node \(u\). Dersom
-kostnaden ved å gå til \(u\) via \(v\) er den laveste vi har observert så langt,
-så oppdaterer vi avstanden til \(u\) i \(D\), og legger \(u\) på køen, med den nye
+Vi traverserer så grafen ved å plukke noder fra prioritetskøen. Hver node
+\(u\) som tas av prioritetskøen har en assosiert kostnad. Når en node \(u\) er
+tatt av køen, går vi gjennom hver kant fra \(u\) til en nabo \(v\). Dersom
+kostnaden ved å gå til \(v\) via \(u\) er den laveste observert så langt, så
+oppdateres avstanden til \(v\) i <code>dist</code>, og \(v\) legges på køen med den nye
 kostnaden som prioritet.
-</p>
-
-<p>
-Merk at man kan gjøre flere små optimaliseringer her, men de vil ikke ha
-noen påvirkning på kjøretidskompleksiteten. Man kan avslutte søket så fort
-alle noder er besøkt, fremfor å fortsette til køen er tom. Man kan også la
-være å gå gjennom kantene (altså <code>for</code>-loopen) dersom <code>cost &gt; D[v]</code>. Denne
-implementasjonen legger større vekt på å være <i>enkel</i> enn å være effektiv,
-så lenge kjøretidskompleksiteten er den samme.
 </p>
 
 <p>
@@ -851,8 +835,8 @@ fint ignoreres, og er der kun for å få en finere utskrift.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python"><span style="color: #6a1868;">D</span> = dijkstra(G, <span style="color: #50a14f;">'A'</span>)
-<span style="color: #a626a4;">list</span>(<span style="color: #a626a4;">zip</span>(*<span style="color: #a626a4;">sorted</span>(D.items())))
+<pre class="src src-python"><span style="color: #263238; font-weight: bold;">dist</span> = dijkstra(G, <span style="color: #90A4AE;">'A'</span>)
+<span style="color: #673AB7;">list</span>(<span style="color: #673AB7;">zip</span>(*<span style="color: #673AB7;">sorted</span>(dist.items())))
 </pre>
 </div>
 
@@ -919,128 +903,126 @@ fint ignoreres, og er der kun for å få en finere utskrift.
 
 <p>
 Et spørsmål man bør stille seg, er om denne implementasjonen av Dijkstra har
-samme kjøretidskompleksitet som den varianten som er presentert på
-forelesning, altså \(O(|E| \cdot \log(|V|))\). Intuitivt betyr det at vi har
-tid til å gå gjennom alle kantene i grafen og for hver av disse gjøre en
-\(O(\log(|V|))\) operasjon, slik som innsetting og sletting fra en binær heap.
-Det som skiller denne implementasjonen fra den som er gått gjennom i
-forelesningsvideoen er at vi her risikerer å legge samme node på heapen
-flere ganger! Da blir spørsmålet, hvor mange elementer kan legges på heapen
-totalt? I verste tilfelle, så kan en node legges til på køen av alle sine
-naboer (altså like mange ganger som det finnes kanter som går til noden).
-Det vil si at vi i verste tilfellet vil legge like mange elementer på heapen
-som antallet kanter i grafen, altså \(|E|\). Dermed ser det ut som at vi får
-\(O(|E| \cdot log(|E|))\) i kjøretid, som virker mindre effektivt siden kan
-finnes mange flere kanter enn noder i en graf. <sup><a id="fnr.2" class="footref" href="#fn.2">2</a></sup> Denne intuisjonen
-stemmer ikke helt, fordi \(\log(x^2) \leq 2 \cdot \log(x)\) for alle \(0 < x\).
-Altså er \(O(|E| \cdot log(|E|)) = O(|E| \cdot log(|V|))\), og dermed har
-denne implementasjonen samme kjøretidskompleksitet som en mer tradisjonell
-implementasjon av Dijkstra.
+samme kjøretidskompleksitet som forventet av Dijkstra, altså \(O(|E| \cdot
+   \log(|V|))\). Intuitivt betyr det at vi har tid til å gå gjennom alle kantene
+i grafen og for hver av disse gjøre en \(O(\log(|V|))\) operasjon, slik som
+innsetting og sletting i en binær heap. I denne implementasjonen risikeres
+det å legge samme node på heapen flere ganger! Da blir spørsmålet, hvor
+mange elementer kan legges på heapen totalt? I verste tilfelle, så kan en
+node legges til på køen av alle sine naboer (altså like mange ganger som det
+finnes kanter som går til noden). Det vil si at vi i verste tilfellet vil
+legge like mange elementer på heapen som antallet kanter i grafen, altså
+\(|E|\). Dermed ser det ut som at vi får \(O(|E| \cdot log(|E|))\) i kjøretid, som
+virker mindre effektivt siden kan finnes mange flere kanter enn noder i en
+graf. Denne intuisjonen stemmer ikke helt, og det bunner i at \(\log(x^2) \leq 2
+   \cdot \log(x)\) for alle \(0 < x\). Antall kanter i grafen kan ikke være mer enn
+kvadratisk med hensyn til antall noder,<sup><a id="fnr.2" class="footref" href="#fn.2" role="doc-backlink">2</a></sup> altså er \(O(|E| \cdot
+   log(|E|)) = O(|E| \cdot log(|V|))\), og dermed har denne implementasjonen samme
+kjøretidskompleksitet som en mer tradisjonell implementasjon av Dijkstra.
 </p>
 
 <p>
-På samme måte som med bredde-først søk, for hver node lagre hvilken node som
-la den på køen, og på den måten kan vi hente ut de konkrete stiene.
+På samme måte som med bredde-først søk kan de konkrete stiene hentes ut ved
+å for hver node \(v\) lagre hvilken node \(u\) som la \(v\) på prioritetskøen.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python"><span style="color: #e45649;">def</span> <span style="color: #a626a4;">shortest_paths_from</span>(G, s):
-    <span style="color: #6a1868;">V</span>, <span style="color: #6a1868;">E</span>, <span style="color: #6a1868;">w</span> = G
-    <span style="color: #6a1868;">Q</span> = [(0, s)]
-    <span style="color: #6a1868;">D</span> = defaultdict(<span style="color: #e45649;">lambda</span>: <span style="color: #a626a4;">float</span>(<span style="color: #50a14f;">'inf'</span>))
-    <span style="color: #6a1868;">parents</span> = {s : <span style="color: #b751b6;">None</span>}
-    <span style="color: #6a1868;">D</span>[s] = 0
+<pre class="src src-python"><span style="color: #673AB7;">def</span> <span style="color: #263238; font-weight: bold;">shortest_paths_from</span>(G, s):
+    <span style="color: #263238; font-weight: bold;">V</span>, <span style="color: #263238; font-weight: bold;">E</span>, <span style="color: #263238; font-weight: bold;">w</span> = G
+    <span style="color: #263238; font-weight: bold;">queue</span> = [(0, s)]
+    <span style="color: #263238; font-weight: bold;">dist</span> = defaultdict(<span style="color: #673AB7;">lambda</span>: <span style="color: #673AB7;">float</span>(<span style="color: #90A4AE;">'inf'</span>))
+    <span style="color: #263238; font-weight: bold;">parents</span> = {s : <span style="color: #673AB7;">None</span>}
+    <span style="color: #263238; font-weight: bold;">dist</span>[s] = 0
 
-    <span style="color: #e45649;">while</span> Q:
-        <span style="color: #6a1868;">cost</span>, <span style="color: #6a1868;">v</span> = heappop(Q)
-        <span style="color: #e45649;">for</span> u <span style="color: #e45649;">in</span> E[v]:
-            <span style="color: #6a1868;">c</span> = cost + w[(v, u)]
-            <span style="color: #e45649;">if</span> c &lt; D[u]:
-                <span style="color: #6a1868;">D</span>[u] = c
-                heappush(Q, (c, u))
-                <span style="color: #6a1868;">parents</span>[u] = v
+    <span style="color: #673AB7;">while</span> queue:
+        <span style="color: #263238; font-weight: bold;">cost</span>, <span style="color: #263238; font-weight: bold;">u</span> = heappop(queue)
+        <span style="color: #673AB7;">if</span> cost != dist[u]:
+            <span style="color: #673AB7;">continue</span>
+        <span style="color: #673AB7;">for</span> v <span style="color: #673AB7;">in</span> E[u]:
+            <span style="color: #263238; font-weight: bold;">c</span> = cost + w[(u, v)]
+            <span style="color: #673AB7;">if</span> c &lt; dist[v]:
+                <span style="color: #263238; font-weight: bold;">dist</span>[v] = c
+                heappush(queue, (c, v))
+                <span style="color: #263238; font-weight: bold;">parents</span>[v] = u
 
-    <span style="color: #e45649;">return</span> parents
+    <span style="color: #673AB7;">return</span> parents
 </pre>
 </div>
 
 <p>
-Vi kan nå se på treet vi får fra å kjøre Dijkstra, og fra det kan du lese ut
+Vi kan nå se på treet vi får fra å kjøre Dijkstra, og fra det kan vi lese ut
 de korteste stiene fra \(A\) til alle andre noder.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python"><span style="color: #e45649;">def</span> <span style="color: #a626a4;">draw_parents_weighted</span>(G, parents, name):
-    <span style="color: #6a1868;">V</span>, <span style="color: #6a1868;">_</span>, <span style="color: #6a1868;">w</span> = G
-    <span style="color: #6a1868;">dot</span> = graphviz.Graph()
-    <span style="color: #e45649;">for</span> v <span style="color: #e45649;">in</span> parents:
-        <span style="color: #6a1868;">u</span> = parents[v]
-        <span style="color: #e45649;">if</span> u:
-            dot.edge(v, u, label=<span style="color: #a626a4;">str</span>(w[(v, u)]))
-    dot.render(name, <span style="color: #a626a4;">format</span>=<span style="color: #50a14f;">'svg'</span>)
+<pre class="src src-python"><span style="color: #673AB7;">def</span> <span style="color: #263238; font-weight: bold;">draw_parents_weighted</span>(G, parents, name):
+    <span style="color: #263238; font-weight: bold;">V</span>, <span style="color: #263238; font-weight: bold;">_</span>, <span style="color: #263238; font-weight: bold;">w</span> = G
+    <span style="color: #263238; font-weight: bold;">dot</span> = graphviz.Graph()
+    <span style="color: #673AB7;">for</span> u <span style="color: #673AB7;">in</span> parents:
+        <span style="color: #263238; font-weight: bold;">v</span> = parents[u]
+        <span style="color: #673AB7;">if</span> v:
+            dot.edge(u, v, label=<span style="color: #673AB7;">str</span>(w[(u, v)]))
+    dot.render(name, <span style="color: #673AB7;">format</span>=<span style="color: #90A4AE;">'svg'</span>)
 
-draw_parents_weighted(G, shortest_paths_from(G, <span style="color: #50a14f;">'A'</span>), <span style="color: #50a14f;">'dijkstra_spanningtree'</span>)
+draw_parents_weighted(G, shortest_paths_from(G, <span style="color: #90A4AE;">'A'</span>), <span style="color: #90A4AE;">'dijkstra_spanningtree'</span>)
 </pre>
 </div>
 
 
-<div id="org1447626" class="figure">
-<p><object type="image/svg+xml" data="./dijkstra_spanningtree.svg" class="org-svg">
-Sorry, your browser does not support SVG.</object>
+<div id="orgfcd511f" class="figure">
+<p><img src="./dijkstra_spanningtree.svg" alt="dijkstra_spanningtree.svg" class="org-svg" />
 </p>
 </div>
 </div>
 </div>
 </div>
 
-<div id="outline-container-orgd3ed8cd" class="outline-2">
-<h2 id="orgd3ed8cd">Minimale spenntrær</h2>
-<div class="outline-text-2" id="text-orgd3ed8cd">
+<div id="outline-container-orgc19e34e" class="outline-2">
+<h2 id="orgc19e34e">Minimale spenntrær</h2>
+<div class="outline-text-2" id="text-orgc19e34e">
 <p>
 Vi har nå såvidt vært innom spenntrær. Ordet er veldig beskrivende: vi ønsker
 et tre som spenner en graf \(G = (V, E)\), altså at et tre som kobler alle
-nodene i \(V\), og kun bruker kanter fra \(E\). Det vi skal se på nå er å finne
-et <i>minimalt</i> spenntre, altså et tre der den totale vekten av kantene er
-minimert. Vi skal kun løse dette problemet for urettede og vektede grafer (i
-motsetning fra BFS, DFS og Dijkstra, som fungerer like godt på rettede
-grafer) som vi antar er sammenhengende.
+nodene i \(V\) og kun bruker kanter fra \(E\). Nå skal vi se på hvordan vi kan
+finne et <i>minimalt</i> spenntre, altså et tre som spenner grafen slik at den
+totale vekten av kantene er minimert. Vi skal kun løse dette problemet for
+urettede og vektede grafer (i motsetning fra BFS, DFS og Dijkstra, som
+fungerer like godt på rettede grafer) som vi antar er sammenhengende.
 </p>
 </div>
 
-<div id="outline-container-orgb0e58a4" class="outline-3">
-<h3 id="orgb0e58a4">Prims algoritme</h3>
-<div class="outline-text-3" id="text-orgb0e58a4">
+<div id="outline-container-org863e54a" class="outline-3">
+<h3 id="org863e54a">Prims algoritme</h3>
+<div class="outline-text-3" id="text-org863e54a">
 <p>
-I forelesningsvideoene dekker vi tre algoritmer for minimale spenntrær. Her
-kommer vi kun til å se på Prims algoritme. Den har store likhetstrekk til
-Dijkstra.
+På forelesning dekker vi tre algoritmer for minimale spenntrær. Her kommer
+vi kun til å se på Prims algoritme. Den har store likhetstrekk til Dijkstra.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python"><span style="color: #e45649;">def</span> <span style="color: #a626a4;">prim</span>(G):
-    <span style="color: #6a1868;">V</span>, <span style="color: #6a1868;">E</span>, <span style="color: #6a1868;">w</span> = G
-    <span style="color: #9ca0a4;"># </span><span style="color: #9ca0a4;">Pick arbitrary start vertex</span>
-    <span style="color: #6a1868;">s</span> = <span style="color: #a626a4;">next</span>(<span style="color: #a626a4;">iter</span>(V))
-    <span style="color: #6a1868;">Q</span> = [(0, s, <span style="color: #b751b6;">None</span>)]
-    <span style="color: #6a1868;">parents</span> = <span style="color: #a626a4;">dict</span>()
+<pre class="src src-python"><span style="color: #673AB7;">def</span> <span style="color: #263238; font-weight: bold;">prim</span>(G):
+    <span style="color: #263238; font-weight: bold;">V</span>, <span style="color: #263238; font-weight: bold;">E</span>, <span style="color: #263238; font-weight: bold;">w</span> = G
+    <span style="color: #90A4AE;"># </span><span style="color: #90A4AE;">Pick arbitrary start vertex</span>
+    <span style="color: #263238; font-weight: bold;">s</span> = <span style="color: #673AB7;">next</span>(<span style="color: #673AB7;">iter</span>(V))
+    <span style="color: #263238; font-weight: bold;">queue</span> = [(0, s, <span style="color: #673AB7;">None</span>)]
+    <span style="color: #263238; font-weight: bold;">parents</span> = <span style="color: #673AB7;">dict</span>()
 
-    <span style="color: #e45649;">while</span> Q:
-        <span style="color: #6a1868;">_</span>, <span style="color: #6a1868;">v</span>, <span style="color: #6a1868;">p</span> = heappop(Q)
-        <span style="color: #e45649;">if</span> v <span style="color: #e45649;">in</span> parents:
-            <span style="color: #e45649;">continue</span>
-        <span style="color: #6a1868;">parents</span>[v] = p
+    <span style="color: #673AB7;">while</span> queue:
+        <span style="color: #263238; font-weight: bold;">_</span>, <span style="color: #263238; font-weight: bold;">u</span>, <span style="color: #263238; font-weight: bold;">p</span> = heappop(queue)
+        <span style="color: #673AB7;">if</span> u <span style="color: #673AB7;">in</span> parents:
+            <span style="color: #673AB7;">continue</span>
+        <span style="color: #263238; font-weight: bold;">parents</span>[u] = p
+        <span style="color: #673AB7;">for</span> v <span style="color: #673AB7;">in</span> E[u]:
+            heappush(queue, (w[(u, v)], v, u))
 
-        <span style="color: #e45649;">for</span> u <span style="color: #e45649;">in</span> E[v]:
-            heappush(Q, (w[(v, u)], u, v))
-
-    <span style="color: #e45649;">return</span> parents
+    <span style="color: #673AB7;">return</span> parents
 </pre>
 </div>
 
 <p>
 Vi definerer en kø som starter med å inneholde et trippel, der \(s\) er en
 vilkårlig node, \(0\) er den assosierte vekten, og <code>None</code> representerer
-<i>fraværet</i> av en node som la \(s\) på heapen. I tillegg har vi et map
+<i>fraværet</i> av en node som la \(s\) på prioritetskøen. I tillegg har vi et map
 <code>parents</code> for å holde på foreldre-pekere. Som vi har sett tidligere, så kan
 vi bruke et slikt map for å representere et spenntre etter en traversering.
 </p>
@@ -1048,42 +1030,40 @@ vi bruke et slikt map for å representere et spenntre etter en traversering.
 <p>
 Vi traverserer så grafen ved å ta ut noder fra prioritetskøen. Her
 prioriterer vi nodene etter vekten på kanten, snarere enn den akkumulerte
-vekten av stien så langt (som vi gjorde for Dijkstra). For hver node \(v\) vi
-tar av prioritetskøen har vi en assosiert kostnad og en node \(p\) som la \(v\)
-på heapen. Når en node \(v\) er tatt av køen legger vi det til i <code>parents</code>
-dersom \(v\) ikke forekommer i <code>parents</code> fra før. På denne måten velger vi
+vekten av stien så langt (som vi gjorde for Dijkstra). For hver node \(u\) vi
+tar av prioritetskøen har vi en assosiert kostnad og en node \(p\) som la \(u\)
+på heapen. Når en node \(u\) er tatt av køen legger vi det til i <code>parents</code>
+dersom \(u\) ikke forekommer i <code>parents</code> fra før. På denne måten velger vi
 alltid den kanten med lavest vekt som er observert fra en node så langt. Ved
 å alltid velge den kanten med lavest vekt, så er vi også garantert å få det
 treet med lavest total vekt. Dette er et eksempel på en <i>grådig</i> algoritme.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python">draw_parents_weighted(G, prim(G), <span style="color: #50a14f;">'prim_minimal_spanningtree'</span>)
+<pre class="src src-python">draw_parents_weighted(G, prim(G), <span style="color: #90A4AE;">'prim_minimal_spanningtree'</span>)
 </pre>
 </div>
 
 
-<div id="orgce608d4" class="figure">
-<p><object type="image/svg+xml" data="./prim_minimal_spanningtree.svg" class="org-svg">
-Sorry, your browser does not support SVG.</object>
+<div id="org1f4959d" class="figure">
+<p><img src="./prim_minimal_spanningtree.svg" alt="prim_minimal_spanningtree.svg" class="org-svg" />
 </p>
 </div>
 </div>
 </div>
 </div>
 
-<div id="outline-container-orgc6721b9" class="outline-2">
-<h2 id="orgc6721b9">Bikonnektivitet</h2>
-<div class="outline-text-2" id="text-orgc6721b9">
+<div id="outline-container-orgf7a684b" class="outline-2">
+<h2 id="orgf7a684b">\(2\)-sammenhengenhet</h2>
+<div class="outline-text-2" id="text-orgf7a684b">
 <p>
 Grafen som vi jobber med er <i>sammenhengende</i>. Det finnes altså en sti mellom
 alle par av noder i \(G\). I mange anvendelser så ønsker man ikke bare at
-grafen skal være sammenhengende, men også at den skal være <i>bikonnektiv</i>. Det
-betyr at hvis en hvilken som helst node \(v \in V\) fjernes fra grafen, så vil
-grafen fremdeles være sammenhengende. Mer generelt sier vi at en graf er
-\(k\)-sammenhengende, så hvis grafen forblir sammenhengende hvis man fjerner
-færre enn \(k\) noder. At en graf er bikonnektiv betyr det samme som at den er
-\(2\)-sammenhengende.
+grafen skal være sammenhengende, men også at den skal være
+<i>\(2\)-sammenhengende</i> (også kalt <i>bikonnektiv</i>). Det betyr at hvis en hvilken
+som helst node \(v \in V\) fjernes fra grafen, så vil grafen <i>fremdeles</i> være
+sammenhengende. Mer generelt sier vi at en graf er \(k\)-sammenhengende, så
+hvis grafen forblir sammenhengende hvis man fjerner færre enn \(k\) noder.
 </p>
 
 <p>
@@ -1091,21 +1071,21 @@ Dette er et nyttig begrep i anvendelser der det er et ønske om redundans. For
 eksempel kan du se for deg en graf som representerer Ruter sitt
 kollektivnett, der noder representerer holdeplasser, og kanter representerer
 at det går en buss, trikk eller bane mellom holdeplassene. Dersom denne
-grafen er bikonnektiv, så betyr det at dersom det er full stans ved en
+grafen er \(2\)-sammenhengende, så betyr det at dersom det er full stans ved en
 holdeplass, så vil reisende fremdeles kunne komme frem til sitt stoppested
 gjennom en annen rute.
 </p>
 </div>
 
-<div id="outline-container-org6e0f893" class="outline-3">
-<h3 id="org6e0f893">Er \(G\) er bikonnektiv?</h3>
-<div class="outline-text-3" id="text-org6e0f893">
+<div id="outline-container-org5b9ae17" class="outline-3">
+<h3 id="org5b9ae17">Er \(G\) er \(2\)-sammenhengende?</h3>
+<div class="outline-text-3" id="text-org5b9ae17">
 <p>
-La oss sjekke om \(G\) er bikonnektiv ved å følge definisjonen veldig direkte.
-Med andre ord prøver vi å fjerne hver node \(v \in V\) fra \(G\) og sjekke om
-den resulterende grafen er sammenhengende. Siden grafen er liten, så er det
-lurt å sjekke om den er bikonnektiv «for hånd» før du går videre (dette er
-ganske lett å gjøre ved å se på grafen).
+La oss sjekke om \(G\) er \(2\)-sammenhengende ved å følge definisjonen veldig
+direkte. Med andre ord prøver vi å fjerne hver node \(v \in V\) fra \(G\) og
+sjekke om den resulterende grafen er sammenhengende. Siden grafen er liten,
+så er det lurt å sjekke om den er \(2\)-sammenhengende «for hånd» før du går
+videre.
 </p>
 
 <p>
@@ -1116,21 +1096,21 @@ forbli uendret (selv om dette er litt stygt).
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python"><span style="color: #e45649;">def</span> <span style="color: #a626a4;">removenode</span>(G, v):
-    <span style="color: #6a1868;">V</span>, <span style="color: #6a1868;">E</span>, <span style="color: #6a1868;">w</span> = G
+<pre class="src src-python"><span style="color: #673AB7;">def</span> <span style="color: #263238; font-weight: bold;">removenode</span>(G, u):
+    <span style="color: #263238; font-weight: bold;">V</span>, <span style="color: #263238; font-weight: bold;">E</span>, <span style="color: #263238; font-weight: bold;">w</span> = G
 
-    <span style="color: #6a1868;">newV</span> = V.copy()
-    <span style="color: #6a1868;">newE</span> = E.copy()
+    <span style="color: #263238; font-weight: bold;">newV</span> = V.copy()
+    <span style="color: #263238; font-weight: bold;">newE</span> = E.copy()
 
-    newV.discard(v)
-    <span style="color: #e45649;">del</span> newE[v]
+    newV.discard(u)
+    <span style="color: #673AB7;">del</span> newE[u]
 
-    <span style="color: #e45649;">for</span> u <span style="color: #e45649;">in</span> newV:
-        <span style="color: #6a1868;">neighbors</span> = newE[u].copy()
-        neighbors.discard(v)
-        <span style="color: #6a1868;">newE</span>[u] = neighbors
+    <span style="color: #673AB7;">for</span> v <span style="color: #673AB7;">in</span> newV:
+        <span style="color: #263238; font-weight: bold;">neighbors</span> = newE[v].copy()
+        neighbors.discard(u)
+        <span style="color: #263238; font-weight: bold;">newE</span>[v] = neighbors
 
-    <span style="color: #e45649;">return</span> newV, newE, w
+    <span style="color: #673AB7;">return</span> newV, newE, w
 </pre>
 </div>
 
@@ -1142,19 +1122,19 @@ hvilken som helst node \(v \in V\).
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python"><span style="color: #e45649;">def</span> <span style="color: #a626a4;">isbiconnected_naive</span>(G):
-    <span style="color: #6a1868;">V</span>, <span style="color: #6a1868;">E</span>, <span style="color: #6a1868;">_</span> = G
-    <span style="color: #e45649;">for</span> v <span style="color: #e45649;">in</span> V:
-        <span style="color: #6a1868;">newV</span>, <span style="color: #6a1868;">_</span>, <span style="color: #6a1868;">_</span> = <span style="color: #6a1868;">newG</span> = removenode(G, v)
-        <span style="color: #6a1868;">nodelist</span> = dfs(newG, <span style="color: #a626a4;">next</span>(<span style="color: #a626a4;">iter</span>(newV)))
-        <span style="color: #e45649;">if</span> <span style="color: #a626a4;">set</span>(nodelist) != newV:
-            <span style="color: #e45649;">return</span> <span style="color: #b751b6;">False</span>
-    <span style="color: #e45649;">return</span> <span style="color: #b751b6;">True</span>
+<pre class="src src-python"><span style="color: #673AB7;">def</span> <span style="color: #263238; font-weight: bold;">isbiconnected_naive</span>(G):
+    <span style="color: #263238; font-weight: bold;">V</span>, <span style="color: #263238; font-weight: bold;">E</span>, <span style="color: #263238; font-weight: bold;">_</span> = G
+    <span style="color: #673AB7;">for</span> v <span style="color: #673AB7;">in</span> V:
+        <span style="color: #263238; font-weight: bold;">newV</span>, <span style="color: #263238; font-weight: bold;">_</span>, <span style="color: #263238; font-weight: bold;">_</span> = newG = removenode(G, v)
+        <span style="color: #263238; font-weight: bold;">nodelist</span> = dfs(newG, <span style="color: #673AB7;">next</span>(<span style="color: #673AB7;">iter</span>(newV)))
+        <span style="color: #673AB7;">if</span> <span style="color: #673AB7;">set</span>(nodelist) != newV:
+            <span style="color: #673AB7;">return</span> <span style="color: #673AB7;">False</span>
+    <span style="color: #673AB7;">return</span> <span style="color: #673AB7;">True</span>
 </pre>
 </div>
 
 <p>
-Så, er \(G\) bikonnektiv?
+Så, er \(G\) \(2\)-sammenhengende?
 </p>
 
 <div class="org-src-container">
@@ -1168,14 +1148,13 @@ True
 
 
 <p>
-Ja, \(G\) er bikonnektiv, som betyr det samme som at \(G\) er
-\(2\)-sammenhengende. Men er \(G\) \(3\)-sammenhengende? Prosedyren vår kan
-bare sjekke bikonnektivitet, men vi kan sjekke dette ved hjelp av
-<code>removenode</code> og <code>isbiconnected_naive</code>.
+Ja, \(G\) er \(2\)-sammenhengende. Men er \(G\) \(3\)-sammenhengende? Prosedyren
+vår kan kun sjekke om grafen er \(2\)-sammenhengende, men vi kan sjekke
+dette ved hjelp av <code>removenode</code> og <code>isbiconnected_naive</code>.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python">isbiconnected_naive(removenode(G, <span style="color: #50a14f;">'C'</span>))
+<pre class="src src-python">isbiconnected_naive(removenode(G, <span style="color: #90A4AE;">'C'</span>))
 </pre>
 </div>
 
@@ -1185,60 +1164,60 @@ False
 
 
 <p>
-Ved å først fjerne en velvalgt node <code>C</code>, så kan vi se at grafen ikke lenger
-er \(2\)-sammenhengende, som vil si at grafen \(G\) ikke er
-\(2\)-sammenhengende, men ikke \(3\)-sammenhengende.
+Ved å først fjerne en velvalgt node <code>C</code>, så kan vi se at grafen ikke lenger er
+\(2\)-sammenhengende, som vil si at grafen \(G\) er \(2\)-sammenhengende, men
+ikke \(3\)-sammenhengende.
 </p>
 
 <p>
-For hver node \(v \in V\), bygger <code>isbiconnected_naive</code> en ny graf \(G'\) med
-\(v\) (og tilhørende kanter) er fjernet, og gjør et DFS-søk. DFS-søk har som
-kjent \(O(|V| + |E|)\) kjøretid, og det samme har <code>removenode</code>, siden grafen
+For hver node \(v \in V\), bygger <code>isbiconnected_naive</code> en ny graf \(G'\) med \(v\)
+(og tilhørende kanter) er fjernet, og gjør et DFS-søk. DFS-søk har som kjent
+\(O(|V| + |E|)\) kjøretid, og det samme har <code>removenode</code>, siden grafen
 essensielt kopieres. Dette gjøres for <i>hver</i> node \(v \in V\), som gir oss
 \(O(|V|\cdot(|V| + |E|))\) i kjøretid.
 </p>
 </div>
 </div>
 
-<div id="outline-container-org4908b88" class="outline-3">
-<h3 id="org4908b88">Separasjonsnoder og bikonnektivitet</h3>
-<div class="outline-text-3" id="text-org4908b88">
+<div id="outline-container-org4aafaf9" class="outline-3">
+<h3 id="org4aafaf9">Separasjonsnoder og bikonnektivitet</h3>
+<div class="outline-text-3" id="text-org4aafaf9">
 <p>
-Dette problemet kan løses mye mer effektivt enn <code>isbiconnected_naive</code>. Når
-en algoritme følger definisjonen så direkte, pleier vi å si at algoritmen er
-<i>brute force</i>. Nå skal vi se en algoritme (som er godt forklart i en
-forelesningsvideo) som er i \(O(|V| + |E|)\). Den gjør et dybde-først søk, og
-lagrer litt ekstra informasjon på veien som lar oss avgjøre hvorvidt grafen
-er bikonnektiv eller ikke. Algoritmen går ut på å identifisere det som
-kalles <i>separasjonsnoder</i>.
+Dette problemet kan løses mye mer effektivt enn <code>isbiconnected_naive</code>. Når en
+algoritme følger definisjonen så direkte, pleier vi å si at algoritmen er
+<i>brute force</i>. Nå skal vi se en algoritme som er i \(O(|V| + |E|)\), altså
+lineær tid med hensyn til størrelsen på grafen. Den gjør et dybde-først søk,
+og lagrer litt ekstra informasjon på veien som lar oss avgjøre hvorvidt
+grafen er \(2\)-sammenhengende eller ikke. Algoritmen går ut på å
+identifisere det som kalles <i>separasjonsnoder</i>.
 </p>
 
 <p>
 En separasjonsnode er intuitivt en node som holder grafen sammenhengende.
 Hvis en separasjonsnode fjernes, så får grafen <i>flere komponenter</i> (altså at
 den ikke lenger sammenhengende). Dersom alle stier mellom to noder går
-gjennom en node \(v \in V\), så er \(v\) en separasjonsnode.
+gjennom den samme noden \(v \in V\), så er \(v\) en separasjonsnode.
 </p>
 
 <p>
 Når vi gjør et dybde-først søk får vi også et spenntre (akkurat slik vi har
 sett for andre traverseringsmetoder). Vi sier at hvis \(T\) er et spenntre for
-\(G\), og \(v \in V\) er en forfeder av \(u \in V\) i treet, så kalles en kant
-mellom \(u\) og \(v\) en <i>tilbakekant</i> (eng: back-edge). Dersom vi har en
-tilbakekant \((u, v)\) som ikke er i treet, så vet vi at det finnes minst to
-distinkte stier mellom \(u\) og \(v\).
+\(G\) og \(u \in V\) er en forfeder av \(v \in V\) i treet, så kalles en kant fra \(v\)
+til \(u\) en <i>tilbakekant</i> (eng: back-edge). Dersom vi har en tilbakekant \((v,
+   u)\) som ikke er i treet, så vet vi at det finnes minst to distinkte stier
+mellom \(u\) og \(v\).
 </p>
 
 <p>
-Det er to egenskaper vi kan sjekke ved et slikt spenntre, som sammen
+Det er to egenskaper vi kan sjekke ved et slikt spenntre som sammen
 forteller oss om en node i den underliggende grafen er en separasjonsnode:
 </p>
 <ol class="org-ol">
 <li>Hvis rotnoden \(r \in V\) i spenntreet har mer enn ett barn, så er roten
 \(r\) i treet en separasjonsnode i \(G\).</li>
-<li>Hvis \(u \in V\) ikke er en rotnoden, og det ikke finnes en etterfølger \(v\)
-av \(u\) (der \(u \neq v\)) med en tilbakekant til en forfeder av \(u\), så er
-\(u\) en separasjonsnode i \(G\).</li>
+<li>Hvis \(u \in V\) ikke er en rotnoden og det <i>ikke</i> finnes en etterfølger \(v\) av
+\(u\) (der \(u \neq v\)) med en tilbakekant fra \(v\) til en forfeder av \(u\), så
+er \(u\) en separasjonsnode i \(G\).</li>
 </ol>
 
 <p>
@@ -1250,49 +1229,51 @@ separasjonsnode.
 
 <p>
 For å sjekke det andre punktet vil algoritmen for å finne separasjonsnoder
-holde styr på to tall for hver node \(u \in V\) som sammen lar oss
-identifisere alle separasjonsnoder i grafen. Det ene tallet <code>depth[u]</code> (som
-kalles <code>index[u]</code> i forelesningsvideoen) forteller oss hvor langt unna \(u\)
-er fra roten i spenntreet. Det andre tallet <code>low[u]</code> angir den laveste
-dybden som kan nås ved å følge én eller flere etterkommere av \(u\) og
+holde styr på to tall for hver node \(u \in V\) som sammen lar oss identifisere
+alle separasjonsnoder i grafen. Det ene tallet <code>depth[u]</code> forteller oss hvor
+langt unna \(u\) er fra roten i spenntreet. Det andre tallet <code>low[u]</code> angir den
+laveste dybden som kan nås ved å følge én eller flere etterkommere av \(u\) og
 maksimalt en tilbakekant. Dersom <code>depth[u] &lt;= low[v]</code> der \(u\) er en node og
 \(v\) er et barn av \(u\), så er \(u\) en separasjonsnode.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python"><span style="color: #e45649;">def</span> <span style="color: #a626a4;">separationnodes_rec</span>(E, u, d, depth, low, seps):
-    <span style="color: #6a1868;">depth</span>[u] = <span style="color: #6a1868;">low</span>[u] = d
-    <span style="color: #e45649;">for</span> v <span style="color: #e45649;">in</span> E[u]:
-        <span style="color: #e45649;">if</span> v <span style="color: #e45649;">in</span> depth:
-            <span style="color: #6a1868;">low</span>[u] = <span style="color: #a626a4;">min</span>(low[u], depth[v])
-            <span style="color: #e45649;">continue</span>
-        separationnodes_rec(E, v, d + 1, depth, low, seps)
-        <span style="color: #6a1868;">low</span>[u] = <span style="color: #a626a4;">min</span>(low[u], low[v])
-        <span style="color: #e45649;">if</span> d &lt;= low[v]:
+<pre class="src src-python"><span style="color: #673AB7;">def</span> <span style="color: #263238; font-weight: bold;">separationnodes_rec</span>(E, u, d, depth, low, parent, seps):
+    <span style="color: #263238; font-weight: bold;">depth</span>[u] = low[u] = d
+    <span style="color: #673AB7;">for</span> v <span style="color: #673AB7;">in</span> E[u]:
+        <span style="color: #673AB7;">if</span> v <span style="color: #673AB7;">in</span> parent <span style="color: #673AB7;">and</span> parent[v] == u:
+            <span style="color: #673AB7;">continue</span>
+        <span style="color: #673AB7;">if</span> v <span style="color: #673AB7;">in</span> depth:
+            <span style="color: #263238; font-weight: bold;">low</span>[u] = <span style="color: #673AB7;">min</span>(low[u], depth[v])
+            <span style="color: #673AB7;">continue</span>
+        <span style="color: #263238; font-weight: bold;">parent</span>[v] = u
+        separationnodes_rec(E, v, d + 1, depth, low, parent, seps)
+        <span style="color: #263238; font-weight: bold;">low</span>[u] = <span style="color: #673AB7;">min</span>(low[u], low[v])
+        <span style="color: #673AB7;">if</span> d &lt;= low[v]:
             seps.add(u)
 
-<span style="color: #e45649;">def</span> <span style="color: #a626a4;">separationnodes</span>(G):
-    <span style="color: #6a1868;">V</span>, <span style="color: #6a1868;">E</span>, <span style="color: #6a1868;">_</span> = G
-    <span style="color: #6a1868;">s</span> = <span style="color: #a626a4;">next</span>(<span style="color: #a626a4;">iter</span>(V))
-    <span style="color: #6a1868;">depth</span> = {s: 0}
-    <span style="color: #6a1868;">low</span> = {s: 0}
-    <span style="color: #6a1868;">seps</span> = <span style="color: #a626a4;">set</span>()
+<span style="color: #673AB7;">def</span> <span style="color: #263238; font-weight: bold;">separationnodes</span>(G):
+    <span style="color: #263238; font-weight: bold;">V</span>, <span style="color: #263238; font-weight: bold;">E</span>, <span style="color: #263238; font-weight: bold;">_</span> = G
+    <span style="color: #263238; font-weight: bold;">s</span> = <span style="color: #673AB7;">next</span>(<span style="color: #673AB7;">iter</span>(V))
+    <span style="color: #263238; font-weight: bold;">depth</span> = {s: 0}
+    <span style="color: #263238; font-weight: bold;">low</span> = {s: 0}
+    <span style="color: #263238; font-weight: bold;">parent</span> = {s: <span style="color: #673AB7;">None</span>}
+    <span style="color: #263238; font-weight: bold;">seps</span> = <span style="color: #673AB7;">set</span>()
 
-    <span style="color: #e45649;">for</span> u <span style="color: #e45649;">in</span> E[s]:
-        <span style="color: #e45649;">if</span> u <span style="color: #e45649;">not</span> <span style="color: #e45649;">in</span> depth:
-            separationnodes_rec(E, u, 1, depth, low, seps)
+    <span style="color: #673AB7;">for</span> u <span style="color: #673AB7;">in</span> E[s]:
+        <span style="color: #673AB7;">if</span> u <span style="color: #673AB7;">not</span> <span style="color: #673AB7;">in</span> depth:
+            <span style="color: #263238; font-weight: bold;">parent</span>[u] = s
+            separationnodes_rec(E, u, 1, depth, low, parent, seps)
 
-    <span style="color: #e45649;">if</span> <span style="color: #a626a4;">len</span>([u <span style="color: #e45649;">for</span> u <span style="color: #e45649;">in</span> E[s] <span style="color: #e45649;">if</span> depth[u] == 1]) &gt; 1:
+    <span style="color: #673AB7;">if</span> <span style="color: #673AB7;">len</span>([u <span style="color: #673AB7;">for</span> u <span style="color: #673AB7;">in</span> E[s] <span style="color: #673AB7;">if</span> depth[u] == 1]) &gt; 1:
         seps.add(s)
 
-    <span style="color: #e45649;">return</span> seps
+    <span style="color: #673AB7;">return</span> seps
 </pre>
 </div>
 
 <p>
-Det første man kan legge merke til skiller Python-koden fra pseudokoden fra
-forelesningsvideoen er at vi her splitter arbeidet opp i to prosedyrer. Det
-er to grunner til dette:
+Her splitter arbeidet opp i to prosedyrer. Det er to grunner til dette:
 </p>
 <ul class="org-ul">
 <li>Siden algoritmen er avhengig av flere datastrukturer (som vi
@@ -1306,8 +1287,8 @@ for disse i prosedyren som kalles.</li>
 </ul>
 
 <p>
-Vi kan kalle på prosedyren med \(G\) som argument. Siden \(G\) er bikonnektiv bør
-vi heller ikke få noen separasjonsnoder.
+Vi kan kalle på prosedyren med \(G\) som argument. Siden \(G\) er
+\(2\)-sammenhengende bør vi heller ikke få noen separasjonsnoder.
 </p>
 
 <div class="org-src-container">
@@ -1326,7 +1307,7 @@ noder blir da separasjonsnoder?
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python"><span style="color: #a626a4;">sorted</span>(separationnodes(removenode(G, <span style="color: #50a14f;">'C'</span>)))
+<pre class="src src-python"><span style="color: #673AB7;">sorted</span>(separationnodes(removenode(G, <span style="color: #90A4AE;">'C'</span>)))
 </pre>
 </div>
 
@@ -1354,13 +1335,13 @@ noder blir da separasjonsnoder?
 
 <p>
 Med en algoritme for å finne separasjonsnoder i \(O(|V| + |E|)\) på plass er
-det enkelt å skrive en prosedyre som sjekker om en graf er bikonnektiv med
-samme kjøretidskompleksitet.
+det enkelt å skrive en prosedyre som sjekker om en graf er
+\(2\)-sammenhengende med samme kjøretidskompleksitet.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python"><span style="color: #e45649;">def</span> <span style="color: #a626a4;">isbiconnected</span>(G):
-    <span style="color: #e45649;">return</span> <span style="color: #a626a4;">len</span>(separationnodes(G)) == 0
+<pre class="src src-python"><span style="color: #673AB7;">def</span> <span style="color: #263238; font-weight: bold;">isbiconnected</span>(G):
+    <span style="color: #673AB7;">return</span> <span style="color: #673AB7;">len</span>(separationnodes(G)) == 0
 </pre>
 </div>
 
@@ -1380,7 +1361,7 @@ True
 
 
 <div class="org-src-container">
-<pre class="src src-python">isbiconnected(removenode(G, <span style="color: #50a14f;">'C'</span>))
+<pre class="src src-python">isbiconnected(removenode(G, <span style="color: #90A4AE;">'C'</span>))
 </pre>
 </div>
 
@@ -1391,13 +1372,12 @@ False
 </div>
 </div>
 
-<div id="outline-container-orgb543eb9" class="outline-2">
-<h2 id="orgb543eb9">Sterkt sammenhengende komponenter</h2>
-<div class="outline-text-2" id="text-orgb543eb9">
+<div id="outline-container-org202d9eb" class="outline-2">
+<h2 id="org202d9eb">Sterkt sammenhengende komponenter</h2>
+<div class="outline-text-2" id="text-org202d9eb">
 
-<div id="org571c884" class="figure">
-<p><object type="image/svg+xml" data="./forelesningsgraf2.svg" class="org-svg" width="400">
-Sorry, your browser does not support SVG.</object>
+<div id="orge040bac" class="figure">
+<p><img src="./forelesningsgraf2.svg" alt="forelesningsgraf2.svg" class="org-svg" width="400" />
 </p>
 </div>
 
@@ -1421,7 +1401,7 @@ Grafen vi ser på bildet ovenfor er en rettet graf som består av tre sterkt
 sammenhengende komponenter. Grafen kan skrives ned slik:
 </p>
 
-<pre class="example" id="org1ec933c">
+<pre class="example" id="org4c41f1e">
 A B
 B C
 B E
@@ -1444,17 +1424,17 @@ som er rettet og uvektet.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python"><span style="color: #e45649;">def</span> <span style="color: #a626a4;">builddigraph</span>(lines):
-    <span style="color: #6a1868;">V</span> = <span style="color: #a626a4;">set</span>()
-    <span style="color: #6a1868;">E</span> = defaultdict(<span style="color: #a626a4;">set</span>)
+<pre class="src src-python"><span style="color: #673AB7;">def</span> <span style="color: #263238; font-weight: bold;">builddigraph</span>(lines):
+    <span style="color: #263238; font-weight: bold;">V</span> = <span style="color: #673AB7;">set</span>()
+    <span style="color: #263238; font-weight: bold;">E</span> = defaultdict(<span style="color: #673AB7;">set</span>)
 
-    <span style="color: #e45649;">for</span> line <span style="color: #e45649;">in</span> lines.splitlines():
-        <span style="color: #6a1868;">v</span>, <span style="color: #6a1868;">u</span> = line.strip().split()
+    <span style="color: #673AB7;">for</span> line <span style="color: #673AB7;">in</span> lines.splitlines():
+        <span style="color: #263238; font-weight: bold;">v</span>, <span style="color: #263238; font-weight: bold;">u</span> = line.strip().split()
         V.add(v)
         V.add(u)
         E[v].add(u)
 
-    <span style="color: #e45649;">return</span> V, E
+    <span style="color: #673AB7;">return</span> V, E
 </pre>
 </div>
 
@@ -1464,7 +1444,7 @@ ovenfor er gitt i en variabel <code>lines</code>.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python"><span style="color: #6a1868;">G</span> = builddigraph(lines)
+<pre class="src src-python"><span style="color: #263238; font-weight: bold;">G</span> = builddigraph(lines)
 </pre>
 </div>
 
@@ -1473,26 +1453,25 @@ Og la oss tegne denne nye grafen, i likhet med den forrige.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python"><span style="color: #e45649;">def</span> <span style="color: #a626a4;">drawdigraph</span>(G, name):
-     <span style="color: #6a1868;">V</span>, <span style="color: #6a1868;">E</span> = G
-     <span style="color: #6a1868;">dot</span> = graphviz.Digraph()
+<pre class="src src-python"><span style="color: #673AB7;">def</span> <span style="color: #263238; font-weight: bold;">drawdigraph</span>(G, name):
+     <span style="color: #263238; font-weight: bold;">V</span>, <span style="color: #263238; font-weight: bold;">E</span> = G
+     <span style="color: #263238; font-weight: bold;">dot</span> = graphviz.Digraph()
 
-     <span style="color: #e45649;">for</span> u <span style="color: #e45649;">in</span> V:
+     <span style="color: #673AB7;">for</span> u <span style="color: #673AB7;">in</span> V:
           dot.node(u)
 
-          <span style="color: #e45649;">for</span> v <span style="color: #e45649;">in</span> E[u]:
+          <span style="color: #673AB7;">for</span> v <span style="color: #673AB7;">in</span> E[u]:
                dot.edge(u, v)
 
-     dot.render(name, <span style="color: #a626a4;">format</span>=<span style="color: #50a14f;">'svg'</span>)
+     dot.render(name, <span style="color: #673AB7;">format</span>=<span style="color: #90A4AE;">'svg'</span>)
 
-drawdigraph(G, <span style="color: #50a14f;">'digraph'</span>)
+drawdigraph(G, <span style="color: #90A4AE;">'digraph'</span>)
 </pre>
 </div>
 
 
-<div id="orgebe5ce0" class="figure">
-<p><object type="image/svg+xml" data="./digraph.svg" class="org-svg">
-Sorry, your browser does not support SVG.</object>
+<div id="orgbc768a1" class="figure">
+<p><img src="./digraph.svg" alt="digraph.svg" class="org-svg" />
 </p>
 </div>
 
@@ -1502,14 +1481,14 @@ hjelpeprosedyre for dette.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python"><span style="color: #e45649;">def</span> <span style="color: #a626a4;">reversegraph</span>(G):
-    <span style="color: #6a1868;">V</span>, <span style="color: #6a1868;">E</span> = G
-    <span style="color: #6a1868;">rE</span> = defaultdict(<span style="color: #a626a4;">set</span>)
+<pre class="src src-python"><span style="color: #673AB7;">def</span> <span style="color: #263238; font-weight: bold;">reversegraph</span>(G):
+    <span style="color: #263238; font-weight: bold;">V</span>, <span style="color: #263238; font-weight: bold;">E</span> = G
+    <span style="color: #263238; font-weight: bold;">rE</span> = defaultdict(<span style="color: #673AB7;">set</span>)
 
-    <span style="color: #e45649;">for</span> u <span style="color: #e45649;">in</span> V:
-        <span style="color: #e45649;">for</span> v <span style="color: #e45649;">in</span> E[u]:
+    <span style="color: #673AB7;">for</span> u <span style="color: #673AB7;">in</span> V:
+        <span style="color: #673AB7;">for</span> v <span style="color: #673AB7;">in</span> E[u]:
             rE[v].add(u)
-    <span style="color: #e45649;">return</span> V, rE
+    <span style="color: #673AB7;">return</span> V, rE
 </pre>
 </div>
 
@@ -1518,14 +1497,13 @@ La oss sjekke om resultatet ser rimelig ut ved å tegne den.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python">drawdigraph(reversegraph(G), <span style="color: #50a14f;">'digraph_r'</span>)
+<pre class="src src-python">drawdigraph(reversegraph(G), <span style="color: #90A4AE;">'digraph_r'</span>)
 </pre>
 </div>
 
 
-<div id="org8ce7d23" class="figure">
-<p><object type="image/svg+xml" data="./digraph_r.svg" class="org-svg">
-Sorry, your browser does not support SVG.</object>
+<div id="org7b9707b" class="figure">
+<p><img src="./digraph_r.svg" alt="digraph_r.svg" class="org-svg" />
 </p>
 </div>
 
@@ -1535,9 +1513,9 @@ sammenhengende komponentene er de samme.
 </p>
 </div>
 
-<div id="outline-container-org87c1598" class="outline-3">
-<h3 id="org87c1598">DFS og topologisk sortering</h3>
-<div class="outline-text-3" id="text-org87c1598">
+<div id="outline-container-org3ae6b45" class="outline-3">
+<h3 id="org3ae6b45">DFS og topologisk sortering</h3>
+<div class="outline-text-3" id="text-org3ae6b45">
 <p>
 Vi har allerede sett en algoritme for topologisk sortering. Men nå som vi er
 nærmere kjent med dybde-først søk skal vi se at vi kan topologisk sortere
@@ -1547,22 +1525,22 @@ besøkt. Til slutt, vil den stacken være en topologisk sortering for grafen.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python"><span style="color: #e45649;">def</span> <span style="color: #a626a4;">dfsvisit</span>(G, u, visited, stack):
-    <span style="color: #6a1868;">V</span>, <span style="color: #6a1868;">E</span> = G
+<pre class="src src-python"><span style="color: #673AB7;">def</span> <span style="color: #263238; font-weight: bold;">dfsvisit</span>(G, u, visited, stack):
+    <span style="color: #263238; font-weight: bold;">V</span>, <span style="color: #263238; font-weight: bold;">E</span> = G
     visited.add(u)
-    <span style="color: #e45649;">for</span> v <span style="color: #e45649;">in</span> E[u]:
-        <span style="color: #e45649;">if</span> v <span style="color: #e45649;">not</span> <span style="color: #e45649;">in</span> visited:
+    <span style="color: #673AB7;">for</span> v <span style="color: #673AB7;">in</span> E[u]:
+        <span style="color: #673AB7;">if</span> v <span style="color: #673AB7;">not</span> <span style="color: #673AB7;">in</span> visited:
             dfsvisit(G, v, visited, stack)
     stack.append(u)
 
-<span style="color: #e45649;">def</span> <span style="color: #a626a4;">dfstopsort</span>(G):
-    <span style="color: #6a1868;">V</span>, <span style="color: #6a1868;">E</span> = G
-    <span style="color: #6a1868;">visited</span> = <span style="color: #a626a4;">set</span>()
-    <span style="color: #6a1868;">stack</span> = []
-    <span style="color: #e45649;">for</span> u <span style="color: #e45649;">in</span> V:
-        <span style="color: #e45649;">if</span> u <span style="color: #e45649;">not</span> <span style="color: #e45649;">in</span> visited:
+<span style="color: #673AB7;">def</span> <span style="color: #263238; font-weight: bold;">dfstopsort</span>(G):
+    <span style="color: #263238; font-weight: bold;">V</span>, <span style="color: #263238; font-weight: bold;">E</span> = G
+    <span style="color: #263238; font-weight: bold;">visited</span> = <span style="color: #673AB7;">set</span>()
+    <span style="color: #263238; font-weight: bold;">stack</span> = []
+    <span style="color: #673AB7;">for</span> u <span style="color: #673AB7;">in</span> V:
+        <span style="color: #673AB7;">if</span> u <span style="color: #673AB7;">not</span> <span style="color: #673AB7;">in</span> visited:
             dfsvisit(G, u, visited, stack)
-    <span style="color: #e45649;">return</span> stack
+    <span style="color: #673AB7;">return</span> stack
 </pre>
 </div>
 
@@ -1574,9 +1552,9 @@ til leseren.
 </div>
 </div>
 
-<div id="outline-container-org79866df" class="outline-3">
-<h3 id="org79866df">Kosarajus algoritme</h3>
-<div class="outline-text-3" id="text-org79866df">
+<div id="outline-container-org60a466c" class="outline-3">
+<h3 id="org60a466c">Kosarajus algoritme</h3>
+<div class="outline-text-3" id="text-org60a466c">
 <p>
 Algoritmen vi skal se på for sterkt sammenhengende komponenter er utrolig
 elegant, og bygger et par viktige innsikter. Den første har vi allerede
@@ -1626,8 +1604,7 @@ Algoritmen kan i korte trekk beskrives slik:
 stack etter alle naboer er besøkt (akkurat slik som <code>dfstopsort</code>).</li>
 <li>Konstruer den reverserte grafen \(G_r\)</li>
 <li>Gjør et nytt (fullt) dybde-først søk på \(G_r\), der det rekkefølgen i det
-fulle dybde-først søket er diktert av den reverserte stacken fra det
-første søket.</li>
+fulle dybde-først søket er diktert av stacken fra det første søket.</li>
 </ol>
 
 <p>
@@ -1636,21 +1613,22 @@ I kode kan det uttrykkes slik (der vi benytter oss av <code>dfstopsort</code> og
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python"><span style="color: #e45649;">def</span> <span style="color: #a626a4;">stronglyconnectedcomponents</span>(G):
-    <span style="color: #6a1868;">V</span>, <span style="color: #6a1868;">E</span> = G
+<pre class="src src-python"><span style="color: #673AB7;">def</span> <span style="color: #263238; font-weight: bold;">stronglyconnectedcomponents</span>(G):
+    <span style="color: #263238; font-weight: bold;">V</span>, <span style="color: #263238; font-weight: bold;">E</span> = G
 
-    <span style="color: #6a1868;">stack</span> = dfstopsort(G)
+    <span style="color: #263238; font-weight: bold;">stack</span> = dfstopsort(G)
 
-    <span style="color: #6a1868;">Gr</span> = reversegraph(G)
-    <span style="color: #6a1868;">visited</span> = <span style="color: #a626a4;">set</span>()
-    <span style="color: #6a1868;">components</span> = []
-    <span style="color: #e45649;">for</span> u <span style="color: #e45649;">in</span> <span style="color: #a626a4;">reversed</span>(stack):
-        <span style="color: #e45649;">if</span> u <span style="color: #e45649;">not</span> <span style="color: #e45649;">in</span> visited:
-            <span style="color: #6a1868;">component</span> = []
+    <span style="color: #263238; font-weight: bold;">Gr</span> = reversegraph(G)
+    <span style="color: #263238; font-weight: bold;">visited</span> = <span style="color: #673AB7;">set</span>()
+    <span style="color: #263238; font-weight: bold;">components</span> = []
+    <span style="color: #673AB7;">while</span> stack:
+        <span style="color: #263238; font-weight: bold;">u</span> = stack.pop()
+        <span style="color: #673AB7;">if</span> u <span style="color: #673AB7;">not</span> <span style="color: #673AB7;">in</span> visited:
+            <span style="color: #263238; font-weight: bold;">component</span> = []
             dfsvisit(Gr, u, visited, component)
             components.append(component)
 
-    <span style="color: #e45649;">return</span> components
+    <span style="color: #673AB7;">return</span> components
 </pre>
 </div>
 
@@ -1686,9 +1664,9 @@ grafen.
 </colgroup>
 <tbody>
 <tr>
+<td class="org-left">A</td>
 <td class="org-left">B</td>
 <td class="org-left">E</td>
-<td class="org-left">A</td>
 </tr>
 
 <tr>
@@ -1698,8 +1676,8 @@ grafen.
 </tr>
 
 <tr>
-<td class="org-left">F</td>
 <td class="org-left">G</td>
+<td class="org-left">F</td>
 <td class="org-left">&#xa0;</td>
 </tr>
 </tbody>
@@ -1711,12 +1689,12 @@ grafen.
 <h2 class="footnotes">Fotnoter: </h2>
 <div id="text-footnotes">
 
-<div class="footdef"><sup><a id="fn.1" class="footnum" href="#fnr.1">1</a></sup> <div class="footpara"><p class="footpara">Dette kan gjøres på logaritmisk tid, men
+<div class="footdef"><sup><a id="fn.1" class="footnum" href="#fnr.1" role="doc-backlink">1</a></sup> <div class="footpara" role="doc-footnote"><p class="footpara">Dette kan gjøres på logaritmisk tid, men
 krever at man bruker <i>Locators</i> (som er beskrevet i seksjon 5.5 i Goodrich &amp;
 Tamassia), eller noe lignende.</p></div></div>
 
-<div class="footdef"><sup><a id="fn.2" class="footnum" href="#fnr.2">2</a></sup> <div class="footpara"><p class="footpara">Det kan være så mange
-som \(\frac{|V|(|V| - 1)}{2}\) kanter i en urettet graf.</p></div></div>
+<div class="footdef"><sup><a id="fn.2" class="footnum" href="#fnr.2" role="doc-backlink">2</a></sup> <div class="footpara" role="doc-footnote"><p class="footpara">Det kan være så mange som
+\(\frac{|V|(|V| - 1)}{2}\) kanter i en urettet graf.</p></div></div>
 
 
 </div>
