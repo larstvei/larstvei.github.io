@@ -7,8 +7,6 @@ function makeCopyButton(block) {
     button.className = 'copy-code-button';
     button.type = 'button';
 
-    // button.innerText = 'Copy';
-
     button.prepend(hovertext);
     hovertext.innerText = 'Copied!';
     hovertext.classList.add('copy-hoverbox');
@@ -35,11 +33,8 @@ function fancyPythonBlocks() {
     for (var i = 0; i < blocksToBlur.length; i++) {
         const block = blocksToBlur[i]
         const button = makeCopyButton(block)
-        block.prepend(button);
-
-        block.setAttribute("style", "cursor: pointer;");
-
         const collapse_wrapper = block.parentNode.parentNode;
+        block.setAttribute("style", "cursor: pointer;");
 
         if (collapse_wrapper.classList.contains('collapsible')) {
             collapse_wrapper.addEventListener("click", function () {
@@ -51,33 +46,19 @@ function fancyPythonBlocks() {
                 block.classList.toggle("blur");
             });
         }
+
+        block.prepend(button);
     }
 }
 
-// function tocDrawer() {
-//     const nav = document.createElement('nav')
-//     const toc = document.getElementById("table-of-contents");
-//     const content = document.getElementById("content");
-//     const preamble = document.getElementById("preamble");
-//     const button = document.createElement('button');
-
-//     button.className = 'toc-button';
-//     button.type = 'button';
-//     button.innerText = '☰';
-//     nav.prepend(button)
-
-//     button.addEventListener('click', function (event) {
-//         toc.classList.toggle('show-toc');
-//         content.classList.toggle('hide-content');
-//         preamble.classList.toggle('hide-content');
-//     });
-
-//     nav.appendChild(toc)
-//     document.body.prepend(nav);
-// }
+function unblurAll() {
+    blocksToUnblur = document.getElementsByClassName('src-python');
+    for (var i = 0; i < blocksToBlur.length; i++) {
+        const block = blocksToBlur[i];
+        block.classList.remove("blur");
+    }
+}
 
 document.addEventListener('DOMContentLoaded', function(){
     fancyPythonBlocks();
-
-    // tocDrawer();
 }, false);

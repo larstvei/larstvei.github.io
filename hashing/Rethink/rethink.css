@@ -1,5 +1,4 @@
-@import url("https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300i,400,400i");
-@import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,300;0,400;1,300;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro&family=Source+Serif+4:opsz@8..60&display=swap');
 
 /* Set variables */
 :root {
@@ -14,17 +13,18 @@
 
 /* Set padding and margin */
 html, body{
-    font-family: "Source Sans Pro", Helvetica, sans-serif;
-    font-weight: 300;
+    font-family: "Source Serif 4", serif;
+    /* font-weight: 300; */
     max-width: 65ch;
     margin: auto;
     padding: 1ex;
     font-size: 25px;
     background-color: #fdfdfd;
+    text-align: justify;
 }
 
 ::selection {
-    background-color: purple;
+    background-color: #673AB7;
     color: white;
 }
 
@@ -95,23 +95,19 @@ pre{
 }
 
 blockquote{
-    border-left: 0.2rem solid purple;
+    border-left: 0.2rem solid #673AB7;
     padding-left: 1rem;
     font-style: italic;
 }
 
 
-p, pre, ol, ul, table, code{
-    color: #1A1A1A;
+p, pre, ol, ul, table, code, h1, h2, h3, h4, h5, h6 {
+    color: #37474F;
 }
 
 table, blockquote, pre, ol, ul, p, #postamble{
     margin-top: 1rem;
     margin-bottom: 1rem;
-}
-
-h1, h2, h3, h4, h5, h6{
-    color: #0A0A0A;
 }
 
 .tag{
@@ -124,7 +120,7 @@ h1, h2, h3, h4, h5, h6{
 .tag > span{
     font-weight: 400;
     font-size: 0.6rem;
-    background-color: purple;
+    background-color: #673AB7;
     text-transform: uppercase;
     border-radius: 2px;
     width: fit-content;
@@ -142,15 +138,15 @@ tr:nth-child(even) {
 }
 
 .org-org-meta-line{
-    color: purple;
+    color: #673AB7;
 }
 
 .org-keyword{
-    color: purple;
+    color: #673AB7;
 }
 
 a{
-    color: purple;
+    color: #673AB7;
 }
 
 .underline{
@@ -163,7 +159,7 @@ a{
 }
 
 .done{
-    color: purple;
+    color: #673AB7;
     font-weight: 400;
 }
 
@@ -196,19 +192,17 @@ div.figure p {
     text-align: center;
 }
 
+.org-svg {
+    width: 100%;
+}
+
+.katex {
+    font-size: 0.9rem;
+}
+
 table {
     margin-left: auto;
     margin-right: auto;
-}
-
-.org-center {
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-}
-
-.org-svg {
-    width: 100%;
 }
 
 .src {
@@ -246,7 +240,6 @@ table {
 }
 
 .copy-hoverbox {
-    display: none;
     position: absolute;
     opacity: 0;
     padding: 0.25rem;
@@ -263,7 +256,6 @@ table {
 }
 
 .copy-hoverbox.show {
-    display: block;
     opacity: 1;
 }
 
