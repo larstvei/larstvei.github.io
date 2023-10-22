@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="nb" xml:lang="nb">
 <head>
-<!-- 2023-10-20 Fri 18:27 -->
+<!-- 2023-10-22 Sun 18:07 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Hashing</title>
@@ -49,9 +49,9 @@ Vi skal se at vi oppnår det som kalles <i>amortisert</i> (eng: amortized) konst
 tid på samtlige operasjoner.
 </p>
 
-<div id="outline-container-org603c87b" class="outline-2">
-<h2 id="org603c87b">Map</h2>
-<div class="outline-text-2" id="text-org603c87b">
+<div id="outline-container-org5eb70d2" class="outline-2">
+<h2 id="org5eb70d2">Map</h2>
+<div class="outline-text-2" id="text-org5eb70d2">
 <p>
 Et map, eller en mapping, er en abstrakt datatype. Helt generelt assosierer
 en nøkkel \(k\) med nøyaktig én verdi \(v\).
@@ -88,9 +88,9 @@ nøkkel mapper til en vilkårlig verdi (for eksempel <code>null</code>).
 </p>
 </div>
 
-<div id="outline-container-orgfb82cce" class="outline-3">
-<h3 id="orgfb82cce">Hashmaps</h3>
-<div class="outline-text-3" id="text-orgfb82cce">
+<div id="outline-container-org97e3d16" class="outline-3">
+<h3 id="org97e3d16">Hashmaps</h3>
+<div class="outline-text-3" id="text-org97e3d16">
 <p>
 Et hashmap er en måte å materialisere den abstrakte datatypen map. Vi bruker
 kun et enkelt array \(A\), sammen med en <i>hashfunksjon</i> \(h\). Hashfunksjonen
@@ -109,9 +109,9 @@ det samme tallet \(i\). Vi skal se på to måter å håndtere kollisjoner på.
 </div>
 </div>
 
-<div id="outline-container-org8817199" class="outline-2">
-<h2 id="org8817199">Hashfunksjoner</h2>
-<div class="outline-text-2" id="text-org8817199">
+<div id="outline-container-org1fae5e7" class="outline-2">
+<h2 id="org1fae5e7">Hashfunksjoner</h2>
+<div class="outline-text-2" id="text-org1fae5e7">
 <p>
 En <i>funksjon</i> returner samme output for et gitt input <i>hver gang</i>.<sup><a id="fnr.1" class="footref" href="#fn.1" role="doc-backlink">1</a></sup> En
 hashfunksjon \(h\) får en nøkkel \(k\) og et positivt heltall \(N\) som input, og
@@ -134,9 +134,9 @@ hardere.
 </p>
 </div>
 
-<div id="outline-container-org50ab13f" class="outline-3">
-<h3 id="org50ab13f">Hashfunksjon for strenger</h3>
-<div class="outline-text-3" id="text-org50ab13f">
+<div id="outline-container-orgc0d1e0d" class="outline-3">
+<h3 id="orgc0d1e0d">Hashfunksjon for strenger</h3>
+<div class="outline-text-3" id="text-orgc0d1e0d">
 <blockquote>
 <p>
 Kodeblokkene er skjult, men vises når du trykker på dem; det er ment som en
@@ -247,9 +247,9 @@ få rimelig store tall, det er et primtall, og det får plass i en byte.
 </p>
 </div>
 
-<div id="outline-container-org3d0c5ba" class="outline-4">
-<h4 id="org3d0c5ba">Sammenligning av hashfunksjoner</h4>
-<div class="outline-text-4" id="text-org3d0c5ba">
+<div id="outline-container-org04e6591" class="outline-4">
+<h4 id="org04e6591">Sammenligning av hashfunksjoner</h4>
+<div class="outline-text-4" id="text-org04e6591">
 <blockquote>
 <p>
 Merk at denne seksjonen viser hvordan vi kan illustrere hvor godt en
@@ -391,9 +391,9 @@ hensiktsmessig å lage en illustrasjon. Her bruker vi et enkelt bibliotek
 </div>
 </div>
 
-<div id="outline-container-orgc573dff" class="outline-4">
-<h4 id="orgc573dff">Lag illustrasjoner</h4>
-<div class="outline-text-4" id="text-orgc573dff">
+<div id="outline-container-orgef302e4" class="outline-4">
+<h4 id="orgef302e4">Lag illustrasjoner</h4>
+<div class="outline-text-4" id="text-orgef302e4">
 <p>
 La oss anta at \(N\) er et kvadrattall der \(s^2 = N\). Da kan vi lage et \(s
     \times s\) bilde, der hvert punkt svarer til en posisjon \(i\). Gitt to
@@ -456,9 +456,9 @@ Vi kan kalle på denne for rimelige verdier av \(N\) og hashfunksjonene vi
 </div>
 </div>
 
-<div id="outline-container-orgbd00fac" class="outline-4">
-<h4 id="orgbd00fac">Resultater</h4>
-<div class="outline-text-4" id="text-orgbd00fac">
+<div id="outline-container-orge3e62c8" class="outline-4">
+<h4 id="orge3e62c8">Resultater</h4>
+<div class="outline-text-4" id="text-orge3e62c8">
 <p>
 For \(N = 100\) kan vi allerede se at det er større variasjon i distribusjonen
 for <code>hash_string_bad</code> enn <code>hash_string_good</code>.
@@ -570,9 +570,9 @@ hashfunksjonen, men den gode fortsetter å gi en jevn distribusjon.
 </div>
 </div>
 
-<div id="outline-container-org313dccf" class="outline-2">
-<h2 id="org313dccf">Kollisjonshåndtering</h2>
-<div class="outline-text-2" id="text-org313dccf">
+<div id="outline-container-orgfb8435d" class="outline-2">
+<h2 id="orgfb8435d">Kollisjonshåndtering</h2>
+<div class="outline-text-2" id="text-orgfb8435d">
 <p>
 Den overordnede idéen for å implementere en hashmap er å la hashmapet være
 representert som et array \(A\) av størrelse \(N\), og bruke en hashfunksjon
@@ -654,9 +654,9 @@ til \(N\), så vi må selv ta modulo \(N\) av resultatet.
 </div>
 </div>
 
-<div id="outline-container-org68003cd" class="outline-2">
-<h2 id="org68003cd">Separate Chaining</h2>
-<div class="outline-text-2" id="text-org68003cd">
+<div id="outline-container-org5e47e15" class="outline-2">
+<h2 id="org5e47e15">Separate Chaining</h2>
+<div class="outline-text-2" id="text-org5e47e15">
 <p>
 Husk at idéen er å la hver posisjon i arrayet peke til en liste, og plassere
 nøkkel-/​verdiparene i den listen. Lister i denne konteksten kalles ofte
@@ -670,7 +670,7 @@ La oss lage et skall for et hashmap basert på separate chaining.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python" id="org5ee8de4"><span style="color: #673AB7;">class</span> <span style="color: #673AB7;">SeparateChainingMap</span>(MyMap):
+<pre class="src src-python" id="org85c2113"><span style="color: #673AB7;">class</span> <span style="color: #673AB7;">SeparateChainingMap</span>(MyMap):
 
     &lt;&lt;separate_chaining_insert&gt;&gt;
 
@@ -693,9 +693,9 @@ fulle implementasjonen.
 </p>
 </div>
 
-<div id="outline-container-org9b0e1aa" class="outline-4">
-<h4 id="org9b0e1aa">Innsetting</h4>
-<div class="outline-text-4" id="text-org9b0e1aa">
+<div id="outline-container-orgd653de2" class="outline-4">
+<h4 id="orgd653de2">Innsetting</h4>
+<div class="outline-text-4" id="text-orgd653de2">
 <p>
 For innsetting av et nøkkel-/verdipar \((k, v)\) er strategien som følger:
 </p>
@@ -714,7 +714,7 @@ syntaks, der <code>d</code> er en ordbok (eller i vårt tilfelle, en
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python" id="org927443c"><span style="color: #673AB7;">def</span> <span style="color: #263238; font-weight: bold;">__setitem__</span>(<span style="color: #673AB7;">self</span>, k, v):
+<pre class="src src-python" id="org2269e99"><span style="color: #673AB7;">def</span> <span style="color: #263238; font-weight: bold;">__setitem__</span>(<span style="color: #673AB7;">self</span>, k, v):
     <span style="color: #673AB7;">self</span>.ensurecapacity()
 
     <span style="color: #263238; font-weight: bold;">i</span> = <span style="color: #673AB7;">hash</span>(k) % <span style="color: #673AB7;">self</span>.N
@@ -737,9 +737,9 @@ syntaks, der <code>d</code> er en ordbok (eller i vårt tilfelle, en
 </div>
 </div>
 
-<div id="outline-container-org378a9a9" class="outline-4">
-<h4 id="org378a9a9">Oppslag</h4>
-<div class="outline-text-4" id="text-org378a9a9">
+<div id="outline-container-org5f9a2d1" class="outline-4">
+<h4 id="org5f9a2d1">Oppslag</h4>
+<div class="outline-text-4" id="text-org5f9a2d1">
 <p>
 Å finne verdien for en gitt nøkkel \(k\) i hashmapet følger i stor grad samme
 fremgangsmåte som innsetting, men er litt enklere. Vi finner bøtta \(k\) skal
@@ -753,7 +753,7 @@ syntaks.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python" id="org7227d54"><span style="color: #673AB7;">def</span> <span style="color: #263238; font-weight: bold;">__getitem__</span>(<span style="color: #673AB7;">self</span>, k):
+<pre class="src src-python" id="org531b918"><span style="color: #673AB7;">def</span> <span style="color: #263238; font-weight: bold;">__getitem__</span>(<span style="color: #673AB7;">self</span>, k):
     <span style="color: #263238; font-weight: bold;">i</span> = <span style="color: #673AB7;">hash</span>(k) % <span style="color: #673AB7;">self</span>.N
     <span style="color: #263238; font-weight: bold;">bucket</span> = <span style="color: #673AB7;">self</span>.A[i]
 
@@ -768,9 +768,9 @@ syntaks.
 </div>
 </div>
 
-<div id="outline-container-org5de6b06" class="outline-4">
-<h4 id="org5de6b06">Sletting</h4>
-<div class="outline-text-4" id="text-org5de6b06">
+<div id="outline-container-org6d1aeb8" class="outline-4">
+<h4 id="org6d1aeb8">Sletting</h4>
+<div class="outline-text-4" id="text-org6d1aeb8">
 <p>
 Igjen er det mye likt for sletting. Vi finner riktig bøtte for en gitt
 nøkkel \(k\), og sletter \((k, v)\) fra listen. Her gjøres dette ved hjelp av
@@ -783,7 +783,7 @@ syntaks.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python" id="org4f2e2dc"><span style="color: #673AB7;">def</span> <span style="color: #263238; font-weight: bold;">__delitem__</span>(<span style="color: #673AB7;">self</span>, k):
+<pre class="src src-python" id="orgbbe2104"><span style="color: #673AB7;">def</span> <span style="color: #263238; font-weight: bold;">__delitem__</span>(<span style="color: #673AB7;">self</span>, k):
     <span style="color: #263238; font-weight: bold;">i</span> = <span style="color: #673AB7;">hash</span>(k) % <span style="color: #673AB7;">self</span>.N
     <span style="color: #263238; font-weight: bold;">bucket</span> = <span style="color: #673AB7;">self</span>.A[i]
 
@@ -796,9 +796,9 @@ syntaks.
 </div>
 </div>
 
-<div id="outline-container-orgffd648c" class="outline-4">
-<h4 id="orgffd648c">Iterator</h4>
-<div class="outline-text-4" id="text-orgffd648c">
+<div id="outline-container-org0f5c1ad" class="outline-4">
+<h4 id="org0f5c1ad">Iterator</h4>
+<div class="outline-text-4" id="text-org0f5c1ad">
 <p>
 Iteratoren for hashmapet kan skrives ved å gå gjennom arrayet, og gå
 gjennom hver (ikke-tomme) bøtte, og gi hvert nøkkel-/verdipar. For å få en
@@ -806,7 +806,7 @@ iterator bruker vi <code>yield</code>.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python" id="org95e3a16"><span style="color: #673AB7;">def</span> <span style="color: #263238; font-weight: bold;">__iter__</span>(<span style="color: #673AB7;">self</span>):
+<pre class="src src-python" id="org785bbc0"><span style="color: #673AB7;">def</span> <span style="color: #263238; font-weight: bold;">__iter__</span>(<span style="color: #673AB7;">self</span>):
     <span style="color: #673AB7;">for</span> bucket <span style="color: #673AB7;">in</span> <span style="color: #673AB7;">self</span>.A:
         <span style="color: #673AB7;">if</span> bucket:
             <span style="color: #673AB7;">for</span> kv <span style="color: #673AB7;">in</span> bucket:
@@ -816,9 +816,9 @@ iterator bruker vi <code>yield</code>.
 </div>
 </div>
 
-<div id="outline-container-org6abb8af" class="outline-4">
-<h4 id="org6abb8af">Minitest</h4>
-<div class="outline-text-4" id="text-org6abb8af">
+<div id="outline-container-org2092d57" class="outline-4">
+<h4 id="org2092d57">Minitest</h4>
+<div class="outline-text-4" id="text-org2092d57">
 <p>
 La oss sjekke om dette hashmapet faktisk kan holde på elementer slik vi
 forventer. Vi nøyer oss med å mappe bokstavene <code>a</code>, <code>b</code>, <code>c</code> og <code>d</code>, til
@@ -849,11 +849,11 @@ operasjon.
 
 <pre class="example">
 {a ↦ 0}
-{b ↦ 1, a ↦ 0}
-{b ↦ 1, c ↦ 2, a ↦ 0}
-{b ↦ 1, c ↦ 2, a ↦ 0, d ↦ 3}
-{b ↦ 1, c ↦ 2, d ↦ 3}
-{c ↦ 2, d ↦ 3}
+{a ↦ 0, b ↦ 1}
+{a ↦ 0, b ↦ 1, c ↦ 2}
+{d ↦ 3, b ↦ 1, c ↦ 2, a ↦ 0}
+{d ↦ 3, b ↦ 1, c ↦ 2}
+{d ↦ 3, c ↦ 2}
 {d ↦ 3}
 {}
 </pre>
@@ -864,9 +864,57 @@ Det ser rimelig ut! Det er verdt å merke seg at elementene ikke kommer ut
 sortert etter nøkkel. Det er forventet, siden hashmaps ikke er ordnede. 
 </p>
 
-<div class="collapsible" id="orge8e0892">
+<div class="collapsible" id="org7a7ede6">
 <div class="org-src-container">
-<pre class="src src-python">&lt;&lt;separate_chaining_map&gt;&gt;
+<pre class="src src-python"><span style="color: #673AB7;">class</span> <span style="color: #673AB7;">SeparateChainingMap</span>(MyMap):
+
+    <span style="color: #673AB7;">def</span> <span style="color: #263238; font-weight: bold;">__setitem__</span>(<span style="color: #673AB7;">self</span>, k, v):
+        <span style="color: #673AB7;">self</span>.ensurecapacity()
+
+        <span style="color: #263238; font-weight: bold;">i</span> = <span style="color: #673AB7;">hash</span>(k) % <span style="color: #673AB7;">self</span>.N
+
+        <span style="color: #673AB7;">if</span> <span style="color: #673AB7;">self</span>.A[i] == <span style="color: #673AB7;">None</span>:
+            <span style="color: #673AB7;">self</span>.<span style="color: #263238; font-weight: bold;">A</span>[i] = []
+
+        <span style="color: #263238; font-weight: bold;">bucket</span> = <span style="color: #673AB7;">self</span>.A[i]
+
+        <span style="color: #673AB7;">for</span> j <span style="color: #673AB7;">in</span> <span style="color: #673AB7;">range</span>(<span style="color: #673AB7;">len</span>(bucket)):
+            <span style="color: #263238; font-weight: bold;">kj</span>, <span style="color: #263238; font-weight: bold;">vj</span> = bucket[j]
+            <span style="color: #673AB7;">if</span> kj == k:
+                <span style="color: #263238; font-weight: bold;">bucket</span>[j] = (k, v)
+                <span style="color: #673AB7;">return</span>
+
+        <span style="color: #673AB7;">self</span>.<span style="color: #263238; font-weight: bold;">n</span> += 1
+        bucket.append((k, v))
+
+
+    <span style="color: #673AB7;">def</span> <span style="color: #263238; font-weight: bold;">__getitem__</span>(<span style="color: #673AB7;">self</span>, k):
+        <span style="color: #263238; font-weight: bold;">i</span> = <span style="color: #673AB7;">hash</span>(k) % <span style="color: #673AB7;">self</span>.N
+        <span style="color: #263238; font-weight: bold;">bucket</span> = <span style="color: #673AB7;">self</span>.A[i]
+
+        <span style="color: #673AB7;">if</span> bucket == <span style="color: #673AB7;">None</span>:
+            <span style="color: #673AB7;">return</span>
+
+        <span style="color: #673AB7;">for</span> ki, v <span style="color: #673AB7;">in</span> bucket:
+            <span style="color: #673AB7;">if</span> ki == k:
+                <span style="color: #673AB7;">return</span> v
+
+
+    <span style="color: #673AB7;">def</span> <span style="color: #263238; font-weight: bold;">__delitem__</span>(<span style="color: #673AB7;">self</span>, k):
+        <span style="color: #263238; font-weight: bold;">i</span> = <span style="color: #673AB7;">hash</span>(k) % <span style="color: #673AB7;">self</span>.N
+        <span style="color: #263238; font-weight: bold;">bucket</span> = <span style="color: #673AB7;">self</span>.A[i]
+
+        <span style="color: #673AB7;">if</span> bucket == <span style="color: #673AB7;">None</span>:
+            <span style="color: #673AB7;">return</span>
+
+        <span style="color: #673AB7;">self</span>.<span style="color: #263238; font-weight: bold;">A</span>[i] = [(ki, v) <span style="color: #673AB7;">for</span> ki, v <span style="color: #673AB7;">in</span> bucket <span style="color: #673AB7;">if</span> ki != k]
+
+
+    <span style="color: #673AB7;">def</span> <span style="color: #263238; font-weight: bold;">__iter__</span>(<span style="color: #673AB7;">self</span>):
+        <span style="color: #673AB7;">for</span> bucket <span style="color: #673AB7;">in</span> <span style="color: #673AB7;">self</span>.A:
+            <span style="color: #673AB7;">if</span> bucket:
+                <span style="color: #673AB7;">for</span> kv <span style="color: #673AB7;">in</span> bucket:
+                    <span style="color: #673AB7;">yield</span> kv
 </pre>
 </div>
 
@@ -880,9 +928,9 @@ separate chaining.
 </div>
 </div>
 
-<div id="outline-container-org7fad5fd" class="outline-2">
-<h2 id="org7fad5fd">Linear Probing</h2>
-<div class="outline-text-2" id="text-org7fad5fd">
+<div id="outline-container-org2e66977" class="outline-2">
+<h2 id="org2e66977">Linear Probing</h2>
+<div class="outline-text-2" id="text-org2e66977">
 <p>
 Idéen bak linear probing er å se på \(i = h(k, N)\) som den ideelle posisjonen
 for en nøkkel \(k\), og hvis denne posisjonen er opptatt, så prøver vi neste
@@ -936,7 +984,7 @@ arver fra <code>MyMap</code>.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python" id="org857f72a"><span style="color: #673AB7;">class</span> <span style="color: #673AB7;">LinearProbingMap</span>(MyMap):
+<pre class="src src-python" id="orgfdf91e8"><span style="color: #673AB7;">class</span> <span style="color: #673AB7;">LinearProbingMap</span>(MyMap):
 
     &lt;&lt;linear_probing_insert&gt;&gt;
 
@@ -955,9 +1003,9 @@ arver fra <code>MyMap</code>.
 </div>
 </div>
 
-<div id="outline-container-org9981840" class="outline-4">
-<h4 id="org9981840">Innsetting</h4>
-<div class="outline-text-4" id="text-org9981840">
+<div id="outline-container-org36014f9" class="outline-4">
+<h4 id="org36014f9">Innsetting</h4>
+<div class="outline-text-4" id="text-org36014f9">
 <p>
 For innsetting av et nøkkel-/verdipar \((k, v)\) er strategien som følger:
 </p>
@@ -972,7 +1020,7 @@ Ledige plasser er indikert ved <code>None</code>.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python" id="org5147040"><span style="color: #673AB7;">def</span> <span style="color: #263238; font-weight: bold;">__setitem__</span>(<span style="color: #673AB7;">self</span>, k, v):
+<pre class="src src-python" id="org7554f95"><span style="color: #673AB7;">def</span> <span style="color: #263238; font-weight: bold;">__setitem__</span>(<span style="color: #673AB7;">self</span>, k, v):
     <span style="color: #673AB7;">self</span>.ensurecapacity()
 
     <span style="color: #263238; font-weight: bold;">i</span> = <span style="color: #673AB7;">hash</span>(k) % <span style="color: #673AB7;">self</span>.N
@@ -991,9 +1039,9 @@ Ledige plasser er indikert ved <code>None</code>.
 </div>
 </div>
 
-<div id="outline-container-orgf36780a" class="outline-4">
-<h4 id="orgf36780a">Oppslag</h4>
-<div class="outline-text-4" id="text-orgf36780a">
+<div id="outline-container-orgbe533a8" class="outline-4">
+<h4 id="orgbe533a8">Oppslag</h4>
+<div class="outline-text-4" id="text-orgbe533a8">
 <p>
 Oppslag følger i stor grad samme fremgangsmåte som innsetting. Vi starter
 på indeks \(i = h(k, N)\), sjekker om \(k\) ligger på plass \(i\). Hvis ikke,
@@ -1002,7 +1050,7 @@ ved <code>None</code>).
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python" id="org5d79e94"><span style="color: #673AB7;">def</span> <span style="color: #263238; font-weight: bold;">__getitem__</span>(<span style="color: #673AB7;">self</span>, k):
+<pre class="src src-python" id="orge63671e"><span style="color: #673AB7;">def</span> <span style="color: #263238; font-weight: bold;">__getitem__</span>(<span style="color: #673AB7;">self</span>, k):
     <span style="color: #263238; font-weight: bold;">i</span> = <span style="color: #673AB7;">hash</span>(k) % <span style="color: #673AB7;">self</span>.N
 
     <span style="color: #673AB7;">while</span> <span style="color: #673AB7;">self</span>.A[i] != <span style="color: #673AB7;">None</span>:
@@ -1015,9 +1063,9 @@ ved <code>None</code>).
 </div>
 </div>
 
-<div id="outline-container-org4bf0280" class="outline-4">
-<h4 id="org4bf0280">Sletting</h4>
-<div class="outline-text-4" id="text-org4bf0280">
+<div id="outline-container-org6aee3fc" class="outline-4">
+<h4 id="org6aee3fc">Sletting</h4>
+<div class="outline-text-4" id="text-org6aee3fc">
 <p>
 Igjen er strukturen mye av det samme. Vi må først finne nøkkelen \(k\),
 akkurat slik vi gjorde for oppslag. Hvis vi finner \(k\), så setter vi
@@ -1026,7 +1074,7 @@ defineres nedenfor.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python" id="orgb79f19c"><span style="color: #673AB7;">def</span> <span style="color: #263238; font-weight: bold;">__delitem__</span>(<span style="color: #673AB7;">self</span>, k):
+<pre class="src src-python" id="orgac5764c"><span style="color: #673AB7;">def</span> <span style="color: #263238; font-weight: bold;">__delitem__</span>(<span style="color: #673AB7;">self</span>, k):
     <span style="color: #263238; font-weight: bold;">i</span> = <span style="color: #673AB7;">hash</span>(k) % <span style="color: #673AB7;">self</span>.N
 
     <span style="color: #673AB7;">while</span> <span style="color: #673AB7;">self</span>.A[i] != <span style="color: #673AB7;">None</span>:
@@ -1057,7 +1105,7 @@ tilstrekkelig å sjekke om \(h(k, N) \leq i\).
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python" id="orgf08bae1"><span style="color: #673AB7;">def</span> <span style="color: #263238; font-weight: bold;">__fill_hole</span>(<span style="color: #673AB7;">self</span>, i):
+<pre class="src src-python" id="org15e0b0d"><span style="color: #673AB7;">def</span> <span style="color: #263238; font-weight: bold;">__fill_hole</span>(<span style="color: #673AB7;">self</span>, i):
     <span style="color: #263238; font-weight: bold;">s</span> = 1
     <span style="color: #673AB7;">while</span> <span style="color: #673AB7;">self</span>.A[(i + s) % <span style="color: #673AB7;">self</span>.N] != <span style="color: #673AB7;">None</span>:
         <span style="color: #263238; font-weight: bold;">k</span>, <span style="color: #263238; font-weight: bold;">v</span> = <span style="color: #673AB7;">self</span>.A[(i + s) % <span style="color: #673AB7;">self</span>.N]
@@ -1104,9 +1152,9 @@ plass \(i\), dersom dens ideelle posisjon \(j\) ikke er mellom \(i+1\) og \(i +
 </div>
 </div>
 
-<div id="outline-container-orga377948" class="outline-4">
-<h4 id="orga377948">Iterator</h4>
-<div class="outline-text-4" id="text-orga377948">
+<div id="outline-container-orgbe8bc31" class="outline-4">
+<h4 id="orgbe8bc31">Iterator</h4>
+<div class="outline-text-4" id="text-orgbe8bc31">
 <p>
 Iteratoren for hashmapet kan skrives ved å gå gjennom arrayet, og gå
 gjennom hver (ikke-tomme) bøtte, og gi hvert nøkkel-/verdipar. For å få en
@@ -1114,7 +1162,7 @@ iterator bruker vi <code>yield</code>.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python" id="orga6862d3"><span style="color: #673AB7;">def</span> <span style="color: #263238; font-weight: bold;">__iter__</span>(<span style="color: #673AB7;">self</span>):
+<pre class="src src-python" id="orgdf8779c"><span style="color: #673AB7;">def</span> <span style="color: #263238; font-weight: bold;">__iter__</span>(<span style="color: #673AB7;">self</span>):
     <span style="color: #673AB7;">for</span> kv <span style="color: #673AB7;">in</span> <span style="color: #673AB7;">self</span>.A:
         <span style="color: #673AB7;">if</span> kv != <span style="color: #673AB7;">None</span>:
             <span style="color: #673AB7;">yield</span> kv
@@ -1123,9 +1171,9 @@ iterator bruker vi <code>yield</code>.
 </div>
 </div>
 
-<div id="outline-container-org20b71c7" class="outline-4">
-<h4 id="org20b71c7">Minitest</h4>
-<div class="outline-text-4" id="text-org20b71c7">
+<div id="outline-container-orgb5dafae" class="outline-4">
+<h4 id="orgb5dafae">Minitest</h4>
+<div class="outline-text-4" id="text-orgb5dafae">
 <p>
 La oss sjekke om dette hashmapet faktisk kan holde på elementer slik vi
 forventer. Vi nøyer oss med å mappe bokstavene <code>a</code>, <code>b</code>, <code>c</code> og <code>d</code>, til
@@ -1156,11 +1204,11 @@ operasjon.
 
 <pre class="example">
 {a ↦ 0}
-{b ↦ 1, a ↦ 0}
-{b ↦ 1, c ↦ 2, a ↦ 0}
-{b ↦ 1, c ↦ 2, a ↦ 0, d ↦ 3}
-{b ↦ 1, c ↦ 2, d ↦ 3}
-{c ↦ 2, d ↦ 3}
+{a ↦ 0, b ↦ 1}
+{c ↦ 2, a ↦ 0, b ↦ 1}
+{d ↦ 3, c ↦ 2, b ↦ 1, a ↦ 0}
+{d ↦ 3, c ↦ 2, b ↦ 1}
+{d ↦ 3, c ↦ 2}
 {d ↦ 3}
 {}
 </pre>
@@ -1170,9 +1218,66 @@ operasjon.
 Det ser fint ut!
 </p>
 
-<div class="collapsible" id="org348f3b4">
+<div class="collapsible" id="orgf4a23af">
 <div class="org-src-container">
-<pre class="src src-python">&lt;&lt;linear_probing_map&gt;&gt;
+<pre class="src src-python"><span style="color: #673AB7;">class</span> <span style="color: #673AB7;">LinearProbingMap</span>(MyMap):
+
+    <span style="color: #673AB7;">def</span> <span style="color: #263238; font-weight: bold;">__setitem__</span>(<span style="color: #673AB7;">self</span>, k, v):
+        <span style="color: #673AB7;">self</span>.ensurecapacity()
+
+        <span style="color: #263238; font-weight: bold;">i</span> = <span style="color: #673AB7;">hash</span>(k) % <span style="color: #673AB7;">self</span>.N
+
+        <span style="color: #673AB7;">while</span> <span style="color: #673AB7;">self</span>.A[i] != <span style="color: #673AB7;">None</span>:
+            <span style="color: #263238; font-weight: bold;">ki</span>, <span style="color: #263238; font-weight: bold;">_</span> = <span style="color: #673AB7;">self</span>.A[i]
+            <span style="color: #673AB7;">if</span> k == ki:
+                <span style="color: #673AB7;">self</span>.<span style="color: #263238; font-weight: bold;">A</span>[i] = (k, v)
+                <span style="color: #673AB7;">return</span>
+            <span style="color: #263238; font-weight: bold;">i</span> = (i + 1) % <span style="color: #673AB7;">self</span>.N
+
+        <span style="color: #673AB7;">self</span>.<span style="color: #263238; font-weight: bold;">n</span> += 1
+        <span style="color: #673AB7;">self</span>.<span style="color: #263238; font-weight: bold;">A</span>[i] = (k, v)
+
+
+    <span style="color: #673AB7;">def</span> <span style="color: #263238; font-weight: bold;">__getitem__</span>(<span style="color: #673AB7;">self</span>, k):
+        <span style="color: #263238; font-weight: bold;">i</span> = <span style="color: #673AB7;">hash</span>(k) % <span style="color: #673AB7;">self</span>.N
+
+        <span style="color: #673AB7;">while</span> <span style="color: #673AB7;">self</span>.A[i] != <span style="color: #673AB7;">None</span>:
+            <span style="color: #263238; font-weight: bold;">ki</span>, <span style="color: #263238; font-weight: bold;">vi</span> = <span style="color: #673AB7;">self</span>.A[i]
+            <span style="color: #673AB7;">if</span> k == ki:
+                <span style="color: #673AB7;">return</span> v
+            <span style="color: #263238; font-weight: bold;">i</span> = (i + 1) % <span style="color: #673AB7;">self</span>.N
+
+
+    <span style="color: #673AB7;">def</span> <span style="color: #263238; font-weight: bold;">__delitem__</span>(<span style="color: #673AB7;">self</span>, k):
+        <span style="color: #263238; font-weight: bold;">i</span> = <span style="color: #673AB7;">hash</span>(k) % <span style="color: #673AB7;">self</span>.N
+
+        <span style="color: #673AB7;">while</span> <span style="color: #673AB7;">self</span>.A[i] != <span style="color: #673AB7;">None</span>:
+            <span style="color: #263238; font-weight: bold;">ki</span>, <span style="color: #263238; font-weight: bold;">_</span> = <span style="color: #673AB7;">self</span>.A[i]
+            <span style="color: #673AB7;">if</span> k == ki:
+                <span style="color: #673AB7;">self</span>.<span style="color: #263238; font-weight: bold;">n</span> -= 1
+                <span style="color: #673AB7;">self</span>.<span style="color: #263238; font-weight: bold;">A</span>[i] = <span style="color: #673AB7;">None</span>
+                <span style="color: #673AB7;">self</span>.__fill_hole(i)
+                <span style="color: #673AB7;">return</span>
+            <span style="color: #263238; font-weight: bold;">i</span> = (i + 1) % <span style="color: #673AB7;">self</span>.N
+
+
+    <span style="color: #673AB7;">def</span> <span style="color: #263238; font-weight: bold;">__fill_hole</span>(<span style="color: #673AB7;">self</span>, i):
+        <span style="color: #263238; font-weight: bold;">s</span> = 1
+        <span style="color: #673AB7;">while</span> <span style="color: #673AB7;">self</span>.A[(i + s) % <span style="color: #673AB7;">self</span>.N] != <span style="color: #673AB7;">None</span>:
+            <span style="color: #263238; font-weight: bold;">k</span>, <span style="color: #263238; font-weight: bold;">v</span> = <span style="color: #673AB7;">self</span>.A[(i + s) % <span style="color: #673AB7;">self</span>.N]
+            <span style="color: #263238; font-weight: bold;">j</span> = <span style="color: #673AB7;">hash</span>(k) % <span style="color: #673AB7;">self</span>.N
+            <span style="color: #673AB7;">if</span> <span style="color: #673AB7;">not</span>(0 &lt; (j - i) % <span style="color: #673AB7;">self</span>.N &lt;= s):
+                <span style="color: #673AB7;">self</span>.<span style="color: #263238; font-weight: bold;">A</span>[i] = (k, v)
+                <span style="color: #673AB7;">self</span>.<span style="color: #263238; font-weight: bold;">A</span>[(i + s) % <span style="color: #673AB7;">self</span>.N] = <span style="color: #673AB7;">None</span>
+                <span style="color: #673AB7;">self</span>.__fill_hole((i + s) % <span style="color: #673AB7;">self</span>.N)
+                <span style="color: #673AB7;">return</span>
+            <span style="color: #263238; font-weight: bold;">s</span> += 1
+
+
+    <span style="color: #673AB7;">def</span> <span style="color: #263238; font-weight: bold;">__iter__</span>(<span style="color: #673AB7;">self</span>):
+        <span style="color: #673AB7;">for</span> kv <span style="color: #673AB7;">in</span> <span style="color: #673AB7;">self</span>.A:
+            <span style="color: #673AB7;">if</span> kv != <span style="color: #673AB7;">None</span>:
+                <span style="color: #673AB7;">yield</span> kv
 </pre>
 </div>
 
@@ -1186,9 +1291,9 @@ linear probing.
 </div>
 </div>
 
-<div id="outline-container-orge45a7a1" class="outline-2">
-<h2 id="orge45a7a1">Testing</h2>
-<div class="outline-text-2" id="text-orge45a7a1">
+<div id="outline-container-org8dac5f6" class="outline-2">
+<h2 id="org8dac5f6">Testing</h2>
+<div class="outline-text-2" id="text-org8dac5f6">
 <blockquote>
 <p>
 Testing er ikke en del av pensum i IN2010, og denne seksjonen er mest for de
@@ -1287,9 +1392,9 @@ mulig.
 </div>
 </div>
 
-<div id="outline-container-org340d636" class="outline-2">
-<h2 id="org340d636">En uformell kjøretidsanalyse</h2>
-<div class="outline-text-2" id="text-org340d636">
+<div id="outline-container-org74b7185" class="outline-2">
+<h2 id="org74b7185">En uformell kjøretidsanalyse</h2>
+<div class="outline-text-2" id="text-org74b7185">
 <p>
 Ved å gjøre en ordinær kjøretidsanalyse vil vi se på hvor mange steg
 algoritmene vil bruke under verst tenkelige omstendigheter (altså, en verste
