@@ -1,0 +1,302 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro&family=Source+Serif+4:opsz@8..60&display=swap');
+
+/* Set variables */
+:root {
+    --font-size-1: 2rem;
+    --font-size-2: 1.5rem;
+    --font-size-3: 1.15rem;
+    --font-size-4: 1rem;
+
+    --font-size-small: 0.8rem;
+    --font-size-xsmall: 0.6rem;
+}
+
+/* Set padding and margin */
+html, body{
+    font-family: "Source Serif 4", serif;
+    /* font-weight: 300; */
+    max-width: 65ch;
+    margin: auto;
+    padding: 1ex;
+    font-size: 25px;
+    background-color: #fdfdfd;
+    text-align: justify;
+}
+
+::selection {
+    background-color: #673AB7;
+    color: white;
+}
+
+h1{font-size: var(--font-size-1);}
+h2{font-size: var(--font-size-2);}
+h3{font-size: var(--font-size-3);}
+h4{font-size: var(--font-size-3);}
+h5{font-size: var(--font-size-3);}
+
+h1 > .subtitle{
+    font-size: var(--font-size-3);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 300;
+    letter-spacing: -0.03em;
+}
+
+
+.outline-2 > h2, #table-of-contents > h2{
+    text-align: center;
+}
+
+/* Table of contents */
+#table-of-contents ul{
+    list-style-type:none;
+    margin: 0;
+}
+
+
+#table-of-contents .tag{
+    display: none;
+}
+
+.outline-3{
+    border-bottom: 1px solid #CCC;
+}
+
+.outline-2 > h2{
+    grid-row-start: 1;
+    grid-row-end: 2;
+}
+
+.outline-2{
+    grid-row-start: 2;
+    grid-row-end: 3;
+}
+
+img{
+    max-width: 100%;
+}
+
+
+/* Code */
+pre, code{
+    font-family: 'Source Code Pro', monospace;
+    font-size: var(--font-size-small);
+    background-color: rgba(0, 0, 0, 0.04);
+    border-radius: 0.2rem;
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+pre{
+    margin: 1rem;
+    padding: 0.5rem;
+    border-radius: 0.2rem;
+}
+
+blockquote{
+    border-left: 0.2rem solid #673AB7;
+    padding-left: 1rem;
+    font-style: italic;
+}
+
+
+p, pre, ol, ul, table, code, h1, h2, h3, h4, h5, h6 {
+    color: #37474F;
+}
+
+table, blockquote, pre, ol, ul, p, #postamble{
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.tag{
+    margin-top: 0.5rem;
+    display: block;
+    color: white;
+    font-size: var(--font-size-xsmall);
+}
+
+.tag > span{
+    font-weight: 400;
+    font-size: 0.6rem;
+    background-color: #673AB7;
+    text-transform: uppercase;
+    border-radius: 2px;
+    width: fit-content;
+    height: auto;
+    padding: 1px 5px;
+    margin: 1px;
+}
+/* Stripe table */
+/* tr:nth-child(even) { */
+/*     background-color: #EEE; */
+/* } */
+
+.title{
+    text-align: center;
+}
+
+.org-org-meta-line{
+    color: #673AB7;
+}
+
+.org-keyword{
+    color: #673AB7;
+}
+
+a{
+    color: #673AB7;
+}
+
+.underline{
+    text-decoration: underline;
+}
+
+.todo{
+    color: #7D161A;
+    font-weight: 400;
+}
+
+.done{
+    color: #673AB7;
+    font-weight: 400;
+}
+
+/* Postamble */
+
+#postamble{
+    text-align: center;
+    width: 100%;
+}
+
+#postamble > p{
+    display: inline;
+    font-size: var(--font-size-4)
+}
+
+.outline-text-2, .outline-text-3, .outline-text-4{
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+.blur {
+    filter: blur(5px);
+}
+
+div.figure p {
+    text-align: center;
+}
+
+.author, .date {
+    text-align: center;
+}
+
+.org-svg {
+    width: 100%;
+}
+
+.katex {
+    font-size: 0.9rem;
+}
+
+table {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.src {
+    position: relative;
+}
+
+.copy-code-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0.25rem;
+    border: none;
+    border-radius: 0.2rem;
+    width: 1.25rem;
+    height: 1.25rem;
+
+    opacity: 0.5;
+
+    cursor: pointer;
+
+    background: url(copy-link.svg) center;
+    background-origin: content-box;
+    background-repeat: no-repeat;
+}
+
+.copy-code-button:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+    opacity: 1;
+
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    -ms-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+}
+
+.copy-hoverbox {
+    position: absolute;
+    opacity: 0;
+    padding: 0.25rem;
+    border-radius: 0.2rem;
+    top: 0;
+    right: 2rem;
+    background-color: rgba(0, 0, 0, 0.1);
+
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    -ms-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+}
+
+.copy-hoverbox.show {
+    opacity: 1;
+}
+
+.collapsible {
+    max-height: 3rem;
+    overflow-y: hidden;
+ }
+
+.collapsible.collapsed {
+    max-height: 100%;
+    transition: all 0.5 ease;
+}
+
+/* Sudoku table */
+table.sudoku {
+    border-collapse: collapse;
+    aspect-ratio: 1 / 1;
+    border: 3px solid;
+}
+table.sudoku td {
+    border: 1px solid;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+}
+table.sudoku td:nth-child(3), table.sudoku td:nth-child(6) {
+    border-right: 3px solid;
+}
+table.sudoku tr:nth-child(3) td, table.sudoku tr:nth-child(6) td {
+    border-bottom: 3px solid;
+}
+
+/* Decision problems */
+.decision {
+    background: #EEE;
+    border-radius: 10px;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.decision::first-line {
+    display: block;
+    font-weight: bold;
+}

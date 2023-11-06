@@ -1,0 +1,996 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="nb" xml:lang="nb">
+<head>
+<!-- 2023-11-06 Mon 08:53 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Kompleksitet og beregnbarhet</title>
+<meta name="author" content="Lars Tveito" />
+<meta name="generator" content="Org Mode" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.18/dist/katex.min.css" integrity="sha384-zTROYFVGOfTw7JV7KUu8udsvW2fx4lWOsCEDqhBreBwlHI4ioVRtmIvEThzJHGET" crossorigin="anonymous">
+<!-- The loading of KaTeX is deferred to speed up page rendering -->
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.13.18/dist/katex.min.js" integrity="sha384-GxNFqL3r9uRJQhR+47eDxuPoNE7yLftQM8LcxzgS4HT73tp970WS/wV5p8UzCOmb" crossorigin="anonymous"></script>
+
+<!-- To automatically render math in text elements, include the auto-render extension: -->
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.13.18/dist/contrib/auto-render.min.js" integrity="sha384-vZTG03m+2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+<link rel="stylesheet" type="text/css" href="Rethink/rethink.css" />
+</head>
+<body>
+<div id="preamble" class="status">
+<h1 class="title">Kompleksitet og beregnbarhet</h1>
+                                                  <p class="author">Lars Tveito</p>
+                                                  <p class="date">Høst 2023</p>
+</div>
+<div id="content" class="content">
+<p>
+I en introduksjon til algoritmer og datastrukturer studerer man en rekke
+problemer som det finnes gode og effektive løsninger på. Gjennom en slik studie
+blir man introdusert for en rekke slagkraftige teknikker som kan brukes til
+å løse mange forskjellige problemer. Nå skal vi rette blikket mot problemer
+hvor ingen av disse teknikkene har ført frem til noen effektiv løsning, og hvor
+det er høyst usikkert om det i det hele tatt eksisterer noen effektiv løsning.
+Vi skal også se at noen problemer er <i>uløselige</i>. I en slik perspektivendring går
+vi fra å tenke på kompleksiteten til en konkret algoritme til å heller tenke på
+kompleksiteten til problemet selv.
+</p>
+
+<div id="outline-container-org60bc630" class="outline-2">
+<h2 id="org60bc630">Kompleksiteten til algoritmer</h2>
+<div class="outline-text-2" id="text-org60bc630">
+<p>
+Kompleksiteten til en algoritme sier noe om hvor mange ressurser den krever,
+der vi som regel er interessert i tidsbruk og minnebruk. For dette notatet
+vil vi konsentrere oss om tidsbruk.
+</p>
+
+<p>
+Hvis vi får en algoritme presentert, så kan vi ofte resonnere oss frem til
+hvor mange steg algoritmen vil bruke for input av en gitt størrelse i verste
+tilfelle. Hvor fort antall steg vokser i forhold til størrelsen på input gir
+det vi kaller <i>kjøretidskompleksiteten</i> til algoritmen.
+</p>
+</div>
+
+<div id="outline-container-org6f69ef0" class="outline-3">
+<h3 id="org6f69ef0">En ineffektiv løsning på et enkelt problem</h3>
+<div class="outline-text-3" id="text-org6f69ef0">
+<p>
+Si at vi skal finne summen av alle tallene mellom \(1\) og en gitt \(n\), der \(n\)
+er et positivt heltall. Følgende algoritme vil løse problemet, uansett hvor
+stor \(n\) er:
+</p>
+
+<pre class="example" id="orga6f72a4">
+Procedure sumTo(n)
+  sum ← 0
+  for i ← 1 to n do
+    for j ← 1 to i do
+      sum ← sum + 1
+  return sum
+</pre>
+
+<p>
+Den ytre løkken vil gjøre \(n\) iterasjoner. Den indre løkken vil for
+</p>
+<ul class="org-ul">
+<li>\(i = 1\) gjøre 1 iterasjon</li>
+<li>\(i = 2\) gjøre 2 iterasjoner</li>
+<li>\(i = 3\) gjøre 3 iterasjoner</li>
+<li>\(\qquad\quad\vdots\)</li>
+<li>\(i = n\) gjøre \(n\) iterasjoner.</li>
+</ul>
+
+<p>
+Til sammen vil det gjøres
+</p>
+
+<p>
+\[1 + 2 + \cdots + n = \frac{n(n + 1)}{2}\]
+</p>
+
+<p>
+iterasjoner.
+</p>
+
+<blockquote>
+<h3>Hvordan regne iterasjoner</h3>
+<p>
+Dersom vi summerer opp alle iterasjonene får vi
+</p>
+
+<p>
+\[ \overbrace{1 + 2 + \cdots + n}^n\]
+</p>
+
+<p>
+iterasjoner; merk at det er \(n\) ledd i denne summen. For å regne ut en slik
+sum kan vi legge merke til at dersom vi summerer første og siste tall så får
+vi \(n + 1\), og dersom vi summerer nest første og nest siste tall får vi også
+\(n + 1\), og mønsteret fortsetter:
+</p>
+
+<p>
+\[\begin{array}{l c c c c c c c}
+   & 1 &+& 2 &+& \cdots &+& n\\ + & n &+& n-1 &+& \cdots &+& 1\\ \hline
+   = & n + 1 &+& n + 1 &+& \cdots &+& n + 1\\
+   \end{array}\]
+</p>
+
+<p>
+Dette betyr at å summere opp alle leddene i summen <i>to ganger</i> er likt med
+å summere opp nøyaktig \(n\) ledd med \(n + 1\). Siden vi nå har doblet den
+opprinnelige summen, må vi dele det totale resultatet med to for å finne
+den faktiske summen av tallene fra 1 til \(n\). Dette gir oss et uttrykk for
+antall iterasjoner prosedyren kjører:
+</p>
+
+<p>
+\[1 + 2 + \cdots + n = \frac{n(n + 1)}{2}\]
+</p>
+</blockquote>
+</div>
+</div>
+
+<div id="outline-container-orge0ab871" class="outline-3">
+<h3 id="orge0ab871">Litt om kjøretidskompleksitet</h3>
+<div class="outline-text-3" id="text-orge0ab871">
+<p>
+Når vi snakker om <i>kjøretidskompleksitet</i>, så er vi ute etter å forstå hvordan
+kjøretiden vokser når input blir større og større. Under ser du et lite
+utsnitt av en graf som viser hvordan uttrykkene \(10\cdot{}n\),
+\(\textcolor{#437FBB}{n^2}\) og \(\textcolor{#CD5754}{\frac{n(n + 1)}{2}}\)
+vokser, der \(x\)-aksen angir størrelsen på input, og \(y\)-aksen angir
+kjøretiden.
+</p>
+
+<iframe src="https://www.desmos.com/calculator/9kdwdisgmh?embed" width="100%" height="500" style="border: 1px solid #ccc" frameborder=0></iframe>
+
+<p>
+Dersom du åpner grafen (klikk på «edit graph on desmos») så kan du forsøke å
+endre litt på konstantfaktorene. Du kan legge merke til at selv hvis vi
+justerer på konstantfaktorene så vil kurvene bevare den samme <i>formen</i>. Det at
+de <i>bevarer samme form</i> er en uformell måte å si at de vokser på samme måte
+uavhengig av konstantfaktorer. \(\textcolor{#437FBB}{n^2}\) og
+\(\textcolor{#CD5754}{\frac{n(n + 1)}{2}}\) vokser begge <i>kvadratisk</i>, mens
+\(10\cdot{}n\) vokser <i>lineært</i>. Selv hvis du øker \(10\cdot{}n\) til \(100\cdot{}n\) eller \(1000\cdot{}n\),
+så vil du fremdeles se at \(\textcolor{#CD5754}{\frac{n(n + 1)}{2}}\) er
+mindre dersom du zoomer langt nok ut (eller med andre ord, ser på større
+verdier av \(n\)).
+</p>
+
+<p>
+Dette fanges godt av store-\(\mathcal{O}\) notasjon. Notasjonen lar oss fange
+den generelle trenden på hvordan størrelsen på input påvirker kjøretiden,
+men det fanger <i>ikke</i> opp forskjellen på om en algoritme gjør dobbelt så mye
+arbeid som en annen, eller om det gjøres \(1\), \(10\) eller \(100\) steg inne i
+en løkke. Store-\(\mathcal{O}\) visker vekk konstanter ved å si at
+\(\mathcal{O}(c) = \mathcal{O}(1)\) for en vilkårlig konstant \(c\), og bevarer
+kun det største leddet i et sammensatt uttrykk ved å si at \(\mathcal{O}(a +
+   b) = \mathcal{O}(\max(a, b))\). Disse regnereglene for store-\(\mathcal{O}\)
+gir opphav til et perspektiv som sier at:
+</p>
+<ul class="org-ul">
+<li>Vekst er viktigere enn konstantfaktorer.</li>
+<li>Det tregeste leddet av algoritmen styrer veksten.</li>
+</ul>
+<p>
+Denne mangelen på presisjon gjør det <i>vesentlig enklere</i> å resonnere om
+kjøretid, fordi notasjonen ikke tillater oss å bli sittende fast med
+detaljer og hjelper oss rette konsentrasjonen vår dit det trengs mest. Med
+erfaring vil du kunne skrive kode og nesten alltid vite
+kjøretidskompleksiteten på det du skriver, og en bevissthet rundt dette kan
+i sum spare kloden for sløsing av store mengder energi.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgee768ee" class="outline-3">
+<h3 id="orgee768ee">Tilbake til det enkle problemet</h3>
+<div class="outline-text-3" id="text-orgee768ee">
+<p>
+Apropos sløsing; kanskje du la merke til at prosedyren over gir en <i>veldig</i>
+inneffektiv løsning på å summere opp tallene mellom \(1\) og \(n\)? Løsningen er
+ikke inneffektiv fordi den er <i>kvadratisk</i>, men fordi at vi så lett kan se at
+problemet kan løses mer effektivt. Merk at vi nå flytter spørsmålet fra hvor
+effektiv algoritmen er, til hvor effektivt vi kan løse problemet.
+</p>
+
+<p>
+Vi kan starte med å se at vi kan legge til \(i\) i hver iterasjon, fremfor å
+skulle inkrementere summen med én \(i\) ganger.
+</p>
+
+<pre class="example" id="org52f2005">
+Procedure sumTo(n):
+  sum ← 0
+  for i ← 1 to n do
+    sum ← sum + i
+  return sum
+</pre>
+
+<p>
+Siden vi anser aritmetiske operasjoner som konstanttidsoperasjoner, så vil
+dette gi \(n\) iterasjoner og være i \(\mathcal{O}(n)\).
+</p>
+
+<p>
+Den observante leseren vil ha lagt merke til at vi i analysen om hvor mange
+iterasjonser den første varianten gjorde, så fant vi også løsningen på
+problemet. Altså kan prosedyren forenkles videre.
+</p>
+
+<pre class="example" id="org3c189a2">
+Procedure sumTo(n):
+  return (n * (n + 1)) / 2
+</pre>
+
+<p>
+Denne varianten er i \(\mathcal{O}(1)\), altså konstant tid, fordi vi kun gjør
+aritmetiske operasjoner som anses som primitive steg.
+</p>
+
+<blockquote>
+<h3>Kjøretidskompleksitet for aritmetiske operasjoner</h3>
+
+<p>
+At aritmetiske operasjoner anses som primitive steg med konstant tid gir
+mening i konteksten av moderne datamaskiner, som stort sett jobber med tall
+som er begrenset til 32-bit, som gir tall opp til \(2^{32}\) eller 64-bit, som
+gir tall opp til \(2^{64}\). For praktiske formål er dette sjeldent en
+begrensning.
+</p>
+
+<p>
+Dersom vi tenker på tall som bitstrenger av vilkårlig lengde så vil
+effektiviteten på aritmetiske operasjoner vokse med antall bits. Addisjon
+kan for eksempel løses i \(\mathcal{O}(n)\) der \(n\) er antall bits. Den
+raskeste algoritmen for som er kjent for multiplikasjon ble først oppdaget i
+2019! Den er i \(\mathcal{O}(n \cdot \log(n))\). Hvorvidt dette er den raskeste
+mulige algoritmen for multiplikasjon er et åpent spørsmål.
+</p>
+</blockquote>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org142c548" class="outline-2">
+<h2 id="org142c548">Kompleksiteten til problemer</h2>
+<div class="outline-text-2" id="text-org142c548">
+<p>
+I kompleksitetsteori ligger fokus på den <i>iboende</i> vanskelighetsgraden av
+problemet. Vanskelighetsgraden av problemet er gitt av den <i>mest effektive</i>
+algoritmen som gir en løsning på problemet. Å vise at det umulig kan
+eksistere en mer effektiv løsning er ofte veldig vanskelig.
+</p>
+</div>
+
+<div id="outline-container-org986fc15" class="outline-3">
+<h3 id="org986fc15">Avgjørelsesproblemer</h3>
+<div class="outline-text-3" id="text-org986fc15">
+<p>
+Innen kompleksitetsteori er det vanlig å begrense seg til å kun snakke om
+<i>avgjørelsesproblemer</i>. Et avgjørbarhetsproblem formuleres som en beskrivelse
+av en <i>instans</i> av problemet, sammen med et <i>spørsmål</i> som skal kunne besvares
+med JA eller NEI. Problemene vi har studert tidligere har som regel ikke
+vært avgjørelsesproblemer, men heller produsert rikere output, som tall,
+arrayer, lister, trær, grafer, og så videre. For disse kan vi formulere
+relaterte avgjørelsesproblemer. Under finner du noen eksempler på problemer
+du bør kjenne igjen, formulert som et relatert avgjørelsesproblem.
+</p>
+
+<p class="decision">
+SORT<br />
+<b>Instans:</b> To arrayer \(A_1\) og \(A_2\).<br />
+<b>Spørsmål:</b> Består \(A_2\) av de samme elementene som \(A_1\) i sortert rekkefølge?
+</p>
+
+<p class="decision">
+MST-\(k\)<br />
+<b>Instans:</b> En graf \(G\) og et tall \(k\).<br />
+<b>Spørsmål:</b> Finnes det et spenntre over \(G\) med total vekt mindre enn \(k\)?
+</p>
+
+<p class="decision">
+SCC-\(k\)<br />
+<b>Instans:</b> En graf \(G\) og et tall \(k\).<br />
+<b>Spørsmål:</b> Har \(G\) minst \(k\) sterkt sammenhengende komponenter?
+</p>
+
+<p>
+Dersom man har en algoritme for å sortere, finne minimale spenntrær eller
+sterkt sammenhengende komponenter, så vil man kunne bruke disse til å
+besvare det relaterte avgjørbarhetsproblemet. For eksempel vil en algoritme
+som finner de sterkt sammenhengende komponentene til en graf også kunne
+brukes til å besvare om grafen har minst \(k\) sterkt sammenhengende
+komponenter (ved å telle opp komponentene i resultatet og svare JA eller NEI
+avhengig av om det er minst \(k\) av dem). Generelt vil det å løse problemet
+være minst like vanskelig som det relaterte avgjørbarhetsproblemet. Dette er
+litt av årsaken til at avgjørbarhetsproblemer studeres; dersom det er
+vanskelig å løse avgjørbarhetsproblemet, så vil det være <i>minst like
+vanskelig</i> å løse en rikere variant av problemet.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org980537d" class="outline-2">
+<h2 id="org980537d">Kompleksitetsklassene \(P\) og \(NP\)</h2>
+<div class="outline-text-2" id="text-org980537d">
+<p>
+Avgjørelsesproblemer kan klassifiseres etter hvor vanskelige de er å løse. Vi
+skal se på de to mest kjente (og kanskje mest nyttige),
+kompleksitetsklassene.
+</p>
+</div>
+
+<div id="outline-container-orgd89fadd" class="outline-3">
+<h3 id="orgd89fadd">Kompleksitetsklassen \(P\)</h3>
+<div class="outline-text-3" id="text-orgd89fadd">
+<p>
+Et avgjørbarhetsproblem er i kompleksitetsklassen \(P\) dersom det finnes en
+algoritme som løser problemet i <i>polynomiell tid</i>. Det vil si at algoritmen er
+i \(\mathcal{O}(n^k)\) for en konstant \(k\). En intuitiv måte å se for seg
+polynomiell tid er et program som inneholder flere nøstede <code>for</code>-løkker:
+</p>
+
+<pre class="example" id="org709718d">
+Procedure polynomial(n)
+  sum ← 0
+  for i₁ ← 1 to n
+    for i₂ ← 1 to n
+      ...
+        for iₖ ← 1 to n
+          sum ← sum + 1
+  return sum
+</pre>
+
+<p>
+Her har vi altså \(k\) nøstede <code>for</code>-løkker, som gir kjøretidskompleksitet
+\(\mathcal{O}(n^k)\). Alle algoritmene vi har sett på i kurset så langt har
+vært polynomielle; husk at \(\mathcal{O}\) kun gir en øvre grense, så for
+eksempel er en algoritme i \(\mathcal{O}(\log(n))\) også i \(\mathcal{O}(n^2)\).
+</p>
+</div>
+</div>
+
+<div id="outline-container-orga45091c" class="outline-3">
+<h3 id="orga45091c">Sudoku \(n \times n\)</h3>
+<div class="outline-text-3" id="text-orga45091c">
+<p>
+Et problem du antageligvis kjenner fra før er Sudoku. I klassisk Sudoku får
+du et \(9 \times 9\) grid som er delevis fylt ut. En løsning på Sudoku er et ferdig
+utfylt brett, der hver rad, kolonne og boks inneholder tallene \(1\) til \(9\)
+nøyaktig én gang.
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides" class="sudoku">
+
+
+<colgroup>
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-right">&#xa0;</td>
+<td class="org-right">&#xa0;</td>
+<td class="org-right">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-right">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-right">&#xa0;</td>
+<td class="org-right">1</td>
+<td class="org-right">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-right">4</td>
+<td class="org-right">&#xa0;</td>
+<td class="org-right">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-right">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-right">&#xa0;</td>
+<td class="org-right">&#xa0;</td>
+<td class="org-right">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-right">&#xa0;</td>
+<td class="org-right">2</td>
+<td class="org-right">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-right">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-right">&#xa0;</td>
+<td class="org-right">&#xa0;</td>
+<td class="org-right">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-right">&#xa0;</td>
+<td class="org-right">&#xa0;</td>
+<td class="org-right">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-right">5</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-right">4</td>
+<td class="org-right">&#xa0;</td>
+<td class="org-right">7</td>
+</tr>
+
+<tr>
+<td class="org-right">&#xa0;</td>
+<td class="org-right">&#xa0;</td>
+<td class="org-right">8</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-right">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-right">3</td>
+<td class="org-right">&#xa0;</td>
+<td class="org-right">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-right">&#xa0;</td>
+<td class="org-right">&#xa0;</td>
+<td class="org-right">1</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-right">9</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-right">&#xa0;</td>
+<td class="org-right">&#xa0;</td>
+<td class="org-right">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-right">3</td>
+<td class="org-right">&#xa0;</td>
+<td class="org-right">&#xa0;</td>
+<td class="org-left">4</td>
+<td class="org-right">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-right">2</td>
+<td class="org-right">&#xa0;</td>
+<td class="org-right">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-right">&#xa0;</td>
+<td class="org-right">5</td>
+<td class="org-right">&#xa0;</td>
+<td class="org-left">1</td>
+<td class="org-right">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-right">&#xa0;</td>
+<td class="org-right">&#xa0;</td>
+<td class="org-right">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-right">&#xa0;</td>
+<td class="org-right">&#xa0;</td>
+<td class="org-right">&#xa0;</td>
+<td class="org-left">8</td>
+<td class="org-right">&#xa0;</td>
+<td class="org-left">6</td>
+<td class="org-right">&#xa0;</td>
+<td class="org-right">&#xa0;</td>
+<td class="org-right">&#xa0;</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+I avgjørbarhetsproblemet Sudoku endrer vi spørsmålet til hvorvidt det <i>finnes</i>
+en løsning, og vi generaliserer problemet til å omhandle \(n \times n\) brett.
+</p>
+
+<p class="decision">
+SUDOKU \(n \times n\)<br />
+<b>Instans:</b> Et delevis utfylt \(n \times n\) Sudoku-brett.<br />
+<b>Spørsmål:</b> Har brettet en gyldig løsning?
+</p>
+
+<p>
+Det finnes ingen kjent algoritme som avgjør dette problemet i polynomiell
+tid. Det er heller ikke kjent om det i det hele tatt kan eksistere en
+algoritme som avgjør problemet i polynomiell tid.
+</p>
+
+<p>
+For problemer hvor det ikke er funnet noen effektiv algoritme (og her regnes
+en hvilken som helst polynomiell algoritme som effektivt), så er ofte den
+eneste løsningen å gå prøve alle muligheter, helst på en litt smart måte.
+</p>
+
+<ul class="org-ul">
+<li>For \(n = 4\), så finnes det \(288\) gyldige ferdig utfylte \(4 \times 4\) Sudoku-brett.</li>
+<li>For \(n = 9\), så finnes det \(6\ 670\ 903\ 752\ 021\ 072\ 936\ 960\) gyldige ferdig utfylte \(9 \times 9\) Sudoku-brett.</li>
+</ul>
+
+<p>
+Selv om en algoritme kan være litt smartere enn å gå gjennom alle mulige
+ferdige Sudoku-brett, så sier disse tallene noe om hvor raskt problemet
+vokser med input, og kan gi noe intuisjon til hvorfor det ikke er funnet
+noen effektiv algoritme for å løse Sudoku.
+</p>
+
+<blockquote>
+<p>
+Det finnes algoritmer som kan løse Sudoku \(9 \times 9\) forholdsvis raskt på en
+moderne datamaskin. En naiv algoritme vil ikke nødvendigvis kunne løse
+Sudoku-oppgaven ovenfor på rimelig tid, men det finnes teknikker som gjør at
+søket etter løsninger går <i>vesentlig</i> raskere.
+</p>
+
+<p>
+Dersom du ønsker å forsøke å lage en Sudoku-løser kan du teste løsningen din
+på: <a href="all_17_clue_sudokus.txt">alle 49151 ikke-ekvivalente Sudoku-oppgaver med nøyaktig 17 hint</a>.
+</p>
+
+<p>
+Forfatteren sin løsning løser alle oppgavene på ca. 5 sekunder (du kan
+tolke det som en utfordring).
+</p>
+</blockquote>
+
+<p>
+Til tross for at vi ikke har noen effektiv måte å finne en løsning på
+problemet, så har vi gode og effektive løsninger på å <i>verifisere en gitt
+løsning</i>. Å verifisere en løsning på et \(n \times n\) Sudoku-brett kan gjøres ved å
+sjekke at hvert tall mellom \(1\) og \(n\) forekommer nøyaktig én gang i hver
+rad, hver kolonne og hver boks. Dette kan fint gjøres i \(\mathcal{O}(n^2)\).
+</p>
+
+<p>
+Antageligvis kan du verifisere at dette er en løsning raskere enn du kan løse
+Sudoku-oppgaven ovenfor:
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides" class="sudoku">
+
+
+<colgroup>
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-right">6</td>
+<td class="org-right">9</td>
+<td class="org-right">3</td>
+<td class="org-right">7</td>
+<td class="org-right">8</td>
+<td class="org-right">4</td>
+<td class="org-right">5</td>
+<td class="org-right">1</td>
+<td class="org-right">2</td>
+</tr>
+
+<tr>
+<td class="org-right">4</td>
+<td class="org-right">8</td>
+<td class="org-right">7</td>
+<td class="org-right">5</td>
+<td class="org-right">1</td>
+<td class="org-right">2</td>
+<td class="org-right">9</td>
+<td class="org-right">3</td>
+<td class="org-right">6</td>
+</tr>
+
+<tr>
+<td class="org-right">1</td>
+<td class="org-right">2</td>
+<td class="org-right">5</td>
+<td class="org-right">9</td>
+<td class="org-right">6</td>
+<td class="org-right">3</td>
+<td class="org-right">8</td>
+<td class="org-right">7</td>
+<td class="org-right">4</td>
+</tr>
+
+<tr>
+<td class="org-right">9</td>
+<td class="org-right">3</td>
+<td class="org-right">2</td>
+<td class="org-right">6</td>
+<td class="org-right">5</td>
+<td class="org-right">1</td>
+<td class="org-right">4</td>
+<td class="org-right">8</td>
+<td class="org-right">7</td>
+</tr>
+
+<tr>
+<td class="org-right">5</td>
+<td class="org-right">6</td>
+<td class="org-right">8</td>
+<td class="org-right">2</td>
+<td class="org-right">4</td>
+<td class="org-right">7</td>
+<td class="org-right">3</td>
+<td class="org-right">9</td>
+<td class="org-right">1</td>
+</tr>
+
+<tr>
+<td class="org-right">7</td>
+<td class="org-right">4</td>
+<td class="org-right">1</td>
+<td class="org-right">3</td>
+<td class="org-right">9</td>
+<td class="org-right">8</td>
+<td class="org-right">6</td>
+<td class="org-right">2</td>
+<td class="org-right">5</td>
+</tr>
+
+<tr>
+<td class="org-right">3</td>
+<td class="org-right">1</td>
+<td class="org-right">9</td>
+<td class="org-right">4</td>
+<td class="org-right">7</td>
+<td class="org-right">5</td>
+<td class="org-right">2</td>
+<td class="org-right">6</td>
+<td class="org-right">8</td>
+</tr>
+
+<tr>
+<td class="org-right">8</td>
+<td class="org-right">5</td>
+<td class="org-right">6</td>
+<td class="org-right">1</td>
+<td class="org-right">2</td>
+<td class="org-right">9</td>
+<td class="org-right">7</td>
+<td class="org-right">4</td>
+<td class="org-right">3</td>
+</tr>
+
+<tr>
+<td class="org-right">2</td>
+<td class="org-right">7</td>
+<td class="org-right">4</td>
+<td class="org-right">8</td>
+<td class="org-right">3</td>
+<td class="org-right">6</td>
+<td class="org-right">1</td>
+<td class="org-right">5</td>
+<td class="org-right">9</td>
+</tr>
+</tbody>
+</table>
+
+<blockquote>
+<p>
+Ofte gir spill opphav til problemer som ikke kan løses effektivt, og Sudoku
+er et eksempel på det. For eksempel er det bevist at mange klassiske
+Nintendo-spill er vanskelige fra et kompleksitetsperspektiv:
+<a href="https://arxiv.org/abs/1203.1895">https://arxiv.org/abs/1203.1895</a>.
+</p>
+</blockquote>
+</div>
+</div>
+
+<div id="outline-container-orgd43984f" class="outline-3">
+<h3 id="orgd43984f">Verifisering av løsninger med sertifikater</h3>
+<div class="outline-text-3" id="text-orgd43984f">
+<p>
+Avgjørelsesproblemer tar input og svarer JA eller NEI. Dersom vi ønsker å
+verifisere løsningen for et avgjørelsesproblem gjøres dette ved hjelp av et
+<i>sertifikat</i>. For Sudoku er spørsmålet om et gitt brett har en løsning. Dersom
+svaret er JA, så kan vi skrive en algoritme som verifiserer det på
+polynomiell tid; en slik algoritme tar inputet som gitt til det opprinnelige
+problemet, sammen med det løste brettet, og sjekker om reglene for Sudoku er
+fulgt, samt at hintene i det opprinnelige input er bevart. Det løste brettet
+fungerer her som et <i>sertifikat</i>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org471f806" class="outline-3">
+<h3 id="org471f806">Kompleksitetsklassen \(NP\)</h3>
+<div class="outline-text-3" id="text-org471f806">
+<p>
+Et avgjørbarhetsproblem er i kompleksitetsklassen \(NP\) dersom det finnes en
+algoritme som kan <i>verifisere en løsning</i> på problemet i polynomiell tid. Merk
+at dersom vi kan <i>løse</i> problemet i polynomiell tid, så kan vi også verifisere
+problemet i polynomiell tid (fordi vi kan løse problemet og sjekke at svaret
+er det samme). Derfor er alle problemer i kompleksitetsklassen \(P\) også i
+kompleskitetsklassen \(NP\).
+</p>
+
+<div style="display: flex; justify-content: center; align-items: center;">
+  <div style="position: relative; width: 250px; height: 250px; overflow: hidden">
+    <svg width="100%" height="100%">
+      <!-- Outer Circle -->
+      <circle cx="50%" cy="50%" r="45%" fill="none" stroke="#37474F" stroke-width="2"/>
+      <!-- Inner Circle -->
+      <circle cx="50%" cy="50%" r="20%" fill="none" stroke="#37474F" stroke-width="2"/>
+    </svg>
+    <!-- NP Label -->
+    <div style="position: absolute; top: 17.5%; left: 50%; transform: translate(-50%, -50%); color: #37474F">
+      \( NP \)
+    </div>
+    <!-- P Label inside the inner circle -->
+    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1; color: #37474F">
+      \( P \)
+    </div>
+  </div>
+</div>
+
+<blockquote>
+<p>
+En ekvivalent definisjon av \(NP\) er problemer som kan løses i polynomiell
+tid med en ikke-deterministisk algoritme. Dette er utenfor pensum, men
+nevnes fordi navnet \(NP\) kommer fra «Nondeterministic Polynomial time». En
+ikke-deterministisk algoritme kan «gjette» riktig blant mange alternativer i
+konstant tid.
+</p>
+</blockquote>
+
+<p>
+Alle problemer i \(NP\) er <i>minst like vanskelig</i> som problemene i \(P\).
+</p>
+
+<p>
+Det er fremdeles ikke visst om problemene i \(NP\) faktisk er vanskeligere enn
+problemene i \(P\), men den vanligste oppfattelsen er at problemene i \(NP\) <i>er</i>
+vanskeligere enn problemene i \(P\). Om \(P = NP\) eller \(P \neq NP\) er en av de
+største uløste problemene i matematikk og informatikk, og ligger på <a href="https://en.wikipedia.org/wiki/Millennium_Prize_Problems">listen
+over århundrets problemer</a> hvor en løsning vil gi en premie på én million
+dollar. Å bevise at \(P = NP\) eller motsatt er antageligvis en av de
+vanskeligste måtene man kan bli millionær på.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org01cd7dc" class="outline-2">
+<h2 id="org01cd7dc">Oversettelse mellom problemer</h2>
+<div class="outline-text-2" id="text-org01cd7dc">
+<p>
+Når vi løser problemer, så oversetter vi dem ofte til problemer som hjelper
+oss med å løse det opprinnelige problemet. I kompleksitetsteori gjør vi det
+samme, men mer eksplisitt og systematisk, og kaller det reduksjoner. Å vise
+at et problem kan reduseres til et annet sier noe om vanskelighetsgraden på
+problemene.
+</p>
+</div>
+
+<div id="outline-container-org495ddaf" class="outline-3">
+<h3 id="org495ddaf">Polynomtidsreduksjoner</h3>
+<div class="outline-text-3" id="text-org495ddaf">
+<p>
+En polynomtidsreduksjon fra problem \(A\) til problem \(B\) oversetter instanser
+av problem \(A\) til instanser av problem \(B\) i polynomiell tid. For at
+reduksjonen skal være korrekt må JA-instanser av problem \(A\) oversettes til
+JA-instanser av problem \(B\), og tilsvarende for NEI-instanser. En annen måte
+å si det samme er at det er en algoritme (som er i \(\mathcal{O}(n^k)\)) som
+konverterer input til problem \(A\) til et format som kan brukes som input til
+problem \(B\).
+</p>
+
+<p>
+Ta partall og oddetall som eksempel:
+</p>
+
+<p class="decision">
+EVEN<br />
+<b>Instans:</b> Et heltall \(n\).<br />
+<b>Spørsmål:</b> Er \(n\) et partall?
+</p>
+
+<p class="decision">
+ODD<br />
+<b>Instans:</b> Et heltall \(n\).<br />
+<b>Spørsmål:</b> Er \(n\) et oddetall?
+</p>
+
+<p>
+En instans av EVEN er et heltall \(n\). Dersom vi oversette instansen til en
+instans av ODD så kan vi gjøre det ved å oversette \(n\) til \(n + 1\). Denne
+reduksjonen er korrekt, fordi hvis \(n\) er en JA-instans av EVEN, så er \(n +
+   1\) en JA-instans av ODD, og hvis \(n\) er en NEI-instans av EVEN, så er \(n +
+   1\) en NEI-instans av ODD.
+</p>
+
+<p>
+Fra dette kan vi konkludere med at problemet ODD er <i>minst like vanskelig</i> som
+EVEN.
+</p>
+
+<p>
+Alle avgjørelsesproblemer i \(P\) kan polynomtidsreduseres til hverandre.
+Grunnen til det er at vi rekker å løse problemene på polynomiell tid. Hvis
+vi for eksempel vil vise at SCC-\(k\) kan reduseres til SORT, så kan vi
+finne de sterkt sammenhengende komponentene av inputgrafen, og hvis
+inputgrafen har \(k\) eller flere sterkt sammenhengende komponenenter, så
+oversetter vi det til arrayet \([1, 2, 3]\) og hvis den har færre, så
+oversetter vi det til arrayet \([2,1,3]\).
+</p>
+</div>
+</div>
+
+<div id="outline-container-org1359a51" class="outline-3">
+<h3 id="org1359a51">De vanskeligste problemene i \(NP\)</h3>
+<div class="outline-text-3" id="text-org1359a51">
+<p>
+De vanskeligste problemene i \(NP\) kalles \(NP\)-harde. Et problem \(A\) er
+\(NP\)-hardt dersom \(A\) er minst like vanskelig som alle problemer i \(NP\).
+</p>
+
+<p>
+Det første problemet som ble bevist å være \(NP\)-hardt heter SAT og går ut
+på å avgjøre om en formel av boolske variabler kan gjøres sann. Det betyr at
+det ble bevist at SAT er minst like vanskelig som alle problemer i \(NP\).
+</p>
+
+<p>
+Dersom du ønsker å vise at et nytt problem \(A\) er \(NP\)-hardt, så kan du
+redusere SAT til \(A\). Med det har du sagt at \(A\) er minst like vanskelig som
+SAT, og siden SAT er \(NP\)-hardt så må \(A\) også være det. Hvis du nå kommer
+med nok et nytt problem \(B\), så kan du vise at \(B\) er \(NP\)-hardt ved å enten
+redusere \(A\) eller SAT til \(B\).
+</p>
+
+<p>
+Med andre ord, dersom vi har et problem \(A\) vi ønsker å vise er \(NP\)-hardt,
+så er det tilstrekkelig å finne et \(NP\)-hardt problem og redusere det til
+\(A\).
+</p>
+</div>
+</div>
+
+<div id="outline-container-org8d37e98" class="outline-3">
+<h3 id="org8d37e98">\(NP\)-komplette problemer</h3>
+<div class="outline-text-3" id="text-org8d37e98">
+<p>
+Et problem \(A\) er \(NP\)-komplett hvis det både
+</p>
+<ol class="org-ol">
+<li>er i \(NP\) (kan verifiseres i polynomiell tid),</li>
+<li>er \(NP\)-hardt (hvert problem i \(NP\) kan polynomtidsreduseres til \(A\)).</li>
+</ol>
+
+<p>
+En egenskap ved disse problemene er at de er antatt å være vanskelig å løse,
+men enkle å sjekke. De utgjør en svært viktig rolle i kryptografi, fordi man
+der ønsker at det skal være lett å identifisere at du har riktig nøkkel, men
+det skal være vanskelig å finne nøkkelen.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org6f27625" class="outline-3">
+<h3 id="org6f27625">Men er \(P = NP\)?</h3>
+<div class="outline-text-3" id="text-org6f27625">
+<p>
+Alle \(NP\)-komplette problemer kan reduseres til hverandre. Det betyr at
+dersom man finner en polynomiell løsning på <i>ett</i> \(NP\)-komplett problem, så
+kan all \(NP\)-komplette problemer reduseres til dette problemet, og med det
+har man bevist at \(P = NP\).
+</p>
+
+<p>
+Dersom denne polynomielle løsningen er rask nok til å kunne beregnes på
+moderne datamaskiner, så vil man både kunne løse svært mange problemer som
+tidligere har vært utenfor rekkevidde, og samtidig ville alt av kryptografi
+bli mulig å bryte.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orge217a21" class="outline-2">
+<h2 id="orge217a21">Beregnbarhet</h2>
+<div class="outline-text-2" id="text-orge217a21">
+<p>
+Vi avslutter med en kort historie om bergnbarhet. Spørsmålet er om det finnes
+problemer som er så vanskelig at det ikke går an å beregne et svar, uansett
+hvor lang tid det tar. Finnes det problemer som er grunnleggende uløselige?
+</p>
+
+<p>
+Dette var spørsmålet David Hilbert stilte i begynnelsen av 1900-tallet.
+Svaret kom først fra Alonzo Church, men like etter, og med større slagkraft,
+fra Alan Turing, i 1936. Svaret på spørsmålet viste seg å være nei, og man
+måtte utvikle den moderne forståelsen av hva en datamaskin er for å klare å
+besvare det.
+</p>
+
+<p>
+Problemet som er uløselig kalles <i>stoppeproblemet</i>:
+</p>
+
+<p class="decision">
+HALT<br />
+<b>Instans:</b> En algoritme \(A\), og en input til \(A\), \(x\).<br />
+<b>Spørsmål:</b> Terminerer \(A\) på input \(x\)?
+</p>
+
+<p>
+Dette er uløselig, og det kan bevises ved et motsigelsesbevis.
+</p>
+
+<blockquote>
+<p>
+Anta (for motsigelse) at det finnes en algoritme \(H\) som svarer riktig
+(JA/NEI) på alle instanser av HALT (på endelig tid).
+</p>
+
+<p>
+Vi konstruerer nå en algoritme \(D\) som tar en algoritme \(A\) som input, og
+fungerer som følger:
+</p>
+<ul class="org-ul">
+<li>Sjekk  \(H(A, A)\) (terminerer algoritmen \(A\) med \(A\) som input)?
+<ul class="org-ul">
+<li>Hvis JA: gå inn i en evig løkke</li>
+<li>Hvis NEI: output JA</li>
+</ul></li>
+</ul>
+
+<p>
+Hva skjer nå hvis vi kjører \(D(D)\), altså med \(D\) med \(D\) som input? Først
+sjekkes \(H(D, D)\), som vi har antatt gir riktig svar på om \(D\) terminerer
+med \(D\) som input.
+</p>
+<ul class="org-ul">
+<li>Hvis \(D\) terminerer med seg selv som input, så går den inn i en evig
+løkke.</li>
+<li>Hvis den ikke terminerer med seg selv som input, så svarer den JA.</li>
+</ul>
+
+<p>
+I begge tilfeller får vi en motsigelse. Dersom \(D(D)\) terminerer, så
+terminerer den ikke. Dersom \(D(D)\) ikke terminerer, så svarer den JA (og med
+det terminerer den). Siden antagelsen om at \(H\) finnes ledet til en
+motsigelse, konkluderer vi med at \(H\) ikke eksisterer. Siden \(H\) var en
+vilkårlig algoritme som løste stoppeproblemet kan vi konkludere med at ingen
+algoritme kan løse stoppeproblemet.
+</p>
+</blockquote>
+</div>
+</div>
+</div>
+</body>
+</html>
