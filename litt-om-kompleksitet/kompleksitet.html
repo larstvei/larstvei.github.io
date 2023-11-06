@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="nb" xml:lang="nb">
 <head>
-<!-- 2023-11-06 Mon 14:24 -->
+<!-- 2023-11-06 Mon 16:09 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Litt om kompleksitet</title>
@@ -37,9 +37,9 @@ vi fra å tenke på kompleksiteten til en konkret algoritme til å heller tenke 
 kompleksiteten til problemet selv.
 </p>
 
-<div id="outline-container-org8fd021a" class="outline-2">
-<h2 id="org8fd021a">Kompleksiteten til algoritmer</h2>
-<div class="outline-text-2" id="text-org8fd021a">
+<div id="outline-container-orgb686908" class="outline-2">
+<h2 id="orgb686908">Kompleksiteten til algoritmer</h2>
+<div class="outline-text-2" id="text-orgb686908">
 <p>
 Kompleksiteten til en algoritme sier noe om hvor mange ressurser den krever,
 der vi som regel er interessert i tidsbruk og minnebruk. For dette notatet
@@ -54,16 +54,16 @@ det vi kaller <i>kjøretidskompleksiteten</i> til algoritmen.
 </p>
 </div>
 
-<div id="outline-container-orgbb4eb9f" class="outline-3">
-<h3 id="orgbb4eb9f">En ineffektiv løsning på et enkelt problem</h3>
-<div class="outline-text-3" id="text-orgbb4eb9f">
+<div id="outline-container-org96eb251" class="outline-3">
+<h3 id="org96eb251">En ineffektiv løsning på et enkelt problem</h3>
+<div class="outline-text-3" id="text-org96eb251">
 <p>
 Si at vi skal finne summen av alle tallene mellom \(1\) og en gitt \(n\), der \(n\)
 er et positivt heltall. Følgende algoritme vil løse problemet, uansett hvor
 stor \(n\) er:
 </p>
 
-<pre class="example" id="org1b6ac53">
+<pre class="example" id="org0d61eec">
 Procedure sumTo(n)
   sum ← 0
   for i ← 1 to n do
@@ -134,9 +134,9 @@ antall iterasjoner prosedyren kjører:
 </div>
 </div>
 
-<div id="outline-container-org4ae77b4" class="outline-3">
-<h3 id="org4ae77b4">Litt om kjøretidskompleksitet</h3>
-<div class="outline-text-3" id="text-org4ae77b4">
+<div id="outline-container-orgda00f1c" class="outline-3">
+<h3 id="orgda00f1c">Litt om kjøretidskompleksitet</h3>
+<div class="outline-text-3" id="text-orgda00f1c">
 <p>
 Når vi snakker om <i>kjøretidskompleksitet</i>, så er vi ute etter å forstå hvordan
 kjøretiden vokser når input blir større og større. Under ser du et lite
@@ -150,9 +150,9 @@ kjøretiden.
 
 <p>
 Dersom du åpner grafen (klikk på «edit graph on desmos») så kan du forsøke å
-endre litt på konstantfaktorene. Du kan legge merke til at selv hvis vi
-justerer på konstantfaktorene så vil kurvene bevare den samme <i>formen</i>. Det at
-de <i>bevarer samme form</i> er en uformell måte å si at de vokser på samme måte
+endre litt på konstantfaktorene. Legg merke til at selv om vi justerer
+på konstantfaktorene så vil kurvene bevare den samme <i>formen</i>. Det at de
+<i>bevarer samme form</i> er en uformell måte å si at de vokser på samme måte
 uavhengig av konstantfaktorer. \(\textcolor{#437FBB}{n^2}\) og
 \(\textcolor{#CD5754}{\frac{n(n + 1)}{2}}\) vokser begge <i>kvadratisk</i>, mens
 \(10\cdot{}n\) vokser <i>lineært</i>. Selv hvis du øker \(10\cdot{}n\) til \(100\cdot{}n\) eller \(1000\cdot{}n\),
@@ -168,9 +168,8 @@ men det fanger <i>ikke</i> opp forskjellen på om en algoritme gjør dobbelt s�
 arbeid som en annen, eller om det gjøres \(1\), \(10\) eller \(100\) steg inne i
 en løkke. Store-\(\mathcal{O}\) visker vekk konstanter ved å si at
 \(\mathcal{O}(c) = \mathcal{O}(1)\) for en vilkårlig konstant \(c\), og bevarer
-kun det største leddet i et sammensatt uttrykk ved å si at \(\mathcal{O}(a +
-   b) = \mathcal{O}(\max(a, b))\). Disse regnereglene for store-\(\mathcal{O}\)
-gir opphav til et perspektiv som sier at:
+kun det største leddet i et sammensatt uttrykk. Disse regnereglene for
+store-\(\mathcal{O}\) gir opphav til et perspektiv som sier at:
 </p>
 <ul class="org-ul">
 <li>Vekst er viktigere enn konstantfaktorer.</li>
@@ -179,17 +178,17 @@ gir opphav til et perspektiv som sier at:
 <p>
 Denne mangelen på presisjon gjør det <i>vesentlig enklere</i> å resonnere om
 kjøretid, fordi notasjonen ikke tillater oss å bli sittende fast med
-detaljer og hjelper oss rette konsentrasjonen vår dit det trengs mest. Med
-erfaring vil du kunne skrive kode og nesten alltid vite
+detaljer og hjelper oss med å rette konsentrasjonen vår dit det trengs mest.
+Med erfaring vil du kunne skrive kode og nesten alltid vite
 kjøretidskompleksiteten på det du skriver, og en bevissthet rundt dette kan
 i sum spare kloden for sløsing av store mengder energi.
 </p>
 </div>
 </div>
 
-<div id="outline-container-org6899c2e" class="outline-3">
-<h3 id="org6899c2e">Tilbake til det enkle problemet</h3>
-<div class="outline-text-3" id="text-org6899c2e">
+<div id="outline-container-org1968369" class="outline-3">
+<h3 id="org1968369">Tilbake til det enkle problemet</h3>
+<div class="outline-text-3" id="text-org1968369">
 <p>
 Apropos sløsing; kanskje du la merke til at prosedyren over gir en <i>veldig</i>
 inneffektiv løsning på å summere opp tallene mellom \(1\) og \(n\)? Løsningen er
@@ -203,7 +202,7 @@ Vi kan starte med å se at vi kan legge til \(i\) i hver iterasjon, fremfor å
 skulle inkrementere summen med én \(i\) ganger.
 </p>
 
-<pre class="example" id="orgd60f403">
+<pre class="example" id="orgfeb084f">
 Procedure sumTo(n):
   sum ← 0
   for i ← 1 to n do
@@ -218,11 +217,12 @@ dette gi \(n\) iterasjoner og være i \(\mathcal{O}(n)\).
 
 <p>
 Den observante leseren vil ha lagt merke til at vi i analysen om hvor mange
-iterasjonser den første varianten gjorde, så fant vi også løsningen på
-problemet. Altså kan prosedyren forenkles videre.
+iterasjonser den første varianten av <code>sumTo</code> gjorde, utledet vi også en formel
+som regner ut løsningen på problemet direkte. Altså kan prosedyren forenkles
+videre til:
 </p>
 
-<pre class="example" id="orga306388">
+<pre class="example" id="org0effbf8">
 Procedure sumTo(n):
   return (n * (n + 1)) / 2
 </pre>
@@ -238,8 +238,8 @@ aritmetiske operasjoner som anses som primitive steg.
 <p>
 At aritmetiske operasjoner anses som primitive steg med konstant tid gir
 mening i konteksten av moderne datamaskiner, som stort sett jobber med tall
-som er begrenset til 32-bit, som gir tall opp til \(2^{32}\) eller 64-bit, som
-gir tall opp til \(2^{64}\). For praktiske formål er dette sjeldent en
+som er begrenset til 32- eller 64-bit, som henholdsvis lar oss uttrykke tall
+opp til \(2^{32}\) eller \(2^{64}\). For praktiske formål er dette sjeldent en
 begrensning.
 </p>
 
@@ -247,7 +247,7 @@ begrensning.
 Dersom vi tenker på tall som bitstrenger av vilkårlig lengde så vil
 effektiviteten på aritmetiske operasjoner vokse med antall bits. Addisjon
 kan for eksempel løses i \(\mathcal{O}(n)\) der \(n\) er antall bits. Den
-raskeste algoritmen for som er kjent for multiplikasjon ble først oppdaget i
+raskeste algoritmen vi kjenner til for multiplikasjon ble først oppdaget i
 2019! Den er i \(\mathcal{O}(n \cdot \log(n))\). Hvorvidt dette er den raskeste
 mulige algoritmen for multiplikasjon er et åpent spørsmål.
 </p>
@@ -256,20 +256,20 @@ mulige algoritmen for multiplikasjon er et åpent spørsmål.
 </div>
 </div>
 
-<div id="outline-container-org8154985" class="outline-2">
-<h2 id="org8154985">Kompleksiteten til problemer</h2>
-<div class="outline-text-2" id="text-org8154985">
+<div id="outline-container-orgdf75d47" class="outline-2">
+<h2 id="orgdf75d47">Kompleksiteten til problemer</h2>
+<div class="outline-text-2" id="text-orgdf75d47">
 <p>
 I kompleksitetsteori ligger fokus på den <i>iboende</i> vanskelighetsgraden av
-problemet. Vanskelighetsgraden av problemet er gitt av den <i>mest effektive</i>
+problemet. Vanskelighetsgraden til problemet er gitt av den <i>mest effektive</i>
 algoritmen som gir en løsning på problemet. Å vise at det umulig kan
 eksistere en mer effektiv løsning er ofte veldig vanskelig.
 </p>
 </div>
 
-<div id="outline-container-org7c07bdc" class="outline-3">
-<h3 id="org7c07bdc">Avgjørelsesproblemer</h3>
-<div class="outline-text-3" id="text-org7c07bdc">
+<div id="outline-container-org09e35c1" class="outline-3">
+<h3 id="org09e35c1">Avgjørelsesproblemer</h3>
+<div class="outline-text-3" id="text-org09e35c1">
 <p>
 Innen kompleksitetsteori er det vanlig å begrense seg til å kun snakke om
 <i>avgjørelsesproblemer</i>. Et avgjørbarhetsproblem formuleres som en beskrivelse
@@ -316,9 +316,9 @@ vanskelig</i> å løse en rikere variant av problemet.
 </div>
 </div>
 
-<div id="outline-container-org4e959c0" class="outline-2">
-<h2 id="org4e959c0">Kompleksitetsklassene \(P\) og \(NP\)</h2>
-<div class="outline-text-2" id="text-org4e959c0">
+<div id="outline-container-org6d1386f" class="outline-2">
+<h2 id="org6d1386f">Kompleksitetsklassene \(P\) og \(NP\)</h2>
+<div class="outline-text-2" id="text-org6d1386f">
 <p>
 Avgjørelsesproblemer kan klassifiseres etter hvor vanskelige de er å løse. Vi
 skal se på de to mest kjente (og kanskje mest nyttige),
@@ -326,9 +326,9 @@ kompleksitetsklassene.
 </p>
 </div>
 
-<div id="outline-container-orgdb7d01a" class="outline-3">
-<h3 id="orgdb7d01a">Kompleksitetsklassen \(P\)</h3>
-<div class="outline-text-3" id="text-orgdb7d01a">
+<div id="outline-container-org373b6be" class="outline-3">
+<h3 id="org373b6be">Kompleksitetsklassen \(P\)</h3>
+<div class="outline-text-3" id="text-org373b6be">
 <p>
 Et avgjørbarhetsproblem er i kompleksitetsklassen \(P\) dersom det finnes en
 algoritme som løser problemet i <i>polynomiell tid</i>. Det vil si at algoritmen er
@@ -336,7 +336,7 @@ i \(\mathcal{O}(n^k)\) for en konstant \(k\). En intuitiv måte å se for seg
 polynomiell tid er et program som inneholder flere nøstede <code>for</code>-løkker:
 </p>
 
-<pre class="example" id="orgf3fb761">
+<pre class="example" id="orgdd96e40">
 Procedure polynomial(n)
   sum ← 0
   for i₁ ← 1 to n
@@ -348,17 +348,18 @@ Procedure polynomial(n)
 </pre>
 
 <p>
-Her har vi altså \(k\) nøstede <code>for</code>-løkker, som gir kjøretidskompleksitet
-\(\mathcal{O}(n^k)\). Alle algoritmene vi har sett på i kurset så langt har
-vært polynomielle; husk at \(\mathcal{O}\) kun gir en øvre grense, så for
-eksempel er en algoritme i \(\mathcal{O}(\log(n))\) også i \(\mathcal{O}(n^2)\).
+Her har vi altså \(k\) nøstede <code>for</code>-løkker som alle går opp til \(n\), og gir
+kjøretidskompleksitet \(\mathcal{O}(n^k)\). Alle algoritmene vi har sett på i
+kurset så langt har vært polynomielle; husk at \(\mathcal{O}\) kun gir en øvre
+grense, så for eksempel er en algoritme i \(\mathcal{O}(\log(n))\) også i
+\(\mathcal{O}(n^2)\).
 </p>
 </div>
 </div>
 
-<div id="outline-container-org1ef7730" class="outline-3">
-<h3 id="org1ef7730">Sudoku \(n \times n\)</h3>
-<div class="outline-text-3" id="text-org1ef7730">
+<div id="outline-container-org5bfd916" class="outline-3">
+<h3 id="org5bfd916">Sudoku \(n \times n\)</h3>
+<div class="outline-text-3" id="text-org5bfd916">
 <p>
 Et problem du antageligvis kjenner fra før er Sudoku. I klassisk Sudoku får
 du et \(9 \times 9\) grid som er delevis fylt ut. En løsning på Sudoku er et ferdig
@@ -710,9 +711,9 @@ Nintendo-spill er vanskelige fra et kompleksitetsperspektiv:
 </div>
 </div>
 
-<div id="outline-container-org9b225c9" class="outline-3">
-<h3 id="org9b225c9">Verifisering av løsninger med sertifikater</h3>
-<div class="outline-text-3" id="text-org9b225c9">
+<div id="outline-container-org27c9523" class="outline-3">
+<h3 id="org27c9523">Verifisering av løsninger med sertifikater</h3>
+<div class="outline-text-3" id="text-org27c9523">
 <p>
 Avgjørelsesproblemer tar input og svarer JA eller NEI. Dersom vi ønsker å
 verifisere løsningen for et avgjørelsesproblem gjøres dette ved hjelp av et
@@ -726,9 +727,9 @@ fungerer her som et <i>sertifikat</i>.
 </div>
 </div>
 
-<div id="outline-container-org26d53b9" class="outline-3">
-<h3 id="org26d53b9">Kompleksitetsklassen \(NP\)</h3>
-<div class="outline-text-3" id="text-org26d53b9">
+<div id="outline-container-orgfee1ac9" class="outline-3">
+<h3 id="orgfee1ac9">Kompleksitetsklassen \(NP\)</h3>
+<div class="outline-text-3" id="text-orgfee1ac9">
 <p>
 Et avgjørbarhetsproblem er i kompleksitetsklassen \(NP\) dersom det finnes en
 algoritme som kan <i>verifisere en løsning</i> på problemet i polynomiell tid. Merk
@@ -762,8 +763,8 @@ kompleskitetsklassen \(NP\).
 En ekvivalent definisjon av \(NP\) er problemer som kan løses i polynomiell
 tid med en ikke-deterministisk algoritme. Dette er utenfor pensum, men
 nevnes fordi navnet \(NP\) kommer fra «Nondeterministic Polynomial time». En
-ikke-deterministisk algoritme kan «gjette» riktig blant mange alternativer i
-konstant tid.
+ikke-deterministisk algoritme kan «gjette» riktig blant polynomielt mange
+alternativer i konstant tid.
 </p>
 </blockquote>
 
@@ -778,15 +779,15 @@ vanskeligere enn problemene i \(P\). Om \(P = NP\) eller \(P \neq NP\) er en av 
 største uløste problemene i matematikk og informatikk, og ligger på <a href="https://en.wikipedia.org/wiki/Millennium_Prize_Problems">listen
 over århundrets problemer</a> hvor en løsning vil gi en premie på én million
 dollar. Å bevise at \(P = NP\) eller motsatt er antageligvis en av de
-vanskeligste måtene man kan bli millionær på.
+vanskeligste måtene å bli millionær på.
 </p>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org19c7ac0" class="outline-2">
-<h2 id="org19c7ac0">Oversettelse mellom problemer</h2>
-<div class="outline-text-2" id="text-org19c7ac0">
+<div id="outline-container-org44579fa" class="outline-2">
+<h2 id="org44579fa">Oversettelse mellom problemer</h2>
+<div class="outline-text-2" id="text-org44579fa">
 <p>
 Når vi løser problemer, så oversetter vi dem ofte til problemer som hjelper
 oss med å løse det opprinnelige problemet. I kompleksitetsteori gjør vi det
@@ -796,9 +797,9 @@ problemene.
 </p>
 </div>
 
-<div id="outline-container-orgd49bced" class="outline-3">
-<h3 id="orgd49bced">Polynomtidsreduksjoner</h3>
-<div class="outline-text-3" id="text-orgd49bced">
+<div id="outline-container-orge429b2c" class="outline-3">
+<h3 id="orge429b2c">Polynomtidsreduksjoner</h3>
+<div class="outline-text-3" id="text-orge429b2c">
 <p>
 En polynomtidsreduksjon fra problem \(A\) til problem \(B\) oversetter instanser
 av problem \(A\) til instanser av problem \(B\) i polynomiell tid. For at
@@ -826,7 +827,7 @@ ODD<br />
 </p>
 
 <p>
-En instans av EVEN er et heltall \(n\). Dersom vi oversette instansen til en
+En instans av EVEN er et heltall \(n\). Dersom vi oversetter instansen til en
 instans av ODD så kan vi gjøre det ved å oversette \(n\) til \(n + 1\). Denne
 reduksjonen er korrekt, fordi hvis \(n\) er en JA-instans av EVEN, så er \(n +
    1\) en JA-instans av ODD, og hvis \(n\) er en NEI-instans av EVEN, så er \(n +
@@ -850,9 +851,9 @@ oversetter vi det til arrayet \([2,1,3]\).
 </div>
 </div>
 
-<div id="outline-container-org647416f" class="outline-3">
-<h3 id="org647416f">De vanskeligste problemene i \(NP\)</h3>
-<div class="outline-text-3" id="text-org647416f">
+<div id="outline-container-org1a52bb2" class="outline-3">
+<h3 id="org1a52bb2">De vanskeligste problemene i \(NP\)</h3>
+<div class="outline-text-3" id="text-org1a52bb2">
 <p>
 De vanskeligste problemene i \(NP\) kalles \(NP\)-harde. Et problem \(A\) er
 \(NP\)-hardt dersom \(A\) er minst like vanskelig som alle problemer i \(NP\).
@@ -880,9 +881,9 @@ så er det tilstrekkelig å finne et \(NP\)-hardt problem og redusere det til
 </div>
 </div>
 
-<div id="outline-container-org7682872" class="outline-3">
-<h3 id="org7682872">\(NP\)-komplette problemer</h3>
-<div class="outline-text-3" id="text-org7682872">
+<div id="outline-container-orgd92f59d" class="outline-3">
+<h3 id="orgd92f59d">\(NP\)-komplette problemer</h3>
+<div class="outline-text-3" id="text-orgd92f59d">
 <p>
 Et problem \(A\) er \(NP\)-komplett hvis det både
 </p>
@@ -900,9 +901,9 @@ det skal være vanskelig å finne nøkkelen.
 </div>
 </div>
 
-<div id="outline-container-org5d235dc" class="outline-3">
-<h3 id="org5d235dc">Men er \(P = NP\)?</h3>
-<div class="outline-text-3" id="text-org5d235dc">
+<div id="outline-container-org45851ac" class="outline-3">
+<h3 id="org45851ac">Men er \(P = NP\)?</h3>
+<div class="outline-text-3" id="text-org45851ac">
 <p>
 Alle \(NP\)-komplette problemer kan reduseres til hverandre. Det betyr at
 dersom man finner en polynomiell løsning på <i>ett</i> \(NP\)-komplett problem, så
@@ -920,9 +921,9 @@ bli mulig å bryte.
 </div>
 </div>
 
-<div id="outline-container-orgcbfeba2" class="outline-2">
-<h2 id="orgcbfeba2">Beregnbarhet</h2>
-<div class="outline-text-2" id="text-orgcbfeba2">
+<div id="outline-container-orgafb0dde" class="outline-2">
+<h2 id="orgafb0dde">Beregnbarhet</h2>
+<div class="outline-text-2" id="text-orgafb0dde">
 <p>
 Vi avslutter med en kort historie om bergnbarhet. Spørsmålet er om det finnes
 problemer som er så vanskelig at det ikke går an å beregne et svar, uansett
@@ -932,13 +933,13 @@ hvor lang tid det tar. Finnes det problemer som er grunnleggende uløselige?
 <p>
 Dette var spørsmålet David Hilbert stilte i begynnelsen av 1900-tallet.
 Svaret kom først fra Alonzo Church, men like etter, og med større slagkraft,
-fra Alan Turing, i 1936. Svaret på spørsmålet viste seg å være nei, og man
-måtte utvikle den moderne forståelsen av hva en datamaskin er for å klare å
-besvare det.
+fra Alan Turing, i 1936. Svaret på spørsmålet viste seg å være at det finnes
+problemer som ikke kan løses, og man måtte utvikle den moderne forståelsen av
+hva en datamaskin er for å klare å besvare det.
 </p>
 
 <p>
-Problemet som er uløselig kalles <i>stoppeproblemet</i>:
+Problemet som er uløselig kalles <i>stoppeproblemet</i> (eng: halting problem):
 </p>
 
 <p class="decision">
@@ -953,21 +954,24 @@ Dette er uløselig, og det kan bevises ved et motsigelsesbevis.
 
 <blockquote>
 <p>
-Anta (for motsigelse) at det finnes en algoritme \(H\) som svarer riktig
-(JA/NEI) på alle instanser av HALT (på endelig tid).
+Anta for motsigelse at det finnes en algoritme \(H\) som svarer riktig
+(JA/NEI) på alle instanser av HALT på endelig tid.
 </p>
 
 <p>
 Vi konstruerer nå en algoritme \(D\) som tar en algoritme \(A\) som input, og
 fungerer som følger:
 </p>
-<ul class="org-ul">
-<li>Sjekk  \(H(A, A)\) (terminerer algoritmen \(A\) med \(A\) som input)?
+
+<div style="background: #EEE; border-radius: 10px; padding-left: 1rem; padding-right: 1rem;">
+<p>
+Sjekk  \(H(A, A)\) (terminerer algoritmen \(A\) med \(A\) som input)?
+</p>
 <ul class="org-ul">
 <li>Hvis JA: gå inn i en evig løkke</li>
-<li>Hvis NEI: output JA</li>
-</ul></li>
+<li>Hvis NEI: terminer med output JA</li>
 </ul>
+</div>
 
 <p>
 Hva skjer nå hvis vi kjører \(D(D)\), altså med \(D\) med \(D\) som input? Først
@@ -977,7 +981,7 @@ med \(D\) som input.
 <ul class="org-ul">
 <li>Hvis \(D\) terminerer med seg selv som input, så går den inn i en evig
 løkke.</li>
-<li>Hvis den ikke terminerer med seg selv som input, så svarer den JA.</li>
+<li>Hvis \(D\) ikke terminerer med seg selv som input, så terminerer den og svarer JA.</li>
 </ul>
 
 <p>
