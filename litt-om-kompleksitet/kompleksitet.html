@@ -3,10 +3,10 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="nb" xml:lang="nb">
 <head>
-<!-- 2023-11-06 Mon 08:53 -->
+<!-- 2023-11-06 Mon 14:24 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Kompleksitet og beregnbarhet</title>
+<title>Litt om kompleksitet</title>
 <meta name="author" content="Lars Tveito" />
 <meta name="generator" content="Org Mode" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.18/dist/katex.min.css" integrity="sha384-zTROYFVGOfTw7JV7KUu8udsvW2fx4lWOsCEDqhBreBwlHI4ioVRtmIvEThzJHGET" crossorigin="anonymous">
@@ -20,7 +20,7 @@
 </head>
 <body>
 <div id="preamble" class="status">
-<h1 class="title">Kompleksitet og beregnbarhet</h1>
+<h1 class="title">Litt om kompleksitet</h1>
                                                   <p class="author">Lars Tveito</p>
                                                   <p class="date">Høst 2023</p>
 </div>
@@ -37,9 +37,9 @@ vi fra å tenke på kompleksiteten til en konkret algoritme til å heller tenke 
 kompleksiteten til problemet selv.
 </p>
 
-<div id="outline-container-org60bc630" class="outline-2">
-<h2 id="org60bc630">Kompleksiteten til algoritmer</h2>
-<div class="outline-text-2" id="text-org60bc630">
+<div id="outline-container-org8fd021a" class="outline-2">
+<h2 id="org8fd021a">Kompleksiteten til algoritmer</h2>
+<div class="outline-text-2" id="text-org8fd021a">
 <p>
 Kompleksiteten til en algoritme sier noe om hvor mange ressurser den krever,
 der vi som regel er interessert i tidsbruk og minnebruk. For dette notatet
@@ -54,16 +54,16 @@ det vi kaller <i>kjøretidskompleksiteten</i> til algoritmen.
 </p>
 </div>
 
-<div id="outline-container-org6f69ef0" class="outline-3">
-<h3 id="org6f69ef0">En ineffektiv løsning på et enkelt problem</h3>
-<div class="outline-text-3" id="text-org6f69ef0">
+<div id="outline-container-orgbb4eb9f" class="outline-3">
+<h3 id="orgbb4eb9f">En ineffektiv løsning på et enkelt problem</h3>
+<div class="outline-text-3" id="text-orgbb4eb9f">
 <p>
 Si at vi skal finne summen av alle tallene mellom \(1\) og en gitt \(n\), der \(n\)
 er et positivt heltall. Følgende algoritme vil løse problemet, uansett hvor
 stor \(n\) er:
 </p>
 
-<pre class="example" id="orga6f72a4">
+<pre class="example" id="org1b6ac53">
 Procedure sumTo(n)
   sum ← 0
   for i ← 1 to n do
@@ -134,9 +134,9 @@ antall iterasjoner prosedyren kjører:
 </div>
 </div>
 
-<div id="outline-container-orge0ab871" class="outline-3">
-<h3 id="orge0ab871">Litt om kjøretidskompleksitet</h3>
-<div class="outline-text-3" id="text-orge0ab871">
+<div id="outline-container-org4ae77b4" class="outline-3">
+<h3 id="org4ae77b4">Litt om kjøretidskompleksitet</h3>
+<div class="outline-text-3" id="text-org4ae77b4">
 <p>
 Når vi snakker om <i>kjøretidskompleksitet</i>, så er vi ute etter å forstå hvordan
 kjøretiden vokser når input blir større og større. Under ser du et lite
@@ -187,9 +187,9 @@ i sum spare kloden for sløsing av store mengder energi.
 </div>
 </div>
 
-<div id="outline-container-orgee768ee" class="outline-3">
-<h3 id="orgee768ee">Tilbake til det enkle problemet</h3>
-<div class="outline-text-3" id="text-orgee768ee">
+<div id="outline-container-org6899c2e" class="outline-3">
+<h3 id="org6899c2e">Tilbake til det enkle problemet</h3>
+<div class="outline-text-3" id="text-org6899c2e">
 <p>
 Apropos sløsing; kanskje du la merke til at prosedyren over gir en <i>veldig</i>
 inneffektiv løsning på å summere opp tallene mellom \(1\) og \(n\)? Løsningen er
@@ -203,7 +203,7 @@ Vi kan starte med å se at vi kan legge til \(i\) i hver iterasjon, fremfor å
 skulle inkrementere summen med én \(i\) ganger.
 </p>
 
-<pre class="example" id="org52f2005">
+<pre class="example" id="orgd60f403">
 Procedure sumTo(n):
   sum ← 0
   for i ← 1 to n do
@@ -222,7 +222,7 @@ iterasjonser den første varianten gjorde, så fant vi også løsningen på
 problemet. Altså kan prosedyren forenkles videre.
 </p>
 
-<pre class="example" id="org3c189a2">
+<pre class="example" id="orga306388">
 Procedure sumTo(n):
   return (n * (n + 1)) / 2
 </pre>
@@ -256,9 +256,9 @@ mulige algoritmen for multiplikasjon er et åpent spørsmål.
 </div>
 </div>
 
-<div id="outline-container-org142c548" class="outline-2">
-<h2 id="org142c548">Kompleksiteten til problemer</h2>
-<div class="outline-text-2" id="text-org142c548">
+<div id="outline-container-org8154985" class="outline-2">
+<h2 id="org8154985">Kompleksiteten til problemer</h2>
+<div class="outline-text-2" id="text-org8154985">
 <p>
 I kompleksitetsteori ligger fokus på den <i>iboende</i> vanskelighetsgraden av
 problemet. Vanskelighetsgraden av problemet er gitt av den <i>mest effektive</i>
@@ -267,9 +267,9 @@ eksistere en mer effektiv løsning er ofte veldig vanskelig.
 </p>
 </div>
 
-<div id="outline-container-org986fc15" class="outline-3">
-<h3 id="org986fc15">Avgjørelsesproblemer</h3>
-<div class="outline-text-3" id="text-org986fc15">
+<div id="outline-container-org7c07bdc" class="outline-3">
+<h3 id="org7c07bdc">Avgjørelsesproblemer</h3>
+<div class="outline-text-3" id="text-org7c07bdc">
 <p>
 Innen kompleksitetsteori er det vanlig å begrense seg til å kun snakke om
 <i>avgjørelsesproblemer</i>. Et avgjørbarhetsproblem formuleres som en beskrivelse
@@ -316,9 +316,9 @@ vanskelig</i> å løse en rikere variant av problemet.
 </div>
 </div>
 
-<div id="outline-container-org980537d" class="outline-2">
-<h2 id="org980537d">Kompleksitetsklassene \(P\) og \(NP\)</h2>
-<div class="outline-text-2" id="text-org980537d">
+<div id="outline-container-org4e959c0" class="outline-2">
+<h2 id="org4e959c0">Kompleksitetsklassene \(P\) og \(NP\)</h2>
+<div class="outline-text-2" id="text-org4e959c0">
 <p>
 Avgjørelsesproblemer kan klassifiseres etter hvor vanskelige de er å løse. Vi
 skal se på de to mest kjente (og kanskje mest nyttige),
@@ -326,9 +326,9 @@ kompleksitetsklassene.
 </p>
 </div>
 
-<div id="outline-container-orgd89fadd" class="outline-3">
-<h3 id="orgd89fadd">Kompleksitetsklassen \(P\)</h3>
-<div class="outline-text-3" id="text-orgd89fadd">
+<div id="outline-container-orgdb7d01a" class="outline-3">
+<h3 id="orgdb7d01a">Kompleksitetsklassen \(P\)</h3>
+<div class="outline-text-3" id="text-orgdb7d01a">
 <p>
 Et avgjørbarhetsproblem er i kompleksitetsklassen \(P\) dersom det finnes en
 algoritme som løser problemet i <i>polynomiell tid</i>. Det vil si at algoritmen er
@@ -336,7 +336,7 @@ i \(\mathcal{O}(n^k)\) for en konstant \(k\). En intuitiv måte å se for seg
 polynomiell tid er et program som inneholder flere nøstede <code>for</code>-løkker:
 </p>
 
-<pre class="example" id="org709718d">
+<pre class="example" id="orgf3fb761">
 Procedure polynomial(n)
   sum ← 0
   for i₁ ← 1 to n
@@ -356,9 +356,9 @@ eksempel er en algoritme i \(\mathcal{O}(\log(n))\) også i \(\mathcal{O}(n^2)\
 </div>
 </div>
 
-<div id="outline-container-orga45091c" class="outline-3">
-<h3 id="orga45091c">Sudoku \(n \times n\)</h3>
-<div class="outline-text-3" id="text-orga45091c">
+<div id="outline-container-org1ef7730" class="outline-3">
+<h3 id="org1ef7730">Sudoku \(n \times n\)</h3>
+<div class="outline-text-3" id="text-org1ef7730">
 <p>
 Et problem du antageligvis kjenner fra før er Sudoku. I klassisk Sudoku får
 du et \(9 \times 9\) grid som er delevis fylt ut. En løsning på Sudoku er et ferdig
@@ -710,9 +710,9 @@ Nintendo-spill er vanskelige fra et kompleksitetsperspektiv:
 </div>
 </div>
 
-<div id="outline-container-orgd43984f" class="outline-3">
-<h3 id="orgd43984f">Verifisering av løsninger med sertifikater</h3>
-<div class="outline-text-3" id="text-orgd43984f">
+<div id="outline-container-org9b225c9" class="outline-3">
+<h3 id="org9b225c9">Verifisering av løsninger med sertifikater</h3>
+<div class="outline-text-3" id="text-org9b225c9">
 <p>
 Avgjørelsesproblemer tar input og svarer JA eller NEI. Dersom vi ønsker å
 verifisere løsningen for et avgjørelsesproblem gjøres dette ved hjelp av et
@@ -726,9 +726,9 @@ fungerer her som et <i>sertifikat</i>.
 </div>
 </div>
 
-<div id="outline-container-org471f806" class="outline-3">
-<h3 id="org471f806">Kompleksitetsklassen \(NP\)</h3>
-<div class="outline-text-3" id="text-org471f806">
+<div id="outline-container-org26d53b9" class="outline-3">
+<h3 id="org26d53b9">Kompleksitetsklassen \(NP\)</h3>
+<div class="outline-text-3" id="text-org26d53b9">
 <p>
 Et avgjørbarhetsproblem er i kompleksitetsklassen \(NP\) dersom det finnes en
 algoritme som kan <i>verifisere en løsning</i> på problemet i polynomiell tid. Merk
@@ -784,9 +784,9 @@ vanskeligste måtene man kan bli millionær på.
 </div>
 </div>
 
-<div id="outline-container-org01cd7dc" class="outline-2">
-<h2 id="org01cd7dc">Oversettelse mellom problemer</h2>
-<div class="outline-text-2" id="text-org01cd7dc">
+<div id="outline-container-org19c7ac0" class="outline-2">
+<h2 id="org19c7ac0">Oversettelse mellom problemer</h2>
+<div class="outline-text-2" id="text-org19c7ac0">
 <p>
 Når vi løser problemer, så oversetter vi dem ofte til problemer som hjelper
 oss med å løse det opprinnelige problemet. I kompleksitetsteori gjør vi det
@@ -796,9 +796,9 @@ problemene.
 </p>
 </div>
 
-<div id="outline-container-org495ddaf" class="outline-3">
-<h3 id="org495ddaf">Polynomtidsreduksjoner</h3>
-<div class="outline-text-3" id="text-org495ddaf">
+<div id="outline-container-orgd49bced" class="outline-3">
+<h3 id="orgd49bced">Polynomtidsreduksjoner</h3>
+<div class="outline-text-3" id="text-orgd49bced">
 <p>
 En polynomtidsreduksjon fra problem \(A\) til problem \(B\) oversetter instanser
 av problem \(A\) til instanser av problem \(B\) i polynomiell tid. For at
@@ -850,9 +850,9 @@ oversetter vi det til arrayet \([2,1,3]\).
 </div>
 </div>
 
-<div id="outline-container-org1359a51" class="outline-3">
-<h3 id="org1359a51">De vanskeligste problemene i \(NP\)</h3>
-<div class="outline-text-3" id="text-org1359a51">
+<div id="outline-container-org647416f" class="outline-3">
+<h3 id="org647416f">De vanskeligste problemene i \(NP\)</h3>
+<div class="outline-text-3" id="text-org647416f">
 <p>
 De vanskeligste problemene i \(NP\) kalles \(NP\)-harde. Et problem \(A\) er
 \(NP\)-hardt dersom \(A\) er minst like vanskelig som alle problemer i \(NP\).
@@ -880,9 +880,9 @@ så er det tilstrekkelig å finne et \(NP\)-hardt problem og redusere det til
 </div>
 </div>
 
-<div id="outline-container-org8d37e98" class="outline-3">
-<h3 id="org8d37e98">\(NP\)-komplette problemer</h3>
-<div class="outline-text-3" id="text-org8d37e98">
+<div id="outline-container-org7682872" class="outline-3">
+<h3 id="org7682872">\(NP\)-komplette problemer</h3>
+<div class="outline-text-3" id="text-org7682872">
 <p>
 Et problem \(A\) er \(NP\)-komplett hvis det både
 </p>
@@ -900,9 +900,9 @@ det skal være vanskelig å finne nøkkelen.
 </div>
 </div>
 
-<div id="outline-container-org6f27625" class="outline-3">
-<h3 id="org6f27625">Men er \(P = NP\)?</h3>
-<div class="outline-text-3" id="text-org6f27625">
+<div id="outline-container-org5d235dc" class="outline-3">
+<h3 id="org5d235dc">Men er \(P = NP\)?</h3>
+<div class="outline-text-3" id="text-org5d235dc">
 <p>
 Alle \(NP\)-komplette problemer kan reduseres til hverandre. Det betyr at
 dersom man finner en polynomiell løsning på <i>ett</i> \(NP\)-komplett problem, så
@@ -920,9 +920,9 @@ bli mulig å bryte.
 </div>
 </div>
 
-<div id="outline-container-orge217a21" class="outline-2">
-<h2 id="orge217a21">Beregnbarhet</h2>
-<div class="outline-text-2" id="text-orge217a21">
+<div id="outline-container-orgcbfeba2" class="outline-2">
+<h2 id="orgcbfeba2">Beregnbarhet</h2>
+<div class="outline-text-2" id="text-orgcbfeba2">
 <p>
 Vi avslutter med en kort historie om bergnbarhet. Spørsmålet er om det finnes
 problemer som er så vanskelig at det ikke går an å beregne et svar, uansett
