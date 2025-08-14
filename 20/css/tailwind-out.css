@@ -2803,6 +2803,10 @@ details.collapse summary::-webkit-details-marker {
   font-weight: 700;
 }
 
+.filter {
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+}
+
 [contenteditable]:focus {
   outline: 0px solid transparent;
 }
